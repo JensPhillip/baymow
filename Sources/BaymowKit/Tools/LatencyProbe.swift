@@ -8,16 +8,23 @@ public enum LatencyProbe {
         let settings = SettingsStore(defaults: UserDefaults(suiteName: "baymow.latency-probe")!)
         let apple = AppleSpeechEngine()
         apple.volume = 0
-        let piper = PiperSpeechEngine()
+        let piper = BackendSpeechEngine(backend: PiperBackend())
         piper.volume = 0
         let catalog = VoiceCatalog(engines: [piper, apple], settings: settings)
 
+        // Den stemme, appen selv ville vælge, plus alle hentede stemmer – også dem, der ikke er godkendt som standard.
+        var voices: [Voice] = []
         for language in Language.allCases {
-            guard let voice = catalog.voice(for: language), let engine = catalog.engine(for: voice) else {
-                print("\(language.rawValue): ingen stemme installeret")
-                continue
+            if let chosen = catalog.voice(for: language) { voices.append(chosen) } else { print("\(language.rawValue): ingen stemme installeret") }
+            voices += catalog.voices(for: language).filter { $0.engineID == piper.engineID && !voices.contains($0) }
+        }
+        for voice in voices {
+            guard let engine = catalog.engine(for: voice) else { continue }
+            let language = voice.language
+            if voice.engineID == piper.engineID {
+                piper.prepare(voice)
+                RunLoop.main.run(until: Date().addingTimeInterval(1.5)) // lad modellen indlæse, som appen gør ved start
             }
-            piper.prepare(voice)
             var samples: [Int] = []
             for _ in 0..<4 {
                 var startedAfter: TimeInterval?

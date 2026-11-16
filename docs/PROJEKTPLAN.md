@@ -74,8 +74,7 @@ Derfor er maskinmålingen et *nødvendigt* krav, mens brugerens lytning er det *
 ### Kendte mangler i den nuværende kode
 
 - Chrome, Word, Google Docs og Preview er ikke afprøvet.
-- Pause/fortsæt med Piper er ikke afprøvet. Lydafspilningen ligger inde i `PiperSpeechEngine` og
-  kan ikke genbruges af andre motorer (AP-10).
+- Pause/fortsæt med en backend-stemme er kun afprøvet lydløst (`--player-selftest`), ikke af brugeren.
 - Appen er i sin nuværende form bundet af GPL (espeak-ng er linket ind).
 - Stemmetesten (`tools/stemmetest/`) afhænger af Python-miljøer, der ikke er beskrevet i projektet (AP-02).
 - Kernen er adskilt fra resten med mapper og kontrolscript, men ikke af compileren (AP-23).
@@ -111,7 +110,9 @@ DiagnosticsService logger hændelser uden tekst.
 | `Core/` | `SettingsStore.swift`, `Models.swift` | Indstillinger (UserDefaults) og fælles typer |
 | `Core/` | `DiagnosticsService.swift` | Lokal log uden brugerindhold |
 | `Engines/` | `AppleSpeechEngine.swift` | macOS' egne stemmer |
-| `Engines/` | `PiperSpeechEngine.swift` | Piper via sherpa-onnx + lydafspilning |
+| `Engines/` | `SynthesisBackend.swift` | `SynthesisBackend`, `PCMOutput` og `BackendSpeechEngine` |
+| `Engines/` | `PCMPlayer.swift` | Fælles lydafspiller for alle backends |
+| `Engines/` | `PiperBackend.swift` | Piper via sherpa-onnx (laver kun lyd) |
 | `Engines/` | `ModelDownloader.swift` | Stemmer, der kan hentes; `VoiceStore` |
 | `UI/` | `AppShell.swift` | Livscyklus, menulinje, kobler tjenesterne sammen |
 | `UI/` | `FloatingPlayer.swift`, `MainWindow.swift` | Afspiller, beskeder, indstillinger, stemmebibliotek |
@@ -198,9 +199,9 @@ Tre regler for enhver ny funktion:
 Regel 2 og 3 kontrolleres mekanisk af `Scripts/check.sh` (ingen udskrift eller logning i
 app-koden, ingen filskrivning i kernen, netværk kun i filer på `Scripts/network-allowlist.txt`).
 
-### Målarkitektur for stemmer (indføres i AP-10)
+### Stemmearkitektur (indført i AP-10)
 
-I dag afspiller hver motor selv sin lyd. Fremover skelnes der mellem to slags:
+Der skelnes mellem to slags motorer. Typerne ligger i `Engines/SynthesisBackend.swift` og `Engines/PCMPlayer.swift`:
 
 ```swift
 /// Laver lyd af tekst. Ved intet om afspilning. Piper, Plapre, Røst og cloud-tjenester.
@@ -264,6 +265,7 @@ Nyttige værktøjer i den byggede app (`build/Baymow.app/Contents/MacOS/Baymow`)
 | `--synthesize <stemmemappe> <tekstfil> <ud-mappe>` | Én wav pr. linje med Piper og tekstforberedelse |
 | `--normalize` | Læser linjer fra stdin, skriver den forberedte tekst |
 | `--install-voice <id>` | Henter en stemme med samme kode som knappen "Hent" |
+| `--player-selftest` | Lydløs kontrol af den rigtige afspiller: events, pause, fortsæt, stop, erstatning |
 | `--ax-diagnose <bundle-id>` | Skal startes med `open -n -W build/Baymow.app --args …`; skriver til `~/Library/Logs/Baymow/ax-diagnose.txt` |
 
 Loggen fra brugerens afprøvninger: `~/Library/Logs/Baymow/baymow.log`. Læs den, før du
@@ -347,7 +349,7 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 | AP-01 | Apple som standard igen | 0 | Arkitekt | – | Færdig |
 | AP-02 | Reproducerbar stemmetest | 0 | Udfører | AP-00 | Ikke startet |
 | AP-03 | Lyttepakke til brugeren | 0 | Udfører | AP-02 | Ikke startet |
-| AP-10 | Fælles lydafspiller og `SynthesisBackend` | 1 | Udfører, arkitekt gennemgår | AP-00 | Ikke startet |
+| AP-10 | Fælles lydafspiller og `SynthesisBackend` | 1 | Arkitekt | AP-00 | Færdig |
 | AP-11 | Apples bedre danske stemmer | 1 | Bruger + udfører | AP-03 | Ikke startet |
 | AP-12 | Hvorfor er Piper uforståelig? | 1 | Udfører | AP-03 | Ikke startet |
 | AP-13 | Cloud-stemme: Azure | 1 | Udfører + bruger | AP-10, B6 | Ikke startet |

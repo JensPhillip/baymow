@@ -46,6 +46,74 @@ public enum DeveloperTools {
         return downloader.isInstalled(voice) ? 0 : 1
     }
 
+    /// `--player-selftest`: kører den rigtige lydafspiller lydløst med en installeret Piper-stemme og
+    /// kontrollerer rækkefølgen af events, at pause holder afspilningen stille, og at stop gør tavs.
+    public static func playerSelfTest() -> Int32 {
+        let backend = PiperBackend()
+        guard let voice = backend.installedVoices().first else {
+            print("Ingen Piper-stemme installeret (kør --install-voice piper-da-talesyntese)")
+            return 1
+        }
+        let engine = BackendSpeechEngine(backend: backend)
+        engine.volume = 0
+        let text = "Dette er første sætning i testen. Dette er anden sætning i testen. Dette er tredje sætning i testen."
+        var events: [String] = []
+        let record: (SpeechEvent) -> Void = { event in
+            switch event {
+            case .started: events.append("started")
+            case .progress: events.append("progress")
+            case .finished: events.append("finished")
+            case .failed: events.append("failed")
+            }
+        }
+        func spin(_ seconds: TimeInterval, until done: () -> Bool = { false }) {
+            let deadline = Date().addingTimeInterval(seconds)
+            while !done(), Date() < deadline { RunLoop.main.run(until: Date().addingTimeInterval(0.01)) }
+        }
+        var failures = 0
+        func check(_ name: String, _ ok: Bool) {
+            print("  \(ok ? "ok  " : "FEJL") \(name)\(ok ? "" : " – events: \(events)")")
+            if !ok { failures += 1 }
+        }
+
+        engine.speak(text, voice: voice, rate: 2.0, onEvent: record)
+        spin(20) { events.last == "finished" || events.last == "failed" }
+        check("hel oplæsning: started, progress, progress, finished", events == ["started", "progress", "progress", "finished"])
+
+        events = []
+        engine.speak(text, voice: voice, rate: 2.0, onEvent: record)
+        spin(5) { events.contains("started") }
+        engine.pause()
+        let duringPause = events.count
+        spin(3)
+        check("pause: ingen events i 3 sekunder", events.count == duringPause)
+        engine.resume()
+        spin(20) { events.last == "finished" || events.last == "failed" }
+        check("fortsæt: læser til ende", events.last == "finished")
+
+        events = []
+        engine.speak(text, voice: voice, rate: 2.0, onEvent: record)
+        spin(5) { events.contains("started") }
+        engine.stop()
+        let afterStop = events.count
+        spin(3)
+        check("stop: ingen events bagefter", events.count == afterStop && !events.contains("finished"))
+
+        events = []
+        engine.speak(text, voice: voice, rate: 2.0, onEvent: record)
+        spin(5) { events.contains("started") }
+        var second: [String] = []
+        engine.speak("Ny tekst erstatter den gamle.", voice: voice, rate: 2.0) { event in
+            if case .finished = event { second.append("finished") } else if case .started = event { second.append("started") }
+        }
+        let oldCount = events.count
+        spin(20) { second.last == "finished" }
+        check("ny oplæsning erstatter den gamle uden flere events fra den gamle", events.count == oldCount && second == ["started", "finished"])
+
+        print(failures == 0 ? "Afspilleren bestod" : "Afspilleren fejlede i \(failures) punkt(er)")
+        return failures == 0 ? 0 : 1
+    }
+
     /// `--normalize`: læser linjer fra standard input og skriver den forberedte tekst.
     public static func normalizeStandardInput() {
         while let line = readLine() { print(DanishTextNormalizer.normalize(line)) }

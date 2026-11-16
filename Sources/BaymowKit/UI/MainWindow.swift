@@ -16,11 +16,11 @@ final class MainWindowModel: ObservableObject {
     private var timer: Timer?
     private var keyMonitor: Any?
 
-    init(settings: SettingsStore, catalog: VoiceCatalog, downloader: ModelDownloader, store: VoiceStore) {
+    init(settings: SettingsStore, catalog: VoiceCatalog, downloader: ModelDownloader, sampleEngines: [SpeechEngine]) {
         self.settings = settings
         self.catalog = catalog
         self.downloader = downloader
-        sampleEngines = [AppleSpeechEngine(), PiperSpeechEngine(store: store)]
+        self.sampleEngines = sampleEngines
     }
 
     func startPolling() {

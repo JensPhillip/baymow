@@ -10,13 +10,15 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private let capture = TextCaptureService()
     private let shortcuts = GlobalShortcutManager()
     private let voiceStore = VoiceStore()
-    private lazy var piper = PiperSpeechEngine(store: voiceStore)
+    private lazy var piperBackend = PiperBackend(store: voiceStore)
+    private lazy var piper = BackendSpeechEngine(backend: piperBackend)
     private lazy var downloader = ModelDownloader(store: voiceStore)
     private lazy var catalog = VoiceCatalog(engines: [piper, AppleSpeechEngine()], settings: settings)
     private lazy var sessions = ReadingSessionManager(catalog: catalog, settings: settings, diagnostics: diagnostics)
     private lazy var player = FloatingPlayer(sessions: sessions, settings: settings)
     private lazy var notices = NoticePresenter(settings: settings)
-    private lazy var windowModel = MainWindowModel(settings: settings, catalog: catalog, downloader: downloader, store: voiceStore)
+    private lazy var windowModel = MainWindowModel(settings: settings, catalog: catalog, downloader: downloader,
+                                                       sampleEngines: [AppleSpeechEngine(), BackendSpeechEngine(backend: piperBackend)])
 
     private var statusItem: NSStatusItem?
     private var readMenuItem: NSMenuItem?
@@ -35,7 +37,7 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
         downloader.onChange = { [weak self] in
             guard let self else { return }
             for voice in DownloadableVoice.catalog where !self.downloader.isInstalled(voice) {
-                self.piper.unload(voiceID: voice.id)
+                self.piperBackend.unload(voiceID: voice.id)
             }
             self.catalog.refresh()
             self.prepareNeuralVoices()

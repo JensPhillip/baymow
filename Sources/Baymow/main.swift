@@ -21,6 +21,9 @@ MainActor.assumeIsolated {
     if let index = arguments.firstIndex(of: "--install-voice"), arguments.count > index + 1 {
         exit(DeveloperTools.installVoice(id: arguments[index + 1]))
     }
+    if arguments.contains("--player-selftest") {
+        exit(DeveloperTools.playerSelfTest())
+    }
     if arguments.contains("--normalize") {
         DeveloperTools.normalizeStandardInput()
         exit(0)

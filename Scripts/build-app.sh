@@ -35,6 +35,10 @@ if [ "${1:-}" = "--install" ]; then
   pkill -f 'Baymow.app/Contents/MacOS/Baymow' || true
   rm -rf /Applications/Baymow.app
   ditto "$APP" /Applications/Baymow.app
-  open /Applications/Baymow.app
+  # Lige efter at den gamle proces er stoppet, kan macOS afvise at åbne appen. Prøv et par gange.
+  for attempt in 1 2 3 4 5; do
+    sleep 1
+    if open /Applications/Baymow.app 2>/dev/null; then break; fi
+  done
   echo "Installeret: /Applications/Baymow.app"
 fi

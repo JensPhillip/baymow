@@ -5,9 +5,10 @@ Sidst opdateret: 2026-11-16 af arkitekten.
 
 ## Lige nu
 
-- **Færdigt:** AP-00 (permanent mappe, git, omdøbning til Baymow), AP-01 (Apple som standard igen).
+- **Færdigt:** AP-00 (permanent mappe, git, omdøbning til Baymow), AP-01 (Apple som standard igen),
+  AP-10 (fælles lydafspiller og `SynthesisBackend`; ikke committet endnu).
 - **I gang:** intet.
-- **Næste ledige pakker:** AP-02 (reproducerbar stemmetest), AP-10 (fælles lydafspiller), AP-30 (Chrome).
+- **Næste ledige pakker:** AP-02 (reproducerbar stemmetest), AP-30 (Chrome), AP-12 (hvorfor er Piper uforståelig?).
   De rører ikke de samme filer og kan løses hver for sig.
 
 ## Venter på brugeren
@@ -22,7 +23,8 @@ Sidst opdateret: 2026-11-16 af arkitekten.
 
 ## Senest kontrolleret (2026-11-16)
 
-- `./Scripts/check.sh`: ALT GRØNT, 27 tests.
+- `./Scripts/check.sh`: ALT GRØNT, 40 tests.
+- `Baymow --player-selftest`: den rigtige afspiller bestod alle fem punkter, lydløst.
 - Baymow.app er bygget, signeret, installeret i Programmer og startet.
 - Automatisk dansk stemme er Apple Sara, selv om Piper er installeret (`--measure-latency`).
 - En frisk kopi af arkivet bygger efter `fetch-vendor.sh`: se seneste commit-besked.
@@ -39,4 +41,5 @@ Sidst opdateret: 2026-11-16 af arkitekten.
 - espeak-ng fejler, hvis stien til dens data er over ca. 160 tegn.
 - sherpa-onnx 2.x har fjernet espeak-ng; projektet bruger derfor 1.13.8.
 - Bundle-id'et bestemmer Tilgængelighed-tilladelsen. Ændres det, skal brugeren give adgang igen.
+- Flyttes projektmappen med appens egen flytning, følger `.git` og `Vendor/` ikke med. Hent `Vendor/` med `fetch-vendor.sh`.
 - De midlertidige Python-miljøer fra de første stemmetests findes ikke længere; AP-02 genskaber dem.
