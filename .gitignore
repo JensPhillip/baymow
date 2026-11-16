@@ -1,0 +1,10 @@
+.build/
+build/
+.DS_Store
+*.xcuserstate
+# Hentes med Scripts/fetch-vendor.sh
+Vendor/sherpa-onnx/lib/
+Vendor/piper-da-test/
+# Python-miljøer til stemmetesten
+tools/**/env/
+tools/**/__pycache__/
