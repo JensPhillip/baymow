@@ -341,12 +341,27 @@ Spørg ikke om navne, småstrukturer og andre valg, der er nemme at lave om.
 | B4 | Apples stemmer er fallback og standard, indtil en bedre stemme har passeret stemmeporten | Truffet |
 | B5 | En stemme bliver kun standard gennem stemmeporten (afsnit 7) | Truffet |
 | B10 | Kernen (afsnit 3) ændres kun bevidst og med begrundelse; nye funktioner bygges uden om den og er slået fra som standard | Truffet af brugeren 16. november 2026 |
-| B6 | Cloud-stemmer er tilladt som udtrykkeligt tilvalg, aldrig som standard eller stille fallback | Truffet af arkitekten; **afventer brugerens bekræftelse** |
+| B6 | Cloud-stemmer laves **ikke nu**. De kan blive en senere forbedring; hvis de kommer, er de et udtrykkeligt tilvalg, aldrig standard eller stille fallback | Truffet af brugeren 17. november 2026. AP-13 og AP-14 er udskudt |
 | B7 | Hvilken dansk stemme bliver hovedstemme? | **Åben** – afgøres i fase 1 |
-| B8 | Licensmodel: åben kildekode (GPL) eller lukket? | **Åben** – brugeren ved det ikke endnu. Indtil da må ingen ny GPL-kode linkes ind, og Piper/espeak-ng holdes bag `SynthesisBackend`, så den kan fjernes |
+| B8 | Baymow bliver **open source**, med mulighed for at tjene penge senere, og det er en fordel, at koden kan gennemskues udefra. Konkret licens: se "Licens og indtjening" nedenfor | Truffet af brugeren 17. november 2026. Valg af licens afventer brugerens bekræftelse (kræves først før udgivelse) |
 | B9 | Appen hedder **Baymow** | Truffet af brugeren 16. november 2026. Bundle-id `dk.baymow.app` er stadig en pladsholder og skal afgøres før AP-52 |
 
 ---
+
+### Licens og indtjening (anbefaling til B8)
+
+Arkitektens anbefaling, ikke juridisk rådgivning:
+
+- **GPL-3.0-or-later for hele appen.** Piper bruger espeak-ng, som er GPL-3.0, og så længe Piper er bygget
+  ind, skal den færdige app alligevel kunne udgives under GPL. GPL tillader salg, og den forhindrer, at
+  andre tager koden og laver en lukket konkurrent. Koden kan læses af alle, som brugeren ønsker.
+- **Indtjening, der passer med open source:** salg af den færdige, signerede app (fx i App Store eller fra
+  hjemmesiden), mens koden er gratis at bygge selv; frivillige bidrag og sponsorater; betalte tilvalg, der
+  kører hos en tjeneste (fx cloud-stemmer senere, jf. B6); support eller licenser til skoler og kommuner.
+- **Hold døren åben for dobbeltlicens.** Vil man senere kunne sælge en lukket udgave til en virksomhed,
+  skal man eje ophavsretten til al koden. Tager projektet imod bidrag udefra, bør bidragydere derfor
+  skrive under på en bidragsaftale (CLA), før deres kode flettes ind.
+- Licensfilen (`LICENSE`) og "Om"-siden laves i AP-50, når brugeren har bekræftet licensen.
 
 ## 6. Arbejdspakker
 
@@ -365,10 +380,10 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 | AP-02 | Reproducerbar stemmetest | 0 | Arkitekt | AP-00 | Færdig |
 | AP-03 | Lyttepakke til brugeren | 0 | Arkitekt | AP-02 | Afventer bruger |
 | AP-10 | Fælles lydafspiller og `SynthesisBackend` | 1 | Arkitekt | AP-00 | Færdig |
-| AP-11 | Apples bedre danske stemmer | 1 | Bruger + udfører | AP-03 | Ikke startet |
+| AP-11 | Apples bedre danske stemmer | 1 | Bruger + udfører | AP-03 | Afventer bruger (målt; lyttepakke sendt) |
 | AP-12 | Hvorfor er Piper uforståelig? | 1 | Arkitekt | AP-03 | Færdig |
-| AP-13 | Cloud-stemme: Azure | 1 | Udfører + bruger | AP-10, B6 | Ikke startet |
-| AP-14 | Cloud-stemme: ElevenLabs | 1 | Udfører + bruger | AP-13 | Ikke startet |
+| AP-13 | Cloud-stemme: Azure | 1 | Udfører + bruger | AP-10, B6 | Udskudt (B6) |
+| AP-14 | Cloud-stemme: ElevenLabs | 1 | Udfører + bruger | AP-13 | Udskudt (B6) |
 | AP-15 | Plapre: afprøv originalmodellen | 1 | Udfører + bruger | AP-02 | Ikke startet |
 | AP-16 | Røst 500m: kan den gøres hurtig nok? | 1 | Arkitekt eller stærk udfører | AP-02 | Ikke startet |
 | AP-19 | Stemmeport: vælg hovedstemme | 1 | Arkitekt + bruger | AP-11 til AP-16 | Ikke startet |
@@ -377,7 +392,7 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 | AP-22 | Tekstforberedelse, runde 2 | 2 | Udfører | AP-02 | Færdig |
 | AP-23 | Kernen som eget kompileringsmål | 2 | Udfører | AP-10 | Færdig |
 | AP-24 | Engelske ord i dansk tekst | 2 | Arkitekt | – | Delvist: mekanismen er bygget, målet ikke nået (se afleveringen) |
-| AP-30 | Chrome | 3 | Udfører + bruger | AP-00 | Ikke startet |
+| AP-30 | Chrome | 3 | Udfører + bruger | AP-00 | Delvist: brugeren har bekræftet, at genvejen virker (via kopiering, 0,65 s) |
 | AP-31 | Word og Preview/PDF | 3 | Udfører + bruger | AP-00 | Ikke startet |
 | AP-32 | Google Docs og testmatrix | 3 | Udfører + bruger | AP-30 | Ikke startet |
 | AP-40 | Stemmebibliotek færdigt | 4 | Udfører | AP-19 | Ikke startet |
@@ -673,6 +688,27 @@ Test installation på en Mac, der aldrig har set appen, herunder at Tilgængelig
 overlever en opdatering.
 
 ---
+
+### Fase 6 – Efter MVP: idékatalog
+
+Ikke arbejdspakker endnu. Idéerne er samlet 17. november 2026, inspireret af Speechify, som brugeren ser op
+til. Speechify er en cloud-tjeneste med abonnement; Baymows forskel er, at alt sker lokalt, privat, på dansk
+og som åben kildekode. En idé bliver først en arbejdspakke, når MVP'en er færdig, og brugeren har valgt den.
+Rækkefølgen er arkitektens bud på nytten for en ordblind bruger.
+
+| # | Idé | Værdi for brugeren | Hvor den bygges | Rører kernen? |
+|---|---|---|---|---|
+| I1 | **Ordfremhævning:** et læsevindue, der viser teksten og fremhæver ordet, der læses | Følge med i teksten, mens den læses – Speechifys kernefunktion | `Features/Highlighting/`, observerer sessionens position. Apple giver ordposition; backends kun sætningsposition | Ja: sessionen skal kunne udlevere teksten til visning (ny, udtrykkelig metode). Kræver arkitektens ja |
+| I2 | **Spring en sætning frem eller tilbage** (knapper og genveje) | Høre en sætning igen uden at starte forfra | `ReadingSessionManager` (bidderne findes allerede) + knapper i afspilleren | Ja: udvider K2 |
+| I3 | **Højere hastighed**, op til 3–4× | Erfarne lyttere læser hurtigere end de læser selv; Speechify går til 4,5× | Grænsen i `SettingsStore`/sessionen; tjek, at stemmerne kan følge med | Ja: ændrer K5 (0,5–2,0) |
+| I4 | **Læs tekst fra skærmen** (OCR med Apples Vision, lokalt) | Billeder, indscannede PDF'er og programmer uden markerbar tekst | Ny strategi i `TextCaptureService`, eller egen genvej i `Features/ScreenText/` | Ja, hvis den lægges i `TextCaptureService` |
+| I5 | **Læs en hel fil** (PDF, Word, EPUB) via træk-og-slip på afspilleren | Lange dokumenter uden at markere | `Features/Documents/`, giver teksten til `ReadingSessionManager.start` | Nej |
+| I6 | **Gem oplæsning som lydfil** | Lytte på farten, uden computeren | `Features/Export/`, syntetiserer til fil (kun efter brugerens tryk) | Nej |
+| I7 | **Diktering** (tale til tekst) | Skrivehjælp – Speechifys nyeste Mac-funktion | Eget modul; macOS har allerede indbygget diktering, så værdien skal afklares først | Nej |
+| I8 | **Opsummering og spørgsmål til teksten** | Overblik over lange tekster | Kræver en sprogmodel: lokal, eller cloud (udskudt, B6) | Ja – kræver arkitektens ja og en privatlivsvurdering |
+
+Fælles for alle: slået fra som standard eller uden virkning, før brugeren tager dem i brug; de må ikke gøre
+genvejen langsommere; og kernekontrakten skal bestå uændret, medmindre idéen udtrykkeligt ændrer den.
 
 ## 7. Stemmeporten
 

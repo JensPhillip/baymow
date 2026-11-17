@@ -271,6 +271,26 @@ ingen måling her fanger. Lyttepakken (`stemmeproever/piper-talesyntese/` mod `a
 almindelige danske tekster) er lavet for at afgøre det. Engelske ord i dansk tekst er en selvstændig
 opgave (AP-24).
 
+### Apples større danske stemmer (AP-11, 17. november 2026)
+
+Brugeren hentede de danske stemmer i Systemindstillinger. macOS tilbød to: **Sara (Enhanced)** og
+**Magnus (Enhanced)** (kvalitet "Forbedret"; ingen Premium-stemmer på dansk).
+
+| Stemme | 36 danske sætninger | 30 med engelske ord | 52 tekstforberedelsestilfælde | Start (lydløs måling) |
+|---|---|---|---|---|
+| Sara (kompakt) | 23/36, 2,8 % | 17/30, 7,4 % | 26/52, 10,9 % | ca. 10 ms |
+| **Sara (Enhanced)** | **27/36, 1,7 %** | **19/30, 5,9 %** | 27/52, 10,0 % | – |
+| Magnus (Enhanced) | 21/36, 4,1 % | 16/30, 7,9 % | 29/52, 6,7 % | 9–37 ms |
+| Piper talesyntese | 28/36, 1,4 % | 14/30, 8,4 % (18 med udtaleliste) | 32/52, 5,4 % | 37–119 ms |
+
+Sara (Enhanced) består stemmeportens krav 1 og er den bedste stemme på engelske ord i dansk tekst.
+Magnus består ikke krav 1. Magnus' ene "gentagelse" er en målefejl (talegenkendelsen hørte "i et" to gange);
+Apples stemmer kan ikke gentage ord. Apple-stemmer giver samme lyd hver gang, så én kørsel er nok.
+
+Brugen i Chrome (17. november): teksten blev hentet med kopiering på 654 ms, og oplæsningen startede
+efter 831 ms med Magnus (Enhanced). Baymow valgte Magnus selv, fordi de to nye stemmer har samme kvalitet
+og Magnus kommer først i alfabetet – se AP-11-afleveringen.
+
 ### Cloud-stemmer (ElevenLabs m.fl.)
 
 Undersøgt på brugerens ønske. **Dette er et brud med specifikationens principper om offline-first

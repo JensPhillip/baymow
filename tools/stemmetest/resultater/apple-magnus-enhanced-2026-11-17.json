@@ -1,0 +1,334 @@
+{
+ "name": "apple-magnus-enhanced",
+ "clean": 21,
+ "total": 36,
+ "cer": 0.0411515003738722,
+ "repeats": 1,
+ "omits": 0,
+ "rows": [
+  {
+   "cat": "prosa",
+   "written": "Ordblindhed handler ikke om intelligens, men om hvordan hjernen afkoder skrevne ord.",
+   "ref": "ordblindhed handler ikke om intelligens men om hvordan hjernen afkoder skrevne ord",
+   "hyp": "ordenhed handler ikke om intelligens men om hvordan hjernen afkoder skrevne ord",
+   "cer": 0.056338028169014086,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "prosa",
+   "written": "Mange oplever, at en tekst bliver lettere at forstå, når den bliver læst højt i et roligt tempo.",
+   "ref": "mange oplever at en tekst bliver lettere at forstå når den bliver læst højt i et roligt tempo",
+   "hyp": "mange oplever at en tekst bliver lettere at forstå når den bliver i et højt i et roligt tempo",
+   "cer": 0.039473684210526314,
+   "repeats": true,
+   "omits": false
+  },
+  {
+   "cat": "prosa",
+   "written": "Hun cyklede hjem gennem regnen og glemte helt, at hun havde lovet at købe mælk.",
+   "ref": "hun cyklede hjem gennem regnen og glemte helt at hun havde lovet at købe mælk",
+   "hyp": "hun cyklede hjem gennem regnen og glemte helt at hun havde lovet at købe mælk",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "prosa",
+   "written": "Vi skal huske at sende ansøgningen, inden fristen udløber på fredag.",
+   "ref": "vi skal huske at sende ansøgningen inden fristen udløber på fredag",
+   "hyp": "vi skal huske at sende ansøgningen inden fristende udløber på fredag",
+   "cer": 0.03571428571428571,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "prosa",
+   "written": "Er du sikker på, at det er den rigtige vej til stationen?",
+   "ref": "er du sikker på at det er den rigtige vej til stationen",
+   "hyp": "er du sikker på at det er den rigtige vej til stationen",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "prosa",
+   "written": "Bogen handler om en ung kvinde, der flytter fra Aarhus til en lille ø.",
+   "ref": "bogen handler om en ung kvinde der flytter fra aarhus til en lille ø",
+   "hyp": "bogen handler om en ung kvinde der flytter fra aarhus til en lille ø",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "tal",
+   "written": "Kommunen gav støtte til 1.250 elever.",
+   "ref": "kommunen gav støtte til tusind to hundrede og halvtreds elever",
+   "hyp": "kommunen gav støtte til tusind to hundrede og halvtreds elever",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "tal",
+   "written": "Der bor 45.000 mennesker i byen.",
+   "ref": "der bor femogfyrre tusind mennesker i byen",
+   "hyp": "der bor femogfyrre tusind mennesker i byen",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "tal",
+   "written": "Projektet koster 2.500.000 kroner.",
+   "ref": "projektet koster to millioner fem hundrede tusind kroner",
+   "hyp": "projektet koster to millioner fem hundrede tusind kroner",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "tal",
+   "written": "Hun har 7 æbler og 21 pærer.",
+   "ref": "hun har syv æbler og enogtyve pærer",
+   "hyp": "hun har syv æbler og enogtyve pære",
+   "cer": 0.034482758620689655,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "tal",
+   "written": "Bussen kører 150 gange om ugen.",
+   "ref": "bussen kører hundrede og halvtreds gange om ugen",
+   "hyp": "bussen kører hundrede og halvtreds gange om ugen",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "tal",
+   "written": "Temperaturen steg med 3,5 grader.",
+   "ref": "temperaturen steg med tre komma fem grader",
+   "hyp": "temperaturen stemmer tre komma fem grader",
+   "cer": 0.05555555555555555,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "tal",
+   "written": "Renten er nu 4,25 %.",
+   "ref": "renten er nu fire komma femogtyve procent",
+   "hyp": "renten er nu fire komma femogtyve procent",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "tal",
+   "written": "Omkring 68 % af eleverne bestod prøven.",
+   "ref": "omkring otteogtres procent af eleverne bestod prøven",
+   "hyp": "omkring otteogtres procent af eleverne bestod prøven",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "dato",
+   "written": "Ordningen fortsætter i 2026.",
+   "ref": "ordningen fortsætter i to tusind og seksogtyve",
+   "hyp": "ordningen fortsætter i to tusind og seksogtyve",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "dato",
+   "written": "Han blev født i 1999.",
+   "ref": "han blev født i nitten hundrede og nioghalvfems",
+   "hyp": "han blev født i nitten hundrede og nioghalvfems",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "dato",
+   "written": "Mødet er flyttet til torsdag kl. 14.30.",
+   "ref": "mødet er flyttet til torsdag klokken fjorten tredive",
+   "hyp": "mødet er flyttet til torsdag klokken fjorten tredive",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "dato",
+   "written": "Butikken åbner kl. 9.00 den 3. maj.",
+   "ref": "butikken åbner klokken ni den tredje maj",
+   "hyp": "botegenopner klagen nie den tre mai",
+   "cer": 0.4117647058823529,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "dato",
+   "written": "Fristen er den 21. juni 2026.",
+   "ref": "fristen er den enogtyvende juni to tusind og seksogtyve",
+   "hyp": "fristen af den ende tyvende juni to tusind og seksogtyve vil",
+   "cer": 0.14893617021276595,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "dato",
+   "written": "Toget afgår 07:45 fra spor 4.",
+   "ref": "toget afgår syv femogfyrre fra spor fire",
+   "hyp": "toret afgår syv hundrede og femogfyrre fra spor fire",
+   "cer": 0.3235294117647059,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "enhed",
+   "written": "Billetten koster 249,95 kr.",
+   "ref": "billetten koster to hundrede og niogfyrre kroner og femoghalvfems",
+   "hyp": "billetten koster to hundrede og niogtyve kroner og femoghalvfems",
+   "cer": 0.05263157894736842,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "enhed",
+   "written": "Huslejen er 8.500 kr. om måneden.",
+   "ref": "huslejen er otte tusind fem hundrede kroner om måneden",
+   "hyp": "huslejen er otte tusind fem hundrede kroner om måneden",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "enhed",
+   "written": "Hun løb 21 km på under to timer.",
+   "ref": "hun løb enogtyve kilometer på under to timer",
+   "hyp": "hun løb enogtyve kilometer på under to timer",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "enhed",
+   "written": "Pakken vejer 12 kg og er 80 cm lang.",
+   "ref": "pakken vejer tolv kilo og er firs centimeter lang",
+   "hyp": "pakken vejer tolv kilo og er fire centimeter lang",
+   "cer": 0.024390243902439025,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "forkortelse",
+   "written": "Vi mødes ca. en gang om måneden, bl.a. for at planlægge.",
+   "ref": "vi mødes cirka en gang om måneden blandt andet for at planlægge",
+   "hyp": "vi mødes cirka en gang om måneden blandt andet for at planlægge",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "forkortelse",
+   "written": "Medbring f.eks. pas, kørekort osv.",
+   "ref": "medbring for eksempel pas kørekort og så videre",
+   "hyp": "meld bring for eksempel pas kørekort og så videre",
+   "cer": 0.025,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "forkortelse",
+   "written": "Kampen blev aflyst pga. vejret, dvs. den spilles senere.",
+   "ref": "kampen blev aflyst på grund af vejret det vil sige den spilles senere",
+   "hyp": "kampen bliver aflyst på grund af vejret det vil sige denne spil senere",
+   "cer": 0.14035087719298245,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "forkortelse",
+   "written": "Ring evt. på tlf. nr. 12 efter kl. 16.",
+   "ref": "ring eventuelt på telefon nummer tolv efter klokken seksten",
+   "hyp": "ring eventuelt på telefonnummer tolv efter klokken seksten",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "svære ord",
+   "written": "Arbejdsmarkedsuddannelserne skal understøtte kompetenceudviklingen.",
+   "ref": "arbejdsmarkedsuddannelserne skal understøtte kompetenceudviklingen",
+   "hyp": "arbejdsmarkedsuddannelserne skal understøtte kompetenceudviklingen",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "svære ord",
+   "written": "Sundhedsstyrelsen anbefaler regelmæssig fysisk aktivitet.",
+   "ref": "sundhedsstyrelsen anbefaler regelmæssig fysisk aktivitet",
+   "hyp": "sundhedsstyrelsen anbefaler regelmæssig fysisk aktivitet",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "svære ord",
+   "written": "Bæredygtighed og klimaforandringer fylder meget i debatten.",
+   "ref": "bæredygtighed og klimaforandringer fylder meget i debatten",
+   "hyp": "bæredygtighed og klimaforandringer fylder meget i debatten",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "svære ord",
+   "written": "Fysioterapeuten undersøgte patientens skulder grundigt.",
+   "ref": "fysioterapeuten undersøgte patientens skulder grundigt",
+   "hyp": "fysioterapeuten undersøgte patientens kulder grundigt",
+   "cer": 0.02,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "svære ord",
+   "written": "Rødgrød med fløde er en klassisk dansk dessert.",
+   "ref": "rødgrød med fløde er en klassisk dansk dessert",
+   "hyp": "rød grød med fløde er en klassisk dansk dessert",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "svære ord",
+   "written": "Virksomheden opdaterede sin software og sit website i weekenden.",
+   "ref": "virksomheden opdaterede sin software og sit website i weekenden",
+   "hyp": "virksomheden opdaterer sin software og sit website i weekenden",
+   "cer": 0.03636363636363636,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "svære ord",
+   "written": "Psykologen talte om selvværd, angst og stress hos unge.",
+   "ref": "psykologen talte om selvværd angst og stress hos unge",
+   "hyp": "psykologen talte om selvværd angst og stress hos unge",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "svære ord",
+   "written": "Folketinget vedtog lovforslaget efter tredjebehandlingen.",
+   "ref": "folketinget vedtog lovforslaget efter tredjebehandlingen",
+   "hyp": "folketinget vedtog lovforslaget efter træbehandlingen",
+   "cer": 0.07692307692307693,
+   "repeats": false,
+   "omits": false
+  }
+ ]
+}

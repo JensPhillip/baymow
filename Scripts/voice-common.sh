@@ -13,7 +13,7 @@ case "$ARG" in --*) ARG="" ;; esac  # et tilvalg er ikke et stemmenavn
 case "$KIND" in
   piper) VOICE_DIR="${ARG:-$PWD/Vendor/piper-da-test}"; NAME="piper-$(basename "$VOICE_DIR" | sed "s/^piper-//; s/^da-test$/talesyntese/")"
          [ -f "$VOICE_DIR/tokens.txt" ] || { echo "Ingen Piper-model i $VOICE_DIR (kør Scripts/fetch-vendor.sh)" >&2; exit 1; } ;;
-  apple) [ -n "$ARG" ] || usage; NAME="apple-$(echo "$ARG" | tr ' ' '-' | tr '[:upper:]' '[:lower:]')"
+  apple) [ -n "$ARG" ] || usage; NAME="apple-$(echo "$ARG" | tr -d '()' | tr ' ' '-' | tr '[:upper:]' '[:lower:]')"
          voices="$(say -v '?')"; grep -q "^$ARG " <<< "$voices" || { echo "macOS har ingen stemme, der hedder '$ARG'" >&2; exit 1; } ;;
   *) usage ;;
 esac
