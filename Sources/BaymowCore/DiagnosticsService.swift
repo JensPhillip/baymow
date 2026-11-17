@@ -16,6 +16,7 @@ public final class DiagnosticsService: @unchecked Sendable {
         case speechStarted
         case speechFailed
         case noVoiceAvailable
+        case textTooLong
     }
 
     public enum CaptureMethod: String, Sendable {

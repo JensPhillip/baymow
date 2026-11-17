@@ -291,6 +291,18 @@ Brugen i Chrome (17. november): teksten blev hentet med kopiering på 654 ms, og
 efter 831 ms med Magnus (Enhanced). Baymow valgte Magnus selv, fordi de to nye stemmer har samme kvalitet
 og Magnus kommer først i alfabetet – se AP-11-afleveringen.
 
+### Hukommelse ved lange tekster (AP-21, 17. november 2026)
+
+Målt med `Baymow --memory-selftest` (20.000 tegn, skift af tekst midt i, luk; tre gange i træk):
+
+| | Før rettelsen | Efter rettelsen |
+|---|---|---|
+| Apple Sara | +1,8 MB efter luk | +2 til +4 MB efter luk, ingen vækst |
+| Piper | +230 MB efter luk (hele teksten lavet til lyd på én gang) | under udgangspunktet efter luk |
+
+Pipers motor bruger selv 180 MB på én kort sætning og 350 MB på en lang tekst og giver det ikke tilbage,
+før den lukkes. Baymow laver nu højst to sætninger lyd forud og lukker Pipers motor efter 60 s uden brug.
+
 ### Cloud-stemmer (ElevenLabs m.fl.)
 
 Undersøgt på brugerens ønske. **Dette er et brud med specifikationens principper om offline-first

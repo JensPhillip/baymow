@@ -190,7 +190,7 @@ public final class NoticePresenter {
         case .noVoice:
             actionTitle = "Åbn Baymow"
             action = onOpenApp
-        case .noSelection, .unsupported:
+        case .noSelection, .unsupported, .tooLong:
             break
         }
         let view = NoticeView(message: notice.message, actionTitle: actionTitle) { [weak self] in

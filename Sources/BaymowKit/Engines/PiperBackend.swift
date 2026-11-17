@@ -60,9 +60,15 @@ public final class PiperBackend: SynthesisBackend, @unchecked Sendable {
     private let store: VoiceStore
     private let lock = NSLock()
     private var models: [String: PiperModel] = [:]
+    /// Pipers motor beholder sit arbejdslager (op mod 150 MB efter lange tekster), selv når oplæsningen er slut.
+    /// Den lukkes derfor ned, når den ikke har været brugt i så mange sekunder, og startes igen ved næste
+    /// oplæsning (ca. 0,1–0,2 s). Målt i AP-21.
+    private let idleUnloadAfter: TimeInterval
+    private var unloadWork: DispatchWorkItem?
 
-    public init(store: VoiceStore = VoiceStore()) {
+    public init(store: VoiceStore = VoiceStore(), idleUnloadAfter: TimeInterval = 60) {
         self.store = store
+        self.idleUnloadAfter = idleUnloadAfter
     }
 
     public func installedVoices() -> [Voice] {
@@ -92,7 +98,24 @@ public final class PiperBackend: SynthesisBackend, @unchecked Sendable {
 
     public func synthesize(_ sentence: String, voice: Voice, rate: Double) throws -> PCMChunk {
         guard let model = model(for: voice.id) else { throw PiperError.modelUnavailable }
-        return PCMChunk(samples: model.synthesize(sentence, speed: Float(rate)), sampleRate: model.sampleRate)
+        let chunk = PCMChunk(samples: model.synthesize(sentence, speed: Float(rate)), sampleRate: model.sampleRate)
+        scheduleIdleUnload()
+        return chunk
+    }
+
+    /// (Gen)starter nedtællingen til at lukke motoren ned. Kun efter rigtig brug – ikke efter `prepare`, så
+    /// den forudindlæste model fra opstarten bliver liggende, til den første oplæsning er gjort.
+    private func scheduleIdleUnload() {
+        lock.lock(); defer { lock.unlock() }
+        unloadWork?.cancel()
+        let work = DispatchWorkItem { [weak self] in
+            guard let self else { return }
+            self.lock.lock(); defer { self.lock.unlock() }
+            // En igangværende syntese har sin egen reference til modellen og påvirkes ikke.
+            self.models.removeAll()
+        }
+        unloadWork = work
+        DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + idleUnloadAfter, execute: work)
     }
 
     /// Frigiver en model, fx når stemmen fjernes.

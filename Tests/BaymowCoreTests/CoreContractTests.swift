@@ -241,6 +241,19 @@ final class CoreContractTests: XCTestCase {
         XCTAssertEqual(sessions.state, .idle)
     }
 
+    func testVeryLongTextIsRefusedWithAFriendlyNotice() {
+        let tooLong = String(repeating: "Dette er en sætning. ", count: ReadingSessionManager.maxTextLength / 20 + 1)
+        XCTAssertGreaterThan(tooLong.count, ReadingSessionManager.maxTextLength)
+        XCTAssertEqual(sessions.start(text: tooLong), .tooLong)
+        XCTAssertEqual(sessions.state, .idle)
+        XCTAssertFalse(sessions.hasSession)
+        XCTAssertTrue(engine.spoken.isEmpty)
+
+        let atLimit = String(tooLong.prefix(ReadingSessionManager.maxTextLength))
+        XCTAssertNil(sessions.start(text: atLimit), "tekst på præcis grænsen læses op")
+        XCTAssertEqual(sessions.state, .speaking)
+    }
+
     func testMissingVoiceGivesNotice() {
         let empty = VoiceCatalog(engines: [], settings: settings)
         let manager = ReadingSessionManager(catalog: empty, settings: settings, diagnostics: diagnostics)

@@ -222,6 +222,60 @@ final class BackendSpeechEngineTests: XCTestCase {
         XCTAssertEqual(output.pauseCount, 0)
     }
 
+    // MARK: Højst to sætninger forud (AP-21)
+
+    private let sixSentences = "En er her. To er her. Tre er her. Fire er her. Fem er her. Seks er her."
+
+    func testSynthesisStaysAtMostTwoSentencesAheadOfPlayback() async {
+        XCTAssertEqual(BackendSpeechEngine.maxSentencesAhead, 2)
+        engine.speak(sixSentences, voice: voice, rate: 1.0) { self.record($0) }
+        await waitUntil("tre bidder i kø") { output.chunks.count == 3 }
+        await settle()
+        XCTAssertEqual(backend.calls.count, 3, "den, der spilles, plus to forud – ikke mere")
+
+        output.finishPlaying(0)
+        await waitUntil("én til") { backend.calls.count == 4 }
+        await settle()
+        XCTAssertEqual(backend.calls.count, 4)
+
+        for index in 1..<6 {
+            await waitUntil("bid \(index) i kø") { output.chunks.count > index }
+            output.finishPlaying(index)
+        }
+        XCTAssertEqual(backend.calls.count, 6)
+        XCTAssertEqual(events.last, "finished")
+    }
+
+    func testPauseStopsFurtherSynthesis() async {
+        engine.speak(sixSentences, voice: voice, rate: 1.0) { self.record($0) }
+        await waitUntil("tre bidder i kø") { output.chunks.count == 3 }
+        engine.pause()
+        await settle()
+        XCTAssertEqual(backend.calls.count, 3, "på pause laves der ikke mere lyd")
+        engine.resume()
+        output.finishPlaying(0)
+        await waitUntil("fortsætter") { backend.calls.count == 4 }
+    }
+
+    func testStopWhileWaitingForRoomSynthesisesNothingMore() async {
+        engine.speak(sixSentences, voice: voice, rate: 1.0) { self.record($0) }
+        await waitUntil("tre bidder i kø") { output.chunks.count == 3 }
+        engine.stop()
+        // En forsinket "afspillet"-melding må hverken give events eller vække syntesen.
+        output.finishPlaying(0)
+        await settle()
+        XCTAssertEqual(backend.calls.count, 3)
+        XCTAssertEqual(events, ["started"])
+    }
+
+    func testSentenceWithoutAudioDoesNotTakeASlot() async {
+        backend.emptyIndex = 0
+        engine.speak(sixSentences, voice: voice, rate: 1.0) { self.record($0) }
+        await waitUntil("tre bidder i kø") { output.chunks.count == 3 }
+        await settle()
+        XCTAssertEqual(backend.calls.count, 4, "den tomme sætning optager ikke en af pladserne")
+    }
+
     // MARK: Fejl
 
     func testBackendErrorGivesFailedOnceAndStops() async {

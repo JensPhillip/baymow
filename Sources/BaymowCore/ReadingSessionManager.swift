@@ -20,6 +20,9 @@ public final class ReadingSessionManager: ObservableObject {
     @Published public private(set) var progress: Double = 0
     @Published public private(set) var sourceAppName: String?
 
+    /// Længste tekst, der læses op: 200.000 tegn, ca. fire timers oplæsning (AP-21).
+    public static let maxTextLength = 200_000
+
     public var hasSession: Bool { session != nil }
 
     private struct Session {
@@ -54,6 +57,11 @@ public final class ReadingSessionManager: ObservableObject {
     /// - Returns: en besked til brugeren, hvis oplæsningen ikke kunne starte.
     @discardableResult
     public func start(text: String, sourceAppName: String? = nil, sourceBundleID: String? = nil, triggeredAt: Date? = nil) -> Notice? {
+        // En markering ved et uheld (fx ⌘A i en hel bog) skal give en venlig besked, ikke timevis af oplæsning.
+        guard text.count <= Self.maxTextLength else {
+            diagnostics.record(.textTooLong, sourceBundleID: sourceBundleID)
+            return .tooLong
+        }
         let language = settings.forcedLanguage
             ?? languageDetection.dominantLanguage(of: text, fallback: settings.preferredLanguage)
         guard let voice = catalog.voice(for: language) else {

@@ -104,7 +104,7 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
                 switch failure.notice {
                 case .noSelection: diagnostics.record(.captureNoSelection, sourceBundleID: failure.sourceBundleID)
                 case .noPermission: diagnostics.record(.captureNoPermission, sourceBundleID: failure.sourceBundleID)
-                case .unsupported, .noVoice: diagnostics.record(.captureUnsupported, sourceBundleID: failure.sourceBundleID)
+                case .unsupported, .noVoice, .tooLong: diagnostics.record(.captureUnsupported, sourceBundleID: failure.sourceBundleID)
                 }
                 present(failure.notice)
             }

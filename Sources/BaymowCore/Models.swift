@@ -83,6 +83,8 @@ public enum Notice: Equatable, Sendable {
     case noPermission
     case unsupported
     case noVoice(Language)
+    /// Teksten er længere end `ReadingSessionManager.maxTextLength` – oftest en markering ved et uheld.
+    case tooLong
 
     public var message: String {
         switch self {
@@ -94,6 +96,8 @@ public enum Notice: Equatable, Sendable {
             return "Teksten kunne ikke hentes. Programmet eller tekstfeltet understøttes muligvis ikke."
         case .noVoice(let language):
             return "Der er ingen stemme installeret til \(language.displayName.lowercased()). Åbn Baymow for at vælge en stemme."
+        case .tooLong:
+            return "Teksten er meget lang – flere timers oplæsning. Markér et mindre stykke, og prøv igen."
         }
     }
 }

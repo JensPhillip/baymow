@@ -70,3 +70,12 @@ Kontrakt: Ingen tests er ændret i indhold – kun flyttet og med `@testable imp
 `DanishTextNormalizerTests` hører nu formelt til kernen (kontrakt K7), så ændringer i testsætningerne,
 der genereres ind i den, er kerneændringer og skal begrundes her.
 Godkendt af: udfører efter planens AP-23, hvor kerneændringen er forudset.
+
+## 2026-11-17 · AP-21 · Grænse for tekstlængde
+Hvad: `ReadingSessionManager.start` afviser tekster over `maxTextLength` (200.000 tegn, ca. fire timers
+oplæsning) med den nye besked `Notice.tooLong`. `DiagnosticsService.Event` har fået `textTooLong`.
+Hvorfor: Planens AP-21. En markering ved et uheld (fx ⌘A i en hel bog) skal give en venlig besked i stedet
+for timevis af oplæsning og en stor tekst i hukommelsen. Sessionen ejer starten, så grænsen hører til i kernen.
+Kontrakt: Ny test `testVeryLongTextIsRefusedWithAFriendlyNotice` (udvider K1/K3: ingen session ved afvisning).
+Ingen eksisterende tests er ændret.
+Godkendt af: udfører efter planens AP-21, hvor grænsen er forudset.

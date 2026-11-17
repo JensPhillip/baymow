@@ -77,18 +77,25 @@ public final class BackendSpeechEngine: SpeechEngine {
         let handler: (SpeechEvent) -> Void
         let offsets: [Int]
         let cancellation = CancellationFlag()
+        /// Holder syntesen højst `maxSentencesAhead` sætninger foran afspilningen.
+        let lookahead: Lookahead
         var started = false
         var synthesisDone = false
         var enqueued = 0
         var played = 0
 
-        init(handler: @escaping (SpeechEvent) -> Void, offsets: [Int]) {
+        init(handler: @escaping (SpeechEvent) -> Void, offsets: [Int], maxSentencesAhead: Int) {
             self.handler = handler
             self.offsets = offsets
+            // Den sætning, der afspilles, plus de sætninger, der må ligge klar bagved.
+            self.lookahead = Lookahead(limit: maxSentencesAhead + 1)
         }
     }
 
     private var job: Job?
+    /// Hvor mange sætninger der højst laves til lyd forud for den, der afspilles (AP-21). Holder hukommelsen
+    /// nede ved lange tekster og spilder intet arbejde (eller, for cloud-stemmer, penge), når der trykkes stop.
+    public static let maxSentencesAhead = 2
     private var isPaused = false
 
     public init(backend: SynthesisBackend, output: PCMOutput? = nil,
@@ -117,15 +124,18 @@ public final class BackendSpeechEngine: SpeechEngine {
             onEvent(.finished)
             return
         }
-        let job = Job(handler: onEvent, offsets: sentences.map(\.utf16Offset))
+        let job = Job(handler: onEvent, offsets: sentences.map(\.utf16Offset), maxSentencesAhead: Self.maxSentencesAhead)
         self.job = job
         isPaused = false
 
         let backend = self.backend
         let cancellation = job.cancellation
+        let lookahead = job.lookahead
         let lastIndex = sentences.count - 1
         synthesisQueue.async { [weak self] in
             for (index, sentence) in sentences.enumerated() {
+                // Vent, til der er plads: højst `maxSentencesAhead` sætninger foran afspilningen.
+                if !lookahead.acquire() { return }
                 // Afbrudt? Så spild hverken tid eller (for cloud) penge på resten.
                 if cancellation.isCancelled { return }
                 let result = Result { try backend.synthesize(sentence.text, voice: voice, rate: rate) }
@@ -154,6 +164,7 @@ public final class BackendSpeechEngine: SpeechEngine {
 
     public func stop() {
         job?.cancellation.cancel()
+        job?.lookahead.cancel()
         job = nil
         isPaused = false
         output.stop()
@@ -182,7 +193,7 @@ public final class BackendSpeechEngine: SpeechEngine {
                 job.handler(.started)
             }
         case .success:
-            break // En sætning uden lyd (fx kun tegn) springes over.
+            job.lookahead.release() // En sætning uden lyd (fx kun tegn) springes over og optager ingen plads.
         }
         finishIfDone(job)
     }
@@ -190,6 +201,7 @@ public final class BackendSpeechEngine: SpeechEngine {
     private func chunkPlayed(_ job: Job, index: Int) {
         guard self.job === job else { return }
         job.played += 1
+        job.lookahead.release()
         if job.synthesisDone, job.played == job.enqueued {
             end(job, with: .finished)
         } else if index + 1 < job.offsets.count {
@@ -206,6 +218,7 @@ public final class BackendSpeechEngine: SpeechEngine {
     private func end(_ job: Job, with event: SpeechEvent) {
         guard self.job === job else { return }
         job.cancellation.cancel()
+        job.lookahead.cancel()
         self.job = nil
         if case .failed = event { output.stop() }
         job.handler(event)
@@ -240,5 +253,38 @@ final class CancellationFlag: @unchecked Sendable {
     func cancel() {
         lock.lock(); defer { lock.unlock() }
         cancelled = true
+    }
+}
+
+/// Tæller for, hvor mange sætninger der er lavet til lyd, men ikke afspillet endnu. Syntesen venter i `acquire`,
+/// når grænsen er nået, og vækkes, når en sætning er afspillet, eller oplæsningen stoppes.
+final class Lookahead: @unchecked Sendable {
+    private let condition = NSCondition()
+    private let limit: Int
+    private var inFlight = 0
+    private var cancelled = false
+
+    init(limit: Int) { self.limit = limit }
+
+    /// Venter på plads til én sætning mere. Returnerer `false`, hvis oplæsningen er stoppet imens.
+    func acquire() -> Bool {
+        condition.lock(); defer { condition.unlock() }
+        while inFlight >= limit && !cancelled { condition.wait() }
+        guard !cancelled else { return false }
+        inFlight += 1
+        return true
+    }
+
+    /// En sætning er afspillet (eller sprunget over); giv plads til den næste.
+    func release() {
+        condition.lock(); defer { condition.unlock() }
+        inFlight = max(0, inFlight - 1)
+        condition.signal()
+    }
+
+    func cancel() {
+        condition.lock(); defer { condition.unlock() }
+        cancelled = true
+        condition.broadcast()
     }
 }

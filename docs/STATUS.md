@@ -21,9 +21,11 @@ Sidst opdateret: 2026-11-17 af udfører (Claude Opus 5.5).
 - **AP-40 færdig:** stemmebiblioteket med Prøv/Vælg/Hent/Fjern, robust download og vejledning til Sara
   (forbedret). Brugeren har set det og bekræftet, at det ser rigtigt ud. Hvor knappen til Systemindstillinger
   lander, er ikke oplyst.
+- **AP-21 færdig:** lange tekster bruger ikke længere hukommelse uden grænse (højst 2 sætninger lyd forud;
+  Pipers motor lukkes ned efter 60 s uden brug); tekster over 200.000 tegn afvises med en venlig besked.
 - **Afventer bruger:** AP-03 (tal 1–5 i lytteskemaet mangler stadig for begge stemmer).
 - **I gang:** intet.
-- **Næste ledige pakker:** AP-41 (førstegangsopsætning), AP-21 (lange tekster og programskift), AP-20 (afspilleren – kræver en testrunde med brugeren),
+- **Næste ledige pakker:** AP-41 (førstegangsopsætning), AP-20 (afspilleren – testrunde med brugeren) (lange tekster og programskift), AP-20 (afspilleren – kræver en testrunde med brugeren),
   AP-31 (Word og Preview – kræver brugeren).
   De rører ikke de samme filer og kan løses hver for sig.
 
@@ -38,7 +40,8 @@ Sidst opdateret: 2026-11-17 af udfører (Claude Opus 5.5).
 
 ## Senest kontrolleret (2026-11-17)
 
-- `./Scripts/check.sh`: ALT GRØNT, 59 tests.
+- `./Scripts/check.sh`: ALT GRØNT, 64 tests.
+- `Baymow --memory-selftest apple|piper`: begge bestået (efter luk inden for 10 MB af udgangspunktet).
 - `Baymow --player-selftest`: den rigtige afspiller bestod alle fem punkter, lydløst.
 - `./Scripts/test-voice.sh`: Piper 28 af 36 (1,4 %), Apple Sara 23 af 36 (2,8 %) efter AP-22.
 - Baymow.app er bygget, signeret, installeret i Programmer og startet.

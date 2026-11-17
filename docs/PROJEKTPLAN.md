@@ -283,6 +283,7 @@ Nyttige værktøjer i den byggede app (`build/Baymow.app/Contents/MacOS/Baymow`)
 | `--synthesize-text <stemmemappe> <tekstfil> <ud.wav>` | Hele teksten som én lydfil, som appen ville læse den |
 | `--install-voice <id>` | Henter en stemme med samme kode som knappen "Hent" |
 | `--player-selftest` | Lydløs kontrol af den rigtige afspiller: events, pause, fortsæt, stop, erstatning |
+| `--memory-selftest <apple\|piper>` | Lydløs måling af hukommelse ved 20.000 tegn, tekstskift og luk, tre gange |
 | `--ax-diagnose <bundle-id>` | Skal startes med `open -n -W build/Baymow.app --args …`; skriver til `~/Library/Logs/Baymow/ax-diagnose.txt` |
 
 Loggen fra brugerens afprøvninger: `~/Library/Logs/Baymow/baymow.log`. Læs den, før du
@@ -390,7 +391,7 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 | AP-16 | Røst 500m: kan den gøres hurtig nok? | 1 | Arkitekt eller stærk udfører | AP-02 | Parkeret (B7 er afgjort) |
 | AP-19 | Stemmeport: vælg hovedstemme | 1 | Bruger + udfører | AP-11 | Færdig – Sara (Enhanced) |
 | AP-20 | Afspilleren: afprøvning og rettelser | 2 | Udfører + bruger | AP-10 | Ikke startet |
-| AP-21 | Lange tekster og programskift | 2 | Udfører | AP-10 | Ikke startet |
+| AP-21 | Lange tekster og programskift | 2 | Udfører | AP-10 | Færdig |
 | AP-22 | Tekstforberedelse, runde 2 | 2 | Udfører | AP-02 | Færdig |
 | AP-23 | Kernen som eget kompileringsmål | 2 | Udfører | AP-10 | Færdig |
 | AP-24 | Engelske ord i dansk tekst | 2 | Arkitekt | – | Delvist: mekanismen er bygget, målet ikke nået (se afleveringen) |
