@@ -1,0 +1,478 @@
+{
+ "name": "apple-sara-tekstforberedelse",
+ "clean": 26,
+ "total": 52,
+ "cer": 0.10872997181519467,
+ "repeats": 1,
+ "omits": 0,
+ "rows": [
+  {
+   "cat": "telefon",
+   "written": "Ring på tlf. 28 14 56 90.",
+   "ref": "ring på telefon otteogtyve fjorten seksoghalvtreds halvfems",
+   "hyp": "ring på telefon otte av tyve fjorten seksoghalvtreds halvfems",
+   "cer": 0.03773584905660377,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "telefon",
+   "written": "Mit nummer er 28145690.",
+   "ref": "mit nummer er otteogtyve fjorten seksoghalvtreds halvfems",
+   "hyp": "mit nummer er otte fireogtyve seks og halvtreds halvfems",
+   "cer": 0.21568627450980393,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "telefon",
+   "written": "Ring på +45 70 10 20 30.",
+   "ref": "ring på plus femogfyrre halvfjerds ti tyve tredive",
+   "hyp": "ring på plus femogfyrre halvfjerds ti tyve tredive",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "telefon",
+   "written": "Skriv til 40 05 12 00.",
+   "ref": "skriv til fyrre nul fem tolv nul nul",
+   "hyp": "skriv til fire millioner enoghalvtreds tusind to hundrede",
+   "cer": 1.103448275862069,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "lange numre",
+   "written": "Hans CPR-nummer er 010190-1234.",
+   "ref": "hans cpr nummer er nul en nul en ni nul en to tre fire",
+   "hyp": "hans ipr nummer er nul nul ni nul to tre fire",
+   "cer": 0.17073170731707318,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "lange numre",
+   "written": "Ordrenummeret er 4021875536.",
+   "ref": "ordrenummeret er fire nul to en otte syv fem fem tre seks",
+   "hyp": "odrenumret er fire tusind og enogtyve otte hundrede og femoghalvfjerds tusind fem hundrede og seksogtredive",
+   "cer": 1.3043478260869565,
+   "repeats": true,
+   "omits": false
+  },
+  {
+   "cat": "procent",
+   "written": "Renten steg til 0,5 %.",
+   "ref": "renten steg til nul komma fem procent",
+   "hyp": "ræntens dati nul komma fem procent",
+   "cer": 0.16129032258064516,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "procent",
+   "written": "Ledigheden er 12,75 pct.",
+   "ref": "ledigheden er tolv komma femoghalvfjerds procent",
+   "hyp": "ledigheden er tolv komma femoghalvfjerds procent",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "procent",
+   "written": "Kun 2,5 procent svarede.",
+   "ref": "kun to komma fem procent svarede",
+   "hyp": "kun to komma fem procent svaret",
+   "cer": 0.07407407407407407,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "interval",
+   "written": "Der kommer 10-15 gæster.",
+   "ref": "der kommer ti til femten gæster",
+   "hyp": "der kommer tietje femte gæster",
+   "cer": 0.15384615384615385,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "interval",
+   "written": "Butikken har åbent kl. 9-16.",
+   "ref": "butikken har åbent klokken ni til seksten",
+   "hyp": "boutikken har opent klokken niet til seks",
+   "cer": 0.22857142857142856,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "interval",
+   "written": "Mødet varer kl. 10.30-12.00.",
+   "ref": "mødet varer klokken ti tredive til tolv",
+   "hyp": "mødet var klokken ti tredive til tolv",
+   "cer": 0.06060606060606061,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "interval",
+   "written": "Projektet løb i perioden 2020-2024.",
+   "ref": "projektet løb i perioden to tusind og tyve til to tusind og fireogtyve",
+   "hyp": "projektet løb i perioden to tusind og tyve til to tusind og fireogtyve",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "interval",
+   "written": "Det tager 2–3 uger.",
+   "ref": "det tager to til tre uger",
+   "hyp": "det tager to til tre uger",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "interval",
+   "written": "Prisen er 100-150 kr.",
+   "ref": "prisen er hundrede til hundrede og halvtreds kroner",
+   "hyp": "prisen er hundrede til hundrede og halvtreds kroner",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "ordenstal",
+   "written": "Hun kom på 3. pladsen.",
+   "ref": "hun kom på tredje pladsen",
+   "hyp": "hun kom på tredjepladsen",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "ordenstal",
+   "written": "Han går i 1. klasse.",
+   "ref": "han går i første klasse",
+   "hyp": "han går i første klasse",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "ordenstal",
+   "written": "Vi bor på 2. sal.",
+   "ref": "vi bor på anden sal",
+   "hyp": "vi bor på anden sal",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "ordenstal",
+   "written": "Det skete i det 19. århundrede.",
+   "ref": "det skete i det nittende århundrede",
+   "hyp": "det skete i det nittende århundrede",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "ordenstal",
+   "written": "Det er hans 25. fødselsdag.",
+   "ref": "det er hans femogtyvende fødselsdag",
+   "hyp": "det er hans femur døvende fødselsdag",
+   "cer": 0.12903225806451613,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "romertal",
+   "written": "Christian IV byggede Rundetårn.",
+   "ref": "christian den fjerde byggede rundetårn",
+   "hyp": "christian den fjerde byggede rundetårn",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "romertal",
+   "written": "Dronning Margrethe II holdt nytårstale.",
+   "ref": "dronning margrethe den anden holdt nytårstale",
+   "hyp": "tronning margrethe den anden holdt nyborgstale",
+   "cer": 0.1,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "romertal",
+   "written": "Frederik IX døde i 1972.",
+   "ref": "frederik den niende døde i nitten hundrede og tooghalvfjerds",
+   "hyp": "frederik den niende døde i nitten hundrede og tooghalvfjerds",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "romertal",
+   "written": "Læs kapitel III til i morgen.",
+   "ref": "læs kapitel tre til i morgen",
+   "hyp": "læs kandidat tre til i morgen",
+   "cer": 0.21739130434782608,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "romertal",
+   "written": "Det står i bind II.",
+   "ref": "det står i bind to",
+   "hyp": "det står i bindtog",
+   "cer": 0.07142857142857142,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "web",
+   "written": "Læs mere på www.dr.dk.",
+   "ref": "læs mere på w w w punktum d r punktum d k",
+   "hyp": "læs mere på w w w punktum d r punktum d k",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "web",
+   "written": "Gå ind på borger.dk/sundhed.",
+   "ref": "gå ind på borger punktum d k skråstreg sundhed",
+   "hyp": "gå ind på borger punktum d k sundhed",
+   "cer": 0.23684210526315788,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "web",
+   "written": "Se https://www.sundhed.dk for mere.",
+   "ref": "se w w w punktum sundhed punktum d k for mere",
+   "hyp": "se w w w punktum sundhed punktum d k for mere",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "web",
+   "written": "Skriv til info@baymow.dk.",
+   "ref": "skriv til info snabel a baymow punktum d k",
+   "hyp": "skriv til info punktum snabel punktum abalemor punktum d k",
+   "cer": 0.5,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "web",
+   "written": "Kontakt hanne.jensen@firma.com i dag.",
+   "ref": "kontakt hanne punktum jensen snabel a firma punktum com i dag",
+   "hyp": "kontakt hane punktum jensen punktum snabel punktum afirma punktum com i dag",
+   "cer": 0.29411764705882354,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "klokken",
+   "written": "Vi ses kl. 9.",
+   "ref": "vi ses klokken ni",
+   "hyp": "vi ses klokken ni",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "klokken",
+   "written": "Toget kører kl. 16 i dag.",
+   "ref": "toget kører klokken seksten i dag",
+   "hyp": "toget kører klokken seksten i dag",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "klokken",
+   "written": "Mødet er kl. 9.00 den 3. maj.",
+   "ref": "mødet er klokken ni den tredje maj",
+   "hyp": "mødet er klokken niende den tredje maj",
+   "cer": 0.14285714285714285,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "valuta",
+   "written": "Billetten koster 25 EUR.",
+   "ref": "billetten koster femogtyve euro",
+   "hyp": "billetten koster femogtyve euro",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "valuta",
+   "written": "Den kostede €40.",
+   "ref": "den kostede fyrre euro",
+   "hyp": "den kostede fyrre euro",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "valuta",
+   "written": "Abonnementet koster $10 om måneden.",
+   "ref": "abonnementet koster ti dollar om måneden",
+   "hyp": "abonnementet koster ti dollar om måneden",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "valuta",
+   "written": "Det beløber sig til 500 DKK.",
+   "ref": "det beløber sig til fem hundrede kroner",
+   "hyp": "det beløber sig til fem hundrede kroner",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "valuta",
+   "written": "Prisen er kr. 249,-",
+   "ref": "prisen er to hundrede og niogfyrre kroner",
+   "hyp": "prisen er to hundrede og niogfyrre kroner",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "valuta",
+   "written": "Han betalte 100 USD.",
+   "ref": "han betalte hundrede dollar",
+   "hyp": "han betalte hundrede dollars",
+   "cer": 0.041666666666666664,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "paragraf",
+   "written": "Bus nr. 5 kører til stationen.",
+   "ref": "bus nummer fem kører til stationen",
+   "hyp": "bus nummer fem kører til stationen",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "paragraf",
+   "written": "Se § 3, stk. 2.",
+   "ref": "se paragraf tre stykke to",
+   "hyp": "se paragraf tre stykke to",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "paragraf",
+   "written": "Reglerne står i §§ 4-6.",
+   "ref": "reglerne står i paragrafferne fire til seks",
+   "hyp": "reglerne står i paragraferne fire til seks",
+   "cer": 0.02702702702702703,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "paragraf",
+   "written": "Køb 5 stk. æbler.",
+   "ref": "køb fem stykker æbler",
+   "hyp": "køg fem stykker æbler",
+   "cer": 0.05555555555555555,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "brøk",
+   "written": "Tilsæt 1/2 liter mælk.",
+   "ref": "tilsæt en halv liter mælk",
+   "hyp": "tilsæt en halv liter mælk",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "brøk",
+   "written": "Hæld 3/4 af vandet ud.",
+   "ref": "hæld tre fjerdedele af vandet ud",
+   "hyp": "held tre fjerdele af vandet ud",
+   "cer": 0.1111111111111111,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "brøk",
+   "written": "Det tog 1½ time.",
+   "ref": "det tog halvanden time",
+   "hyp": "det tog halvanden time",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "brøk",
+   "written": "Kun 1/3 af eleverne kom.",
+   "ref": "kun en tredjedel af eleverne kom",
+   "hyp": "kun en tredjedel af eleverne kom",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "brøk",
+   "written": "Fristen er d. 3/5.",
+   "ref": "fristen er den tredje i femte",
+   "hyp": "fristen er den tredje i fem",
+   "cer": 0.08333333333333333,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "årstal",
+   "written": "1864 var et skelsår for Danmark.",
+   "ref": "atten hundrede og fireogtres var et skelsår for danmark",
+   "hyp": "atten hundrede og fireogtres var et skældsår for danmark",
+   "cer": 0.0425531914893617,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "årstal",
+   "written": "Vinteren 1947 var meget kold.",
+   "ref": "vinteren nitten hundrede og syvogfyrre var meget kold",
+   "hyp": "vinteren nitten hundrede og syvogfyrre var meget koldt",
+   "cer": 0.021739130434782608,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "årstal",
+   "written": "Der kom 1500 tilskuere.",
+   "ref": "der kom femten hundrede tilskuere",
+   "hyp": "der kom femten hundrede tilspure",
+   "cer": 0.06896551724137931,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "negativ",
+   "written": "Det var -5 grader i nat.",
+   "ref": "det var minus fem grader i nat",
+   "hyp": "det var minus fem grader i nat",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  }
+ ]
+}

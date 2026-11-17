@@ -372,7 +372,7 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 | AP-19 | Stemmeport: vælg hovedstemme | 1 | Arkitekt + bruger | AP-11 til AP-16 | Ikke startet |
 | AP-20 | Afspilleren: afprøvning og rettelser | 2 | Udfører + bruger | AP-10 | Ikke startet |
 | AP-21 | Lange tekster og programskift | 2 | Udfører | AP-10 | Ikke startet |
-| AP-22 | Tekstforberedelse, runde 2 | 2 | Udfører | AP-02 | Ikke startet |
+| AP-22 | Tekstforberedelse, runde 2 | 2 | Udfører | AP-02 | Færdig |
 | AP-23 | Kernen som eget kompileringsmål | 2 | Arkitekt eller stærk udfører | AP-10 | Ikke startet |
 | AP-24 | Engelske ord i dansk tekst | 2 | Arkitekt | – | Delvist: mekanismen er bygget, målet ikke nået (se afleveringen) |
 | AP-30 | Chrome | 3 | Udfører + bruger | AP-00 | Ikke startet |

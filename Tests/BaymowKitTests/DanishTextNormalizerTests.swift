@@ -42,6 +42,58 @@ final class DanishTextNormalizerTests: XCTestCase {
         ("Virksomheden opdaterede sin software og sit website i weekenden.", "virksomheden opdaterede sin software og sit website i weekenden"),
         ("Psykologen talte om selvværd, angst og stress hos unge.", "psykologen talte om selvværd angst og stress hos unge"),
         ("Folketinget vedtog lovforslaget efter tredjebehandlingen.", "folketinget vedtog lovforslaget efter tredjebehandlingen"),
+        ("Ring på tlf. 28 14 56 90.", "ring på telefon otteogtyve fjorten seksoghalvtreds halvfems"),
+        ("Mit nummer er 28145690.", "mit nummer er otteogtyve fjorten seksoghalvtreds halvfems"),
+        ("Ring på +45 70 10 20 30.", "ring på plus femogfyrre halvfjerds ti tyve tredive"),
+        ("Skriv til 40 05 12 00.", "skriv til fyrre nul fem tolv nul nul"),
+        ("Hans CPR-nummer er 010190-1234.", "hans cpr nummer er nul en nul en ni nul en to tre fire"),
+        ("Ordrenummeret er 4021875536.", "ordrenummeret er fire nul to en otte syv fem fem tre seks"),
+        ("Renten steg til 0,5 %.", "renten steg til nul komma fem procent"),
+        ("Ledigheden er 12,75 pct.", "ledigheden er tolv komma femoghalvfjerds procent"),
+        ("Kun 2,5 procent svarede.", "kun to komma fem procent svarede"),
+        ("Der kommer 10-15 gæster.", "der kommer ti til femten gæster"),
+        ("Butikken har åbent kl. 9-16.", "butikken har åbent klokken ni til seksten"),
+        ("Mødet varer kl. 10.30-12.00.", "mødet varer klokken ti tredive til tolv"),
+        ("Projektet løb i perioden 2020-2024.", "projektet løb i perioden to tusind og tyve til to tusind og fireogtyve"),
+        ("Det tager 2–3 uger.", "det tager to til tre uger"),
+        ("Prisen er 100-150 kr.", "prisen er hundrede til hundrede og halvtreds kroner"),
+        ("Hun kom på 3. pladsen.", "hun kom på tredje pladsen"),
+        ("Han går i 1. klasse.", "han går i første klasse"),
+        ("Vi bor på 2. sal.", "vi bor på anden sal"),
+        ("Det skete i det 19. århundrede.", "det skete i det nittende århundrede"),
+        ("Det er hans 25. fødselsdag.", "det er hans femogtyvende fødselsdag"),
+        ("Christian IV byggede Rundetårn.", "christian den fjerde byggede rundetårn"),
+        ("Dronning Margrethe II holdt nytårstale.", "dronning margrethe den anden holdt nytårstale"),
+        ("Frederik IX døde i 1972.", "frederik den niende døde i nitten hundrede og tooghalvfjerds"),
+        ("Læs kapitel III til i morgen.", "læs kapitel tre til i morgen"),
+        ("Det står i bind II.", "det står i bind to"),
+        ("Læs mere på www.dr.dk.", "læs mere på w w w punktum d r punktum d k"),
+        ("Gå ind på borger.dk/sundhed.", "gå ind på borger punktum d k skråstreg sundhed"),
+        ("Se https://www.sundhed.dk for mere.", "se w w w punktum sundhed punktum d k for mere"),
+        ("Skriv til info@baymow.dk.", "skriv til info snabel a baymow punktum d k"),
+        ("Kontakt hanne.jensen@firma.com i dag.", "kontakt hanne punktum jensen snabel a firma punktum com i dag"),
+        ("Vi ses kl. 9.", "vi ses klokken ni"),
+        ("Toget kører kl. 16 i dag.", "toget kører klokken seksten i dag"),
+        ("Mødet er kl. 9.00 den 3. maj.", "mødet er klokken ni den tredje maj"),
+        ("Billetten koster 25 EUR.", "billetten koster femogtyve euro"),
+        ("Den kostede €40.", "den kostede fyrre euro"),
+        ("Abonnementet koster $10 om måneden.", "abonnementet koster ti dollar om måneden"),
+        ("Det beløber sig til 500 DKK.", "det beløber sig til fem hundrede kroner"),
+        ("Prisen er kr. 249,-", "prisen er to hundrede og niogfyrre kroner"),
+        ("Han betalte 100 USD.", "han betalte hundrede dollar"),
+        ("Bus nr. 5 kører til stationen.", "bus nummer fem kører til stationen"),
+        ("Se § 3, stk. 2.", "se paragraf tre stykke to"),
+        ("Reglerne står i §§ 4-6.", "reglerne står i paragrafferne fire til seks"),
+        ("Køb 5 stk. æbler.", "køb fem stykker æbler"),
+        ("Tilsæt 1/2 liter mælk.", "tilsæt en halv liter mælk"),
+        ("Hæld 3/4 af vandet ud.", "hæld tre fjerdedele af vandet ud"),
+        ("Det tog 1½ time.", "det tog halvanden time"),
+        ("Kun 1/3 af eleverne kom.", "kun en tredjedel af eleverne kom"),
+        ("Fristen er d. 3/5.", "fristen er den tredje i femte"),
+        ("1864 var et skelsår for Danmark.", "atten hundrede og fireogtres var et skelsår for danmark"),
+        ("Vinteren 1947 var meget kold.", "vinteren nitten hundrede og syvogfyrre var meget kold"),
+        ("Der kom 1500 tilskuere.", "der kom femten hundrede tilskuere"),
+        ("Det var -5 grader i nat.", "det var minus fem grader i nat"),
         // GENERERET-SLUT
     ]
 
@@ -71,6 +123,34 @@ final class DanishTextNormalizerTests: XCTestCase {
     func testKeepsPunctuationAndCapitalisation() {
         XCTAssertEqual(DanishTextNormalizer.normalize("Ca. 3 personer kom, bl.a. Peter."), "Cirka tre personer kom, blandt andet Peter.")
         XCTAssertEqual(DanishTextNormalizer.normalize("Hvad koster det? 20 kr."), "Hvad koster det? tyve kroner")
+    }
+
+    /// Tilfælde fundet ved afprøvning af almindelige sætninger (AP-22), som ikke hører til i stemmetesten.
+    func testEverydayEdgeCases() {
+        let cases: [(String, String)] = [
+            ("Mødet holdes 2024-11-17 i Aarhus.", "mødet holdes den syttende november to tusind og fireogtyve i aarhus"),
+            ("Bogen udkom i 1999-2000.", "bogen udkom i nitten hundrede og nioghalvfems til to tusind"),
+            ("Kampen endte 3-1 til Brøndby.", "kampen endte tre en til brøndby"),
+            ("Det koster 12,50 €.", "det koster tolv euro og halvtreds cent"),
+            ("Billetten koster 50 kr. 3 gange om ugen.", "billetten koster halvtreds kroner tre gange om ugen"),
+            ("Temperaturen faldt fra 5 til -3 grader.", "temperaturen faldt fra fem til minus tre grader"),
+            ("Vi var 3. Hun kom senere.", "vi var tre hun kom senere"),
+            ("Erik og Hans gik en tur. I går regnede det.", "erik og hans gik en tur i går regnede det"),
+            ("Mail mig på jens@test.dk, tak.", "mail mig på jens snabel a test punktum d k tak"),
+            ("Frederik den Niende og Christian X.", "frederik den niende og christian den tiende"),
+        ]
+        for (written, spoken) in cases {
+            XCTAssertEqual(words(DanishTextNormalizer.normalize(written)), spoken, written)
+        }
+    }
+
+    func testRomanNumerals() {
+        XCTAssertEqual(DanishTextNormalizer.romanValue("IV"), 4)
+        XCTAssertEqual(DanishTextNormalizer.romanValue("XIV"), 14)
+        XCTAssertNil(DanishTextNormalizer.romanValue("IIII"))
+        XCTAssertNil(DanishTextNormalizer.romanValue("VX"))
+        // Et engelsk "I" efter et ikke-regentnavn må ikke blive et tal.
+        XCTAssertEqual(DanishTextNormalizer.normalize("Han sagde: I am fine."), "Han sagde: I am fine.")
     }
 
     func testLeavesPlainTextAlone() {

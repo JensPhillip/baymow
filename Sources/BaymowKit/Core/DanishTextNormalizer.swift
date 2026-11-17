@@ -87,6 +87,91 @@ public enum DanishTextNormalizer {
         Int(digits.replacingOccurrences(of: ".", with: "")) ?? 0
     }
 
+    /// "0105" → "nul en nul fem".
+    private static func digitByDigit(_ digits: String) -> String {
+        digits.compactMap { $0.wholeNumberValue }.map { units[$0] }.joined(separator: " ")
+    }
+
+    /// Telefonnummer i par: "28145690" → "otteogtyve fjorten seksoghalvtreds halvfems"; "05" → "nul fem".
+    private static func pairs(_ digits: String) -> String {
+        var result: [String] = []
+        var index = digits.startIndex
+        while index < digits.endIndex {
+            let end = digits.index(index, offsetBy: 2, limitedBy: digits.endIndex) ?? digits.endIndex
+            let pair = String(digits[index..<end])
+            result.append(pair.hasPrefix("0") || pair.count == 1 ? digitByDigit(pair) : below100(Int(pair) ?? 0))
+            index = end
+        }
+        return result.joined(separator: " ")
+    }
+
+    /// Klokkeslæt uden "klokken": "14", "30" → "fjorten tredive"; minutter "00" udelades.
+    private static func clockTime(hour: String, minute: String?) -> String {
+        let minuteValue = Int(minute ?? "") ?? 0
+        let minutes = minuteValue == 0 ? "" : " \(minuteValue < 10 ? "nul " : "")\(below100(minuteValue))"
+        return cardinal(Int(hour) ?? 0) + minutes
+    }
+
+    /// Romertal I–L. Returnerer nil for ugyldige talord som "IIII" eller "VX".
+    static func romanValue(_ text: String) -> Int? {
+        let values: [Character: Int] = ["I": 1, "V": 5, "X": 10, "L": 50]
+        var total = 0, previous = 0
+        for character in text.reversed() {
+            guard let value = values[character] else { return nil }
+            total += value < previous ? -value : value
+            previous = max(previous, value)
+        }
+        guard (1...50).contains(total), roman(total) == text else { return nil }
+        return total
+    }
+
+    private static func roman(_ n: Int) -> String {
+        let table: [(Int, String)] = [(50, "L"), (40, "XL"), (10, "X"), (9, "IX"), (5, "V"), (4, "IV"), (1, "I")]
+        var rest = n, result = ""
+        for (value, symbol) in table { while rest >= value { result += symbol; rest -= value } }
+        return result
+    }
+
+    /// Brøk som ord: (1, 2) → "en halv", (3, 4) → "tre fjerdedele". Nil, hvis det ikke ligner en brøk.
+    private static func fraction(_ numerator: Int, _ denominator: Int) -> String? {
+        let parts = [3: "tredjedel", 4: "fjerdedel", 5: "femtedel", 6: "sjettedel", 8: "ottendedel", 10: "tiendedel"]
+        guard numerator >= 1, numerator < denominator else { return nil }
+        if denominator == 2 { return "en halv" }
+        guard let part = parts[denominator] else { return nil }
+        return numerator == 1 ? "en \(part)" : "\(cardinal(numerator)) \(part)e"
+    }
+
+    /// Webadresse eller mail, som den siges: "www.dr.dk" → "w w w punktum d r punktum d k".
+    private static func spokenAddress(_ address: String) -> String {
+        var text = address.lowercased()
+        if let scheme = text.range(of: #"^https?://"#, options: .regularExpression) { text.removeSubrange(scheme) }
+        let separators: [Character: String] = [".": "punktum", "/": "skråstreg", "@": "snabel-a", "-": "bindestreg",
+                                               "_": "understregning", ":": "kolon"]
+        var words: [String] = []
+        var part = ""
+        func flush() {
+            guard !part.isEmpty else { return }
+            // Dele uden vokaler kan ikke udtales som ord og staves: "dk" → "d k".
+            let vowels = Set("aeiouyæøå")
+            let isLetters = part.allSatisfy(\.isLetter)
+            words.append(isLetters && !part.contains(where: vowels.contains) ? part.map(String.init).joined(separator: " ") : part)
+            part = ""
+        }
+        for character in text {
+            if let spoken = separators[character] {
+                flush()
+                words.append(spoken)
+            } else if character.isLetter || character.isNumber {
+                part.append(character)
+            } else {
+                flush()
+            }
+        }
+        flush()
+        if words.last == "skråstreg" { words.removeLast() }
+        return words.joined(separator: " ")
+    }
+
     // MARK: Regler
 
     private static let months = "januar|februar|marts|april|maj|juni|juli|august|september|oktober|november|december"
@@ -103,7 +188,15 @@ public enum DanishTextNormalizer {
         (#"\binkl\."#, "inklusive"), (#"\bekskl\."#, "eksklusive"), (#"\bmin\.(?=\s+\d|\s*$)"#, "minutter"),
         (#"\bst\."#, "sankt"), (#"\bdr\."#, "doktor"), (#"\bmht\."#, "med hensyn til"),
         (#"\bift\."#, "i forhold til"), (#"\bo\.lign\."#, "og lignende"), (#"\bvha\."#, "ved hjælp af"),
+        (#"\bpct\b\.?"#, "procent"),
     ]
+
+    /// Regenter og paver: "Christian IV" → "Christian den Fjerde".
+    private static let regents = "Christian|Frederik|Margrethe|Erik|Valdemar|Knud|Oluf|Christoffer|Kristian|Karl|Gustav|"
+        + "Henrik|Ludvig|Louis|Henry|Elizabeth|Elisabeth|Charles|George|Edward|Richard|Wilhelm|Olav|Haakon|Harald|"
+        + "Pius|Johannes|Benedikt|Leo|Gregor|Katarina|Catherine|Napoleon"
+    /// Ord, hvor et romertal bagefter er et grundtal: "kapitel III" → "kapitel tre".
+    private static let numberedParts = "kapitel|del|bind|afsnit|fase|niveau|trin|sæson|akt|bilag|nummer"
 
     private static let unitsAfterNumber: [(String, String)] = [
         ("%", "procent"), ("km/t", "kilometer i timen"), ("km", "kilometer"), ("kg", "kilo"), ("cm", "centimeter"),
@@ -116,36 +209,107 @@ public enum DanishTextNormalizer {
         guard !text.isEmpty else { return text }
         let startedUppercase = text.first.map { $0.isUppercase } ?? false
 
-        text = text.replacingOccurrences(of: "&", with: " og ").replacingOccurrences(of: "§", with: "paragraf ")
+        // Webadresser og mail først, før forkortelserne ændrer "dr." og lignende inde i adressen.
+        text = replace(#"[\w.+-]+@(?:[\w-]+\.)+[a-z]{2,}"#, in: text, caseInsensitive: true) { g in spokenAddress(g[0]) }
+        text = replace(#"(?:https?://)?(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:dk|com|org|net|eu|no|se|de|io|nu|info|uk|fr|gov|edu|app|dev)\b(?:/[\w\-./%?=&]*[\w/])?"#,
+                       in: text, caseInsensitive: true) { g in spokenAddress(g[0]) }
+
+        // Valuta før forkortelser: "kr. 249,-", "DKK 500", "€40", "$10" → beløbet først, valutaen bagefter.
+        let amount = "((?:" + number + #")(?:,\d+)?)"#
+        text = replace(#"(?<!\d)(?<!\d )\b(?:kr\.|DKK)\s?"# + amount + #"(?:,-)?"#, in: text) { g in "\(g[1]) kroner" }
+        text = replace(#"€\s?"# + amount, in: text) { g in "\(g[1]) euro" }
+        text = replace(#"\$\s?"# + amount, in: text) { g in "\(g[1]) dollar" }
+        text = replace(#"£\s?"# + amount, in: text) { g in "\(g[1]) pund" }
+        text = replace(amount + #"\s?€"#, in: text) { g in "\(g[1]) euro" }
+        text = replace("(" + number + "),-", in: text) { g in g[1] }
+        for (code, spoken) in [("DKK", "kroner"), ("EUR", "euro"), ("USD", "dollar"), ("GBP", "pund"),
+                               ("SEK", "svenske kroner"), ("NOK", "norske kroner")] {
+            text = replace(#"\b"# + code + #"\b"#, in: text) { _ in spoken }
+        }
+
+        text = text.replacingOccurrences(of: "&", with: " og ")
+        text = text.replacingOccurrences(of: "§§", with: "paragrafferne ").replacingOccurrences(of: "§", with: "paragraf ")
+        // "stk. 2" (i love) er "stykke to"; "5 stk." er "fem stykker".
+        text = replace(#"(\d)\s?stk\."#, in: text, caseInsensitive: true) { g in "\(g[1]) stykker" }
+        text = replace(#"\bstk\.\s?(?=\d)"#, in: text, caseInsensitive: true) { _ in "stykke " }
+        text = replace(#"\bstk\."#, in: text, caseInsensitive: true) { _ in "stykker" }
         for (pattern, spoken) in abbreviations {
             text = replace(pattern, in: text, caseInsensitive: true) { _ in spoken }
         }
 
-        // Klokkeslæt: "klokken 14.30" og "07:45"
-        let clock: ([String]) -> String = { g in
-            let hour = Int(g[2]) ?? 0, minute = Int(g[3]) ?? 0
-            let minutes = minute == 0 ? "" : " \(minute < 10 ? "nul " : "")\(below100(minute))"
-            return g[1] + cardinal(hour) + minutes
+        // Romertal: "Christian IV" → "Christian den Fjerde"; "kapitel III" → "kapitel tre".
+        text = replace(#"\b("# + regents + #")\s+([IVXL]{1,6})\b"#, in: text) { g in
+            guard let value = romanValue(g[2]) else { return g[0] }
+            let spoken = ordinal(value)
+            return "\(g[1]) den \(spoken.prefix(1).uppercased() + spoken.dropFirst())"
         }
-        text = replace(#"(klokken )(\d{1,2})[.:](\d{2})\b"#, in: text, transform: clock)
-        text = replace(#"()\b([01]?\d|2[0-3]):([0-5]\d)\b"#, in: text, transform: clock)
+        text = replace(#"\b((?i:"# + numberedParts + #"))\s+([IVXL]{1,6})\b"#, in: text) { g in
+            guard let value = romanValue(g[2]) else { return g[0] }
+            return "\(g[1]) \(cardinal(value))"
+        }
 
-        // Datoer: "d. 3. maj", "den 21. juni", "den 21."
+        // Klokkeslæt: "klokken 9-16", "klokken 10.30-12.00", "klokken 14.30" og "07:45"
+        text = replace(#"(klokken )(\d{1,2})(?:[.:](\d{2}))?\s?[-–]\s?(\d{1,2})(?:[.:](\d{2}))?\b"#, in: text) { g in
+            g[1] + clockTime(hour: g[2], minute: g[3]) + " til " + clockTime(hour: g[4], minute: g[5])
+        }
+        text = replace(#"(klokken )(\d{1,2})[.:](\d{2})\b"#, in: text) { g in g[1] + clockTime(hour: g[2], minute: g[3]) }
+        text = replace(#"\b([01]?\d|2[0-3]):([0-5]\d)\b"#, in: text) { g in clockTime(hour: g[1], minute: g[2]) }
+
+        // Datoer: "d. 3. maj", "den 21. juni", "den 21.", "den 3/5"
         text = replace(#"\bd\.\s?(?=\d)"#, in: text) { _ in "den " }
         text = replace(#"\b(\d{1,2})\.\s?("# + months + #")\b"#, in: text, caseInsensitive: true) { g in
             "\(ordinal(Int(g[1]) ?? 0)) \(g[2])"
         }
+        text = replace(#"\bden (\d{1,2})/(\d{1,2})\b"#, in: text) { g in
+            "den \(ordinal(Int(g[1]) ?? 0)) i \(ordinal(Int(g[2]) ?? 0))"
+        }
         text = replace(#"\bden (\d{1,2})\.(?!\d)"#, in: text) { g in "den \(ordinal(Int(g[1]) ?? 0))" }
+        // ISO-dato: "2024-11-17" → "den syttende november to tusind og fireogtyve".
+        let monthNames = months.split(separator: "|").map(String.init)
+        text = replace(#"(?<![\d-])(1[1-9]\d\d|20\d\d)-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])(?![\d-])"#, in: text) { g in
+            "den \(ordinal(Int(g[3]) ?? 1)) \(monthNames[(Int(g[2]) ?? 1) - 1]) \(year(Int(g[1]) ?? 0))"
+        }
+
+        // Numre, der læses ciffer for ciffer eller i par: CPR, lange numre, telefonnumre, grupper med foranstillet nul.
+        text = replace(#"(?<![\d.,])(\d{6})-(\d{4})(?!\d)"#, in: text) { g in "\(digitByDigit(g[1])) \(digitByDigit(g[2]))" }
+        text = replace(#"(?<![\d.,])\d{9,}(?!\d|[.,]\d)"#, in: text) { g in digitByDigit(g[0]) }
+        text = replace(#"(?<![\d.,])\d{8}(?!\d|[.,]\d)"#, in: text) { g in pairs(g[0]) }
+        text = replace(#"(?<![\d.,])0\d+(?!\d|[.,]\d)"#, in: text) { g in digitByDigit(g[0]) }
+
+        // Intervaller: "10-15" → "10 til 15". Ikke i datoer som 2024-11-17 (to bindestreger).
+        let interval = "((?:" + number + #")(?:,\d+)?)"#
+        text = replace(#"(?<![\d.,-])"# + interval + #"\s?[-–]\s?"# + interval + #"(?![\d-])"#, in: text) { g in
+            // "3-1" er et resultat ("tre en"), ikke et interval; et interval går opad ("10-15").
+            let left = integer(g[1].components(separatedBy: ",")[0]), right = integer(g[2].components(separatedBy: ",")[0])
+            return left >= right ? "\(g[1]) \(g[2])" : "\(g[1]) til \(g[2])"
+        }
 
         // Årstal: fire cifre 1100–2099, når ordet foran tyder på et årstal
         let yearContext = #"(\b(?:i|år|året|fra|siden|til|før|efter|omkring|"# + months + #")\s)"#
         text = replace(yearContext + #"(1[1-9]\d\d|20\d\d)\b(?![.,]\d)"#, in: text, caseInsensitive: true) { g in
             g[1] + year(Int(g[2]) ?? 0)
         }
+        // Fortegn: "-5" → "minus 5", "+45" → "plus 45".
+        text = replace(#"(?<![\w\d])[-−](?=\d)"#, in: text) { _ in "minus " }
+        text = replace(#"(?<![\w\d])\+(?=\d)"#, in: text) { _ in "plus " }
 
-        // Kroner og øre: "249,95 kr"
+        // Brøker: "1½" → "halvanden", "1/2" → "en halv", "3/4" → "tre fjerdedele".
+        text = replace(#"(\d+)½"#, in: text) { g in
+            let whole = Int(g[1]) ?? 0
+            return whole == 1 ? "halvanden" : "\(cardinal(whole)) og en halv"
+        }
+        text = text.replacingOccurrences(of: "½", with: "en halv")
+        text = replace(#"(?<![\d/.,])(\d{1,2})/(\d{1,2})(?![\d/])"#, in: text) { g in
+            fraction(Int(g[1]) ?? 0, Int(g[2]) ?? 0) ?? g[0]
+        }
+
+        // Kroner og øre: "249,95 kr"; euro og dollar med cent: "12,50 euro"
         text = replace("(" + number + #"),(\d{2})\s?(?:kroner|kr)\b"#, in: text) { g in
             "\(cardinal(integer(g[1]))) kroner og \(below100(Int(g[2]) ?? 0))"
+        }
+        text = replace("(" + number + #"),(\d{2})\s?(euro|dollar)\b"#, in: text) { g in
+            let cents = Int(g[2]) ?? 0
+            return "\(cardinal(integer(g[1]))) \(g[3])" + (cents == 0 ? "" : " og \(below100(cents)) cent")
         }
 
         // Tal med enhed: "21 km", "68 %"
@@ -155,6 +319,12 @@ public enum DanishTextNormalizer {
                 "\(g[1]) \(spoken)"
             }
         }
+
+        // Årstal 1100–1999 uden tusindtalspunktum, også uden kontekstord: "1864 var" → "atten hundrede og fireogtres".
+        text = replace(#"(?<![\d.,])(1[1-9]\d\d)(?!\d|[.,]\d)"#, in: text) { g in year(Int(g[1]) ?? 0) }
+
+        // Ordenstal foran et ord med lille begyndelsesbogstav: "3. plads" → "tredje plads".
+        text = replace(#"(?<![\d.,])(\d{1,3})\.\s(?=[a-zæøå])"#, in: text) { g in "\(ordinal(Int(g[1]) ?? 0)) " }
 
         // Decimaltal, heltal og løse cifre
         text = replace("(" + number + #"),(\d+)"#, in: text) { g in decimal(whole: integer(g[1]), fraction: g[2]) }

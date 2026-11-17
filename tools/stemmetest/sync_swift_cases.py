@@ -1,4 +1,4 @@
-"""Holder Swift-testens sætninger ens med sentences.py, som er den eneste kilde.
+"""Holder Swift-testens sætninger ens med sentences.py og sentences_tekstforberedelse.py, som er de eneste kilder.
 
 Brug: sync_swift_cases.py          skriver listen ind i Swift-testen
       sync_swift_cases.py --check  afslutter med fejl, hvis de to er ude af trit (bruges af Scripts/check.sh)
@@ -12,7 +12,11 @@ TARGET = os.path.join(ROOT, "Tests/BaymowKitTests/DanishTextNormalizerTests.swif
 START, END = "        // GENERERET-START (tools/stemmetest/sync_swift_cases.py)\n", "        // GENERERET-SLUT\n"
 
 sys.path.insert(0, HERE)
-from sentences import SENTENCES  # noqa: E402
+from sentences import SENTENCES as STEMMETEST  # noqa: E402
+from sentences_tekstforberedelse import SENTENCES as TEKSTFORBEREDELSE  # noqa: E402
+
+# Swift-testen dækker både stemmetestens 36 sætninger og tekstforberedelsens ekstra tilfælde.
+SENTENCES = STEMMETEST + TEKSTFORBEREDELSE
 
 
 def escape(text):

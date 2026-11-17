@@ -46,3 +46,15 @@ og udskiftningen må ske dér, hvor teksten gives til motoren – i kernen.
 Kontrakt: Ny test `testEngineSpecificPronunciationIsAppliedToDanishOnly` (udvider K7). Ingen
 eksisterende tests er ændret. Med tom liste er adfærden uændret.
 Godkendt af: arkitekt.
+
+## 2026-11-17 · AP-22 · Tekstforberedelse, runde 2
+Hvad: `DanishTextNormalizer` har fået nye regler for webadresser og mail, valuta (kr., DKK, EUR, USD, €, $, £),
+"stk.", "§§", "pct.", romertal efter regentnavne og efter kapitel/del/bind, klokkeslæt-intervaller,
+ISO-datoer, "den 3/5", CPR- og lange numre, telefonnumre i par, grupper med foranstillet nul, intervaller
+("10-15" → "til", men "3-1" → resultat), fortegn, brøker og "½", årstal 1100–1999 uden kontekstord og
+ordenstal foran et ord med lille begyndelsesbogstav. Reglerne kører i en fast rækkefølge, med webadresser først.
+Hvorfor: Planens AP-22. Tekstforberedelsen er kernens ansvar (regel 4: al dansk tekst forberedes før motoren).
+Kontrakt: K7 udvidet med 52 nye tilfælde (`tools/stemmetest/sentences_tekstforberedelse.py`, genereret ind i
+`DanishTextNormalizerTests`) og 12 regressionstilfælde. Ingen af de 36 gamle tilfælde er ændret.
+Engelsk tekst forberedes fortsat ikke (`testEnglishTextIsNotChanged` uændret).
+Godkendt af: udfører efter planens AP-22, hvor kerneændringen er forudset.
