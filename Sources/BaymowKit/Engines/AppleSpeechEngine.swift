@@ -28,9 +28,18 @@ public final class AppleSpeechEngine: NSObject, SpeechEngine {
             case .enhanced: quality = .enhanced
             default: quality = .standard
             }
-            return Voice(id: voice.identifier, name: voice.name, language: language, locale: voice.language, quality: quality, engineID: engineID)
+            return Voice(id: voice.identifier, name: voice.name, language: language, locale: voice.language, quality: quality,
+                         engineID: engineID, isApprovedDefault: Self.isApprovedDefault(voice.identifier))
         }
     }
+
+    /// Apple-stemmer, der er målt og ikke bestod stemmeportens krav 1 (docs/PROJEKTPLAN.md afsnit 7).
+    /// De vælges aldrig automatisk, men brugeren kan stadig selv vælge dem. Umålte stemmer er godkendt (B4).
+    static let failedVoiceGate: Set<String> = [
+        "com.apple.voice.enhanced.da-DK.Magnus", // 21/36, 4,1 % tegnfejl (2026-11-17)
+    ]
+
+    static func isApprovedDefault(_ identifier: String) -> Bool { !failedVoiceGate.contains(identifier) }
 
     public func pronunciationOverrides(for language: Language) -> [String: String] {
         language == .danish ? Self.danishOverrides : [:]

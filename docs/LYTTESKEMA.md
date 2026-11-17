@@ -24,8 +24,8 @@ forståelighed og mindst **3** i naturlighed (stemmeporten, `PROJEKTPLAN.md` afs
 | Stemme | Dato | Forståelighed | Naturlighed | Fejl | Brugerens ord |
 |---|---|---|---|---|---|
 | Apple Sara (kompakt) – `apple-sara/` | | | | | |
-| Apple Sara (Enhanced) – `apple-sara-enhanced/` | | | | | |
-| Apple Magnus (Enhanced) – `apple-magnus-enhanced/` | | | | | |
+| Apple Sara (Enhanced) – `apple-sara-enhanced/` | 2026-11-17 | ikke givet | ikke givet | ikke givet | Valgt som den bedste efter lytning → hovedstemme (B7) |
+| Apple Magnus (Enhanced) – `apple-magnus-enhanced/` | 2026-11-17 | ikke givet | ikke givet | ikke givet | Hørt; ikke valgt |
 | Piper talesyntese – `piper-talesyntese/` | 2026-11-16 | ikke givet | ikke givet | ikke givet | Til at forstå på almindelig tekst (svar på direkte spørgsmål efter lyttepakken) |
 
 ## Tidligere domme (før lyttepakken fandtes)

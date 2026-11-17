@@ -58,11 +58,13 @@ synkronisering, App Store, Intel-Macs, automatisk start ved login, pluginsystem.
 | Stemme-download med kontrolsum | Kørt for alvor |
 | Signering med Apple Development-certifikat, installation i Programmer | Virker |
 
-### Det åbne hovedproblem: der findes endnu ingen dansk stemme, brugeren er tilfreds med
+### Stemmen (løst 17. november 2026: Sara (Enhanced), se AP-19)
 
 | Stemme | Brugerens dom | Maskinmåling (36 sætninger) | Andet |
 |---|---|---|---|
 | Apple Sara (kompakt) | "Fin fallback, men ikke menneskelig" | 23 fejlfri, 2,5 % tegnfejl | Øjeblikkelig, ingen licens |
+| **Apple Sara (Enhanced)** | **Valgt som hovedstemme (17. november)** | 27 fejlfri, 1,7 % tegnfejl | Øjeblikkelig, ingen licens; skal hentes |
+| Apple Magnus (Enhanced) | Hørt; ikke valgt | 21 fejlfri, 4,1 % tegnfejl | Bestod ikke krav 1 |
 | Piper talesyntese | "For mange fejl, næsten uforståelig" | 26 fejlfri, 1,9 % tegnfejl | Meget hurtig; GPL via espeak-ng |
 | Plapre 3 (ONNX) | "God stemme, men fejl og langsom" | 9–15 fejlfri, 10–23 % tegnfejl | Gentager sætningsstumper |
 | Røst v3 500m | "Den bedste" | Ikke målt | 2–7× for langsom på M3 |
@@ -342,7 +344,7 @@ Spørg ikke om navne, småstrukturer og andre valg, der er nemme at lave om.
 | B5 | En stemme bliver kun standard gennem stemmeporten (afsnit 7) | Truffet |
 | B10 | Kernen (afsnit 3) ændres kun bevidst og med begrundelse; nye funktioner bygges uden om den og er slået fra som standard | Truffet af brugeren 16. november 2026 |
 | B6 | Cloud-stemmer laves **ikke nu**. De kan blive en senere forbedring; hvis de kommer, er de et udtrykkeligt tilvalg, aldrig standard eller stille fallback | Truffet af brugeren 17. november 2026. AP-13 og AP-14 er udskudt |
-| B7 | Hvilken dansk stemme bliver hovedstemme? | **Åben** – afgøres i fase 1 |
+| B7 | Baymows danske hovedstemme er **Apple Sara (Enhanced)** (`com.apple.voice.enhanced.da-DK.Sara`) | Truffet af brugeren 17. november 2026 efter lytning (AP-19). Engelsk: Apples bedste installerede stemme |
 | B8 | Baymow bliver **open source**, med mulighed for at tjene penge senere, og det er en fordel, at koden kan gennemskues udefra. Konkret licens: se "Licens og indtjening" nedenfor | Truffet af brugeren 17. november 2026. Valg af licens afventer brugerens bekræftelse (kræves først før udgivelse) |
 | B9 | Appen hedder **Baymow** | Truffet af brugeren 16. november 2026. Bundle-id `dk.baymow.app` er stadig en pladsholder og skal afgøres før AP-52 |
 
@@ -380,13 +382,13 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 | AP-02 | Reproducerbar stemmetest | 0 | Arkitekt | AP-00 | Færdig |
 | AP-03 | Lyttepakke til brugeren | 0 | Arkitekt | AP-02 | Afventer bruger |
 | AP-10 | Fælles lydafspiller og `SynthesisBackend` | 1 | Arkitekt | AP-00 | Færdig |
-| AP-11 | Apples bedre danske stemmer | 1 | Bruger + udfører | AP-03 | Afventer bruger (målt; lyttepakke sendt) |
+| AP-11 | Apples bedre danske stemmer | 1 | Bruger + udfører | AP-03 | Færdig |
 | AP-12 | Hvorfor er Piper uforståelig? | 1 | Arkitekt | AP-03 | Færdig |
 | AP-13 | Cloud-stemme: Azure | 1 | Udfører + bruger | AP-10, B6 | Udskudt (B6) |
 | AP-14 | Cloud-stemme: ElevenLabs | 1 | Udfører + bruger | AP-13 | Udskudt (B6) |
-| AP-15 | Plapre: afprøv originalmodellen | 1 | Udfører + bruger | AP-02 | Ikke startet |
-| AP-16 | Røst 500m: kan den gøres hurtig nok? | 1 | Arkitekt eller stærk udfører | AP-02 | Ikke startet |
-| AP-19 | Stemmeport: vælg hovedstemme | 1 | Arkitekt + bruger | AP-11 til AP-16 | Ikke startet |
+| AP-15 | Plapre: afprøv originalmodellen | 1 | Udfører + bruger | AP-02 | Parkeret (B7 er afgjort) |
+| AP-16 | Røst 500m: kan den gøres hurtig nok? | 1 | Arkitekt eller stærk udfører | AP-02 | Parkeret (B7 er afgjort) |
+| AP-19 | Stemmeport: vælg hovedstemme | 1 | Bruger + udfører | AP-11 | Færdig – Sara (Enhanced) |
 | AP-20 | Afspilleren: afprøvning og rettelser | 2 | Udfører + bruger | AP-10 | Ikke startet |
 | AP-21 | Lange tekster og programskift | 2 | Udfører | AP-10 | Ikke startet |
 | AP-22 | Tekstforberedelse, runde 2 | 2 | Udfører | AP-02 | Færdig |
@@ -543,7 +545,19 @@ opgives sporet med tallene dokumenteret. Licensen (OpenRAIL) og brugen af indtal
 afklaret skriftligt med Alexandra Instituttet, før stemmen kan komme i et udgivet produkt.
 **Stop:** Brug højst tre arbejdsdage.
 
-#### AP-19 Stemmeport: vælg hovedstemme
+#### AP-19 Stemmeport: vælg hovedstemme — færdig
+
+**Resultat 17. november 2026:** Brugeren valgte **Apple Sara (Enhanced)** efter at have hørt lyttepakken.
+Hun består krav 1 (27/36, 1,7 %), 2 (start ca. 10 ms), 3 (systemstemme, ingen ventetid) og 5 (ingen licens
+at afklare). Krav 4 er opfyldt ved brugerens valg; tal 1–5 er ikke givet. Hun er også bedst målt på engelske
+ord i dansk tekst (19/30). Magnus (Enhanced) bestod ikke krav 1 og er mærket som ikke godkendt i
+`AppleSpeechEngine.failedVoiceGate`, så han aldrig vælges automatisk. Piper forbliver forsøgsstemme.
+Plapre (AP-15) og Røst (AP-16) er parkeret; fase 1 er dermed slut, som planen foreskriver.
+
+**Vigtig følge:** Sara (Enhanced) er ikke installeret fra start på en ny Mac – brugeren skal hente hende i
+Systemindstillinger. Det skal stemmebiblioteket (AP-40) og førstegangsopsætningen (AP-41) hjælpe med.
+
+Oprindelig beskrivelse:
 
 **Gør:** Saml resultaterne fra AP-11 til AP-16 i én tabel. Anvend porten i afsnit 7. Brugeren
 vælger. Opdatér B7, sæt `isApprovedDefault` for den valgte stemme, og fjern eller mærk resten.
@@ -652,12 +666,17 @@ Matrixen dækker også Mail, Noter, Slack, VS Code og Outlook.
 **Gør:** Stemmebiblioteket viser for hver stemme: sprog, type (system / hentet / cloud), størrelse,
 "Prøv", "Vælg som standard", og "Hent"/"Fjern" hvor det giver mening. Afbrudt download kan
 gentages og efterlader ingen halve filer. Diskplads kontrolleres før download.
-**Acceptkriterier:** Tests for afbrudt download, forkert kontrolsum og manglende diskplads.
+**Hovedstemmen (B7):** Er Sara (Enhanced) ikke installeret, skal biblioteket sige det tydeligt og vise,
+hvordan hun hentes: Systemindstillinger → Tilgængelighed → Oplæst indhold → Systemstemme → Administrer
+stemmer → Dansk → Sara (forbedret). Knappen "Åbn Systemindstillinger" skal åbne Oplæst indhold direkte, og
+biblioteket skal opdage, når stemmen er hentet, uden at appen genstartes.
+**Acceptkriterier:** Tests for afbrudt download, forkert kontrolsum og manglende diskplads. Med kun den kompakte
+Sara installeret vises vejledningen; med Sara (Enhanced) installeret vises den ikke.
 
 #### AP-41 Førstegangsopsætning
 
 **Gør:** Tre trin ved første start: (1) giv Tilgængelighed-adgang, med knap og automatisk
-registrering af, at det er sket; (2) vælg stemme og hør en prøve; (3) prøv genvejen på en
+registrering af, at det er sket; (2) hent hovedstemmen Sara (Enhanced), hvis den mangler (se AP-40), og hør en prøve; (3) prøv genvejen på en
 indbygget eksempeltekst. Ingen tekniske ord.
 **Acceptkriterier:** En person, der ikke har set appen før, kommer fra første start til første
 oplæsning uden hjælp. Brugeren finder testpersonen.

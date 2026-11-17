@@ -75,7 +75,8 @@ Aflevér med `docs/afleveringer/SKABELON.md`, og opdatér `docs/STATUS.md`.
 
 ## Vigtigt at vide
 
-- Den vigtigste åbne opgave er at finde en dansk stemme, brugeren kan forstå. Se planens fase 1 og afsnit 7.
+- Den danske hovedstemme er valgt: Apple Sara (Enhanced) (B7, AP-19). En ny stemme skal stadig gennem
+  stemmeporten (planens afsnit 7) og slå hende, før den kan blive standard.
 - En stemme, der lyder godt, men siger noget forkert, er en fejl. Rigtig oplæsning går forud for flot stemme.
 - En maskinmåling uden fejl betyder ikke, at stemmen er til at forstå. Brugerens lytning afgør det.
 - Brugeren er ikke programmør. Skriv til dem på almindeligt sprog uden fagord.

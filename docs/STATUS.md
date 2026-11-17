@@ -13,15 +13,16 @@ Sidst opdateret: 2026-11-17 af udfører (Claude Opus 5.5).
   dansk tekst. Problemet var teksten (engelske ord), ikke appen. Det flytter AP-24 frem.
 - **AP-24 delvist:** udtalelister pr. motor er bygget og testet, men gav kun en lille forbedring for Piper
   (14 → 18 af 30) og ingen for Apple. Målet om en halvering blev ikke nået.
-- **AP-11 målt:** Sara (Enhanced) er den bedste målte stemme (27/36, 1,7 %) og består krav 1; Magnus (Enhanced)
-  består ikke (4,1 %). Lyttepakker er sendt. Baymow vælger i dag Magnus af sig selv (alfabetisk).
+- **Hovedstemmen er valgt (AP-11, AP-19):** Apple Sara (Enhanced). Baymow vælger hende nu af sig selv;
+  Magnus (Enhanced) bestod ikke stemmeporten og vælges aldrig automatisk. Fase 1 er slut; AP-15 og AP-16 parkeret.
 - **Brugerens beslutninger 2026-11-17:** cloud-stemmer udskudt (AP-13/14), open source med mulighed for indtjening
   (licens afventer bekræftelse), Speechify-idéer lagt i planens idékatalog (fase 6).
 - **AP-30 delvist:** brugeren har bekræftet, at genvejen virker i Chrome.
-- **Afventer bruger:** AP-11 (lyt til Sara og Magnus Enhanced), AP-03 (tal 1–5 i lytteskemaet mangler stadig for begge stemmer).
+- **Afventer bruger:** AP-03 (tal 1–5 i lytteskemaet mangler stadig for begge stemmer).
 - **I gang:** intet.
-- **Næste ledige pakker:** AP-30 (Chrome – kræver brugeren ved tasterne), AP-11 (Apples større stemmer –
-  kræver, at brugeren henter dem), AP-21 (lange tekster og programskift – kan laves uden brugeren).
+- **Næste ledige pakker:** AP-40 (stemmebibliotek – nu med vejledning til at hente Sara (Enhanced)),
+  AP-21 (lange tekster og programskift), AP-20 (afspilleren – kræver en testrunde med brugeren),
+  AP-31 (Word og Preview – kræver brugeren).
   De rører ikke de samme filer og kan løses hver for sig.
 
 ## Venter på brugeren
@@ -30,7 +31,6 @@ Sidst opdateret: 2026-11-17 af udfører (Claude Opus 5.5).
 |---|---|---|
 | Prøv genvejen ⌃⌥S én gang efter omdøbningen | Den er ikke brugt siden; tilladelsen er bekræftet (2026-11-17) | – |
 | Hør lyttepakkerne, og udfyld `docs/LYTTESKEMA.md` | Kun brugeren kan afgøre, om en stemme er til at forstå | AP-03, AP-12, AP-19 |
-| Hør Sara (Enhanced) og Magnus (Enhanced), og sig, hvilken der er bedst | Kun brugeren kan afgøre forståelighed | AP-11, AP-19 |
 | Bekræft licensen (anbefaling: GPL-3.0-or-later) | Open source er besluttet; den konkrete licens mangler | AP-50 |
 | Acceptér vilkår for `syvai/plapre-3` på Hugging Face | Originalmodellen kræver det | AP-15 |
 
