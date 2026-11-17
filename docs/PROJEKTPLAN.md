@@ -76,7 +76,8 @@ Derfor er maskinmålingen et *nødvendigt* krav, mens brugerens lytning er det *
 - Chrome, Word, Google Docs og Preview er ikke afprøvet.
 - Pause/fortsæt med en backend-stemme er kun afprøvet lydløst (`--player-selftest`), ikke af brugeren.
 - Appen er i sin nuværende form bundet af GPL (espeak-ng er linket ind).
-- Stemmetesten (`tools/stemmetest/`) afhænger af Python-miljøer, der ikke er beskrevet i projektet (AP-02).
+- Engelske ord i dansk tekst læses forkert af alle afprøvede lokale stemmer. Omstavning (AP-24) hjalp
+  kun lidt; en stemme, der selv kan skifte sprog, er den realistiske løsning.
 - Kernen er adskilt fra resten med mapper og kontrolscript, men ikke af compileren (AP-23).
 
 ---
@@ -251,6 +252,17 @@ Efter en frisk kopi af projektet hentes de færdigbyggede biblioteker (ca. 90 MB
 ./Scripts/fetch-vendor.sh
 ```
 
+Stemmetest (36 sætninger kontrolleret med talegenkendelse) og lyttepakke til brugeren, for Piper
+eller en af macOS' stemmer:
+
+```bash
+./Scripts/test-voice.sh apple Sara
+```
+
+```bash
+./Scripts/make-listening-pack.sh apple Sara
+```
+
 Byg appen, og læg den i Programmer (genstarter den kørende app):
 
 ```bash
@@ -264,6 +276,7 @@ Nyttige værktøjer i den byggede app (`build/Baymow.app/Contents/MacOS/Baymow`)
 | `--measure-latency` | Lydløs måling af tid til talestart for dansk og engelsk |
 | `--synthesize <stemmemappe> <tekstfil> <ud-mappe>` | Én wav pr. linje med Piper og tekstforberedelse |
 | `--normalize` | Læser linjer fra stdin, skriver den forberedte tekst |
+| `--synthesize-text <stemmemappe> <tekstfil> <ud.wav>` | Hele teksten som én lydfil, som appen ville læse den |
 | `--install-voice <id>` | Henter en stemme med samme kode som knappen "Hent" |
 | `--player-selftest` | Lydløs kontrol af den rigtige afspiller: events, pause, fortsæt, stop, erstatning |
 | `--ax-diagnose <bundle-id>` | Skal startes med `open -n -W build/Baymow.app --args …`; skriver til `~/Library/Logs/Baymow/ax-diagnose.txt` |
@@ -347,11 +360,11 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 |---|---|---|---|---|---|
 | AP-00 | Permanent mappe og versionsstyring | 0 | Arkitekt | – | Færdig |
 | AP-01 | Apple som standard igen | 0 | Arkitekt | – | Færdig |
-| AP-02 | Reproducerbar stemmetest | 0 | Udfører | AP-00 | Ikke startet |
-| AP-03 | Lyttepakke til brugeren | 0 | Udfører | AP-02 | Ikke startet |
+| AP-02 | Reproducerbar stemmetest | 0 | Arkitekt | AP-00 | Færdig |
+| AP-03 | Lyttepakke til brugeren | 0 | Arkitekt | AP-02 | Afventer bruger |
 | AP-10 | Fælles lydafspiller og `SynthesisBackend` | 1 | Arkitekt | AP-00 | Færdig |
 | AP-11 | Apples bedre danske stemmer | 1 | Bruger + udfører | AP-03 | Ikke startet |
-| AP-12 | Hvorfor er Piper uforståelig? | 1 | Udfører | AP-03 | Ikke startet |
+| AP-12 | Hvorfor er Piper uforståelig? | 1 | Arkitekt | AP-03 | Færdig |
 | AP-13 | Cloud-stemme: Azure | 1 | Udfører + bruger | AP-10, B6 | Ikke startet |
 | AP-14 | Cloud-stemme: ElevenLabs | 1 | Udfører + bruger | AP-13 | Ikke startet |
 | AP-15 | Plapre: afprøv originalmodellen | 1 | Udfører + bruger | AP-02 | Ikke startet |
@@ -361,6 +374,7 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 | AP-21 | Lange tekster og programskift | 2 | Udfører | AP-10 | Ikke startet |
 | AP-22 | Tekstforberedelse, runde 2 | 2 | Udfører | AP-02 | Ikke startet |
 | AP-23 | Kernen som eget kompileringsmål | 2 | Arkitekt eller stærk udfører | AP-10 | Ikke startet |
+| AP-24 | Engelske ord i dansk tekst | 2 | Arkitekt | – | Delvist: mekanismen er bygget, målet ikke nået (se afleveringen) |
 | AP-30 | Chrome | 3 | Udfører + bruger | AP-00 | Ikke startet |
 | AP-31 | Word og Preview/PDF | 3 | Udfører + bruger | AP-00 | Ikke startet |
 | AP-32 | Google Docs og testmatrix | 3 | Udfører + bruger | AP-30 | Ikke startet |
@@ -569,6 +583,20 @@ afhænger af `BaymowCore`. Opdatér stierne i `check.sh`, `KERNEAENDRINGER.md` o
 **Acceptkriterier:** `BaymowCore` bygger alene (`swift build --target BaymowCore`). En prøve, hvor
 en kernefil importerer en type fra `Engines/`, giver en kompileringsfejl. `check.sh` er grøn.
 
+#### AP-24 Engelske ord i dansk tekst
+
+**Hvorfor:** Dansk tekst er fuld af engelske navne og fagord. Både Piper og Apple læser dem forkert
+("Chrome" → "krume", "cloud-valg" → "kludval"), og tegnfejlen tredobles på den slags tekst. Det var
+sådan tekst, brugeren hørte, da Piper blev dømt "næsten uforståelig".
+**Gør:** Vent til hovedstemmen er valgt (AP-19) – løsningen afhænger af motoren. Mål først den valgte
+stemme på et nyt sæt med 30 sætninger med engelske ord (`tools/stemmetest/sentences_engelsk.py`).
+Vælg derefter den enkleste løsning, der virker: (1) en lille udtaleliste for de 200 mest almindelige
+engelske ord i dansk tekst, omskrevet til dansk lydskrift før motoren; eller (2) motorens egne
+udtalemærker (SSML/fonemer), hvis den har dem. Byg ikke automatisk sprogskift pr. ord.
+**Kerne:** Ja, hvis løsningen lægges i `DanishTextNormalizer`. Begrund i `KERNEAENDRINGER.md`.
+**Acceptkriterier:** Tegnfejlen på det engelske sæt er mindst halveret, og de 36 danske sætninger
+er uændrede.
+
 ### Fase 3 – Tekstindfangning
 
 Fælles for fasen: **Kerne:** Ja – `TextCaptureService.swift` ligger i kernen; begrund hver ændring i
@@ -646,19 +674,23 @@ overlever en opdatering.
 
 ## 7. Stemmeporten
 
-En stemme kan først blive standardstemme, når den består alle fem punkter. Punkt 1–3 måles af
+En stemme kan først blive standardstemme, når den består punkt 1–5. Punkt 6 måles og vejes med i valget. Punkt 1–3 måles af
 en udfører; punkt 4 er brugerens; punkt 5 er arkitektens.
 
 | # | Krav | Måles med | Grænse |
 |---|---|---|---|
-| 1 | Siger det, der står | `Scripts/test-voice.sh` | Højst 2,5 % tegnfejl, og ingen sætning med gentagne eller manglende ordgrupper |
+| 1 | Siger det, der står | `Scripts/test-voice.sh`, tre kørsler | Højst 3,5 % tegnfejl i gennemsnit, og ingen sætning med gentagne eller manglende ordgrupper |
 | 2 | Hurtig start | `--measure-latency` + loggens `speechStarted` | Første lyd inden 1,0 s for en kort sætning; 1,5 s for en cloud-stemme |
 | 3 | Holder trit | Stemmetestens tidsmåling | Hastighedsfaktor under 0,7 på M3 |
 | 4 | Til at forstå og rar at høre på | `docs/LYTTESKEMA.md` | Brugeren giver mindst 4 af 5 for forståelighed og mindst 3 for naturlighed |
 | 5 | Kan udgives | Licens- og vilkårsgennemgang | Forenelig med B8; for cloud: databehandling afklaret |
+| 6 | Klarer engelske ord i dansk tekst | `Scripts/test-voice.sh … --set engelsk` + brugerens lytning | Ikke et krav endnu, men måles og oplyses for hver kandidat. Reference: Apple Sara 17–18 af 30 |
 
-Apple Sara er referencen: 2,5 % tegnfejl. En ny stemme, der er dårligere end referencen på
-punkt 1, er ikke et fremskridt, uanset hvor godt den lyder.
+Grænsen i punkt 1 blev ændret fra 2,5 % til 3,5 % den 16. november 2026. Talegenkendelsen bidrager
+selv med 2–3 % fejl, og målingen svinger ca. ±0,4 procentpoint fra kørsel til kørsel. Referencen
+Apple Sara måler 2,7 %, Piper 2,3–2,7 %, mens stemmer, der digter ord, måler 10–23 %. Grænsen skiller
+dermed de to slags ad uden at afvise en stemme på grund af målestøj. En ny stemme, der er klart
+dårligere end referencen på punkt 1, er ikke et fremskridt, uanset hvor godt den lyder.
 
 ---
 

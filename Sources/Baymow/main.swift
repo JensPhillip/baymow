@@ -16,13 +16,22 @@ MainActor.assumeIsolated {
 
     if let index = arguments.firstIndex(of: "--synthesize"), arguments.count > index + 3 {
         exit(DeveloperTools.synthesize(voiceDirectory: arguments[index + 1], textFile: arguments[index + 2],
-                                       outputDirectory: arguments[index + 3]))
+                                       outputDirectory: arguments[index + 3], raw: arguments.contains("--raw"),
+                                       overrides: !arguments.contains("--no-overrides")))
     }
     if let index = arguments.firstIndex(of: "--install-voice"), arguments.count > index + 1 {
         exit(DeveloperTools.installVoice(id: arguments[index + 1]))
     }
+    if let index = arguments.firstIndex(of: "--synthesize-text"), arguments.count > index + 3 {
+        exit(DeveloperTools.synthesizeText(voiceDirectory: arguments[index + 1], textFile: arguments[index + 2],
+                                           output: arguments[index + 3]))
+    }
     if arguments.contains("--player-selftest") {
         exit(DeveloperTools.playerSelfTest())
+    }
+    if let index = arguments.firstIndex(of: "--prepare"), arguments.count > index + 1 {
+        DeveloperTools.prepareStandardInput(engineID: arguments[index + 1])
+        exit(0)
     }
     if arguments.contains("--normalize") {
         DeveloperTools.normalizeStandardInput()

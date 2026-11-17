@@ -1,0 +1,5 @@
+# Talegenkendelse til stemmetesten. Kører kun på Apple Silicon.
+mlx-whisper
+soundfile
+scipy
+numpy

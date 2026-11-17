@@ -22,6 +22,8 @@ public protocol SynthesisBackend: AnyObject, Sendable {
     /// `true` for cloud-tjenester. Sådan en backend må kun bruges efter brugerens udtrykkelige tilvalg.
     var requiresNetwork: Bool { get }
     func installedVoices() -> [Voice]
+    /// Som `SpeechEngine.pronunciationOverrides(for:)`. Tom som standard.
+    func pronunciationOverrides(for language: Language) -> [String: String]
     /// Indlæser det, stemmen skal bruge, så første sætning ikke skal vente. Må blokere.
     func prepare(_ voice: Voice)
     /// Én sætning ind, lyd ud. Må blokere; kaldes aldrig på hovedtråden.
@@ -30,6 +32,7 @@ public protocol SynthesisBackend: AnyObject, Sendable {
 }
 
 public extension SynthesisBackend {
+    func pronunciationOverrides(for language: Language) -> [String: String] { [:] }
     func prepare(_ voice: Voice) {}
 }
 
@@ -95,6 +98,10 @@ public final class BackendSpeechEngine: SpeechEngine {
     }
 
     public func installedVoices() -> [Voice] { backend.installedVoices() }
+
+    public func pronunciationOverrides(for language: Language) -> [String: String] {
+        backend.pronunciationOverrides(for: language)
+    }
 
     /// Indlæser stemmen i baggrunden, så første oplæsning starter hurtigt.
     public func prepare(_ voice: Voice) {

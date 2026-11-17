@@ -25,3 +25,24 @@ Hvorfor: Brugeren afviste Piper som standardstemme; automatisk valg er kernens a
 Kontrakt: To nye tests (`testUnapprovedVoiceIsNeverChosenAutomatically`,
 `testUnapprovedVoiceIsUsedWhenNothingElseExists`). Ingen eksisterende tests er ændret i indhold.
 Godkendt af: arkitekt.
+
+## 2026-11-16 · AP-12 · Loggen viser, hvilken stemme der læste
+Hvad: `DiagnosticsService.record` har fået parameteren `voice: Voice?`; `speechStarted` logger stemmens
+id og sprog. `ReadingSessionManager` sender den aktuelle stemme med.
+Hvorfor: Brugeren fandt en oplæsning næsten uforståelig, og loggen kunne ikke vise, hvilken stemme eller
+hvilket sprog der var brugt. Parameteren er en `Voice` fra stemmekataloget, ikke fritekst, så reglen om,
+at brugertekst ikke kan nå loggen, står uændret.
+Kontrakt: K10-testen (`testLogNeverContainsSpokenText`) kontrollerer nu også, at stemme og sprog logges.
+Ingen eksisterende påstande er fjernet.
+Godkendt af: arkitekt.
+
+## 2026-11-16 · AP-24 · Udtalelister pr. stemmemotor
+Hvad: Ny `Core/PronunciationOverrides.swift` (udskifter hele ord med en anden stavemåde, bevarer endelser).
+`SpeechEngine` har fået `pronunciationOverrides(for:)` med en tom standardudgave, så eksisterende
+motorer er uændrede. `ReadingSessionManager.spokenText` anvender motorens liste på dansk tekst efter
+tekstforberedelsen.
+Hvorfor: Hvilke engelske ord der udtales forkert, afhænger af motoren, så listen må komme fra motoren,
+og udskiftningen må ske dér, hvor teksten gives til motoren – i kernen.
+Kontrakt: Ny test `testEngineSpecificPronunciationIsAppliedToDanishOnly` (udvider K7). Ingen
+eksisterende tests er ændret. Med tom liste er adfærden uændret.
+Godkendt af: arkitekt.

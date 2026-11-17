@@ -193,7 +193,8 @@ public final class ReadingSessionManager: ObservableObject {
             case .started:
                 if let triggeredAt = current.triggeredAt {
                     let ms = Int(Date().timeIntervalSince(triggeredAt) * 1000)
-                    self.diagnostics.record(.speechStarted, sourceBundleID: current.sourceBundleID, milliseconds: ms)
+                    self.diagnostics.record(.speechStarted, sourceBundleID: current.sourceBundleID, milliseconds: ms,
+                                            voice: current.voice)
                     self.session?.triggeredAt = nil
                 }
             case .progress(let offset):
@@ -213,7 +214,11 @@ public final class ReadingSessionManager: ObservableObject {
 
     /// Teksten, som den skal siges. Dansk tekst forberedes (tal, datoer, forkortelser skrives ud).
     private func spokenText(for chunk: String) -> String {
-        language == .danish ? DanishTextNormalizer.normalize(chunk) : chunk
+        guard language == .danish else { return chunk }
+        let prepared = DanishTextNormalizer.normalize(chunk)
+        guard let voice = session?.voice, let engine = catalog.engine(for: voice) else { return prepared }
+        // Engelske ord, som netop denne motor udtaler forkert, skrives, så den siger dem rigtigt.
+        return PronunciationOverrides.apply(engine.pronunciationOverrides(for: .danish), to: prepared)
     }
 
     private func advance() {

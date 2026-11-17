@@ -17,9 +17,16 @@ public enum SpeechEvent: Sendable {
 public protocol SpeechEngine: AnyObject {
     var engineID: String { get }
     func installedVoices() -> [Voice]
+    /// Ord, motoren udtaler forkert på dette sprog, og den stavemåde, den udtaler rigtigt
+    /// (små bogstaver → erstatning). Tom som standard. Se `PronunciationOverrides`.
+    func pronunciationOverrides(for language: Language) -> [String: String]
     /// - Parameter rate: hastighedsfaktor, 1.0 = normal.
     func speak(_ text: String, voice: Voice, rate: Double, onEvent: @escaping (SpeechEvent) -> Void)
     func pause()
     func resume()
     func stop()
+}
+
+public extension SpeechEngine {
+    func pronunciationOverrides(for language: Language) -> [String: String] { [:] }
 }

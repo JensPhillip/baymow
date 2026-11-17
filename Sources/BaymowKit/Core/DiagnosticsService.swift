@@ -35,13 +35,19 @@ public final class DiagnosticsService: @unchecked Sendable {
         logURL = dir.appendingPathComponent("baymow.log")
     }
 
-    public func record(_ event: Event, sourceBundleID: String? = nil, method: CaptureMethod? = nil, milliseconds: Int? = nil) {
+    /// - Parameter voice: stemmen, der læste. Kun dens id og sprog logges – de kommer fra stemmekataloget, ikke fra brugeren.
+    public func record(_ event: Event, sourceBundleID: String? = nil, method: CaptureMethod? = nil, milliseconds: Int? = nil,
+                       voice: Voice? = nil) {
         let time = ISO8601DateFormatter().string(from: Date())
         queue.async { [logURL, maxBytes] in
             var fields: [String: Any] = ["time": time, "event": event.rawValue]
             if let sourceBundleID { fields["source"] = sourceBundleID }
             if let method { fields["method"] = method.rawValue }
             if let milliseconds { fields["ms"] = milliseconds }
+            if let voice {
+                fields["voice"] = voice.id
+                fields["language"] = voice.language.rawValue
+            }
             guard var data = try? JSONSerialization.data(withJSONObject: fields, options: [.sortedKeys]) else { return }
             data.append(0x0A)
 

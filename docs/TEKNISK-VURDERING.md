@@ -248,6 +248,29 @@ Kilder til de vendorerede filer (ligger i `Vendor/`, kontrolsummer SHA-256):
 - `vits-piper-da_DK-talesyntese-medium.tar.bz2`, release `tts-models`:
   `f2e2cbcdb2b21e76f93635b35105d07b37997ace434d7289d04b689a97c19bd0`
 
+### Hvorfor lød Piper uforståelig? (AP-12, 16. november 2026)
+
+Brugeren hørte Piper via genvejen på tekst fra Claude-appen og fandt den "næsten uforståelig".
+Undersøgt:
+
+| Mulig årsag | Fund |
+|---|---|
+| For høj hastighed | Nej. Ingen hastighed var gemt; appen brugte 1,0 |
+| Forkerte modelindstillinger | Nej. `noise_scale` 0,667, `length_scale` 1, `noise_w` 0,8 – som i modellens egen fil |
+| Klipning eller forkert samplerate | Nej. Maks. amplitude 0,74; 22.050 Hz hele vejen |
+| Flere ordfejl i appen end i Python-prototypen | Nej. 25–26 af 36 i tre kørsler, mod 26–27 før |
+| Teksten | **Sandsynligt.** Teksten var teknisk dansk med engelske navne og fagord |
+
+Ti sætninger af samme slags (fx "Azure er det oplagte cloud-valg") blev læst af begge stemmer og
+kontrolleret med talegenkendelse: Piper 6,1 % tegnfejl, Apple Sara 7,6 % – mod ca. 2,5 % på almindelig
+dansk. "Chrome" blev hørt som "krume", "cloud-valg" som "kludval", "Azure" som "er sur".
+
+Konklusion: Der er ikke fundet nogen fejl i appens brug af Piper. Enten var det teksten, der gjorde
+oplæsningen svær at forstå – og så gælder det også Apple – eller også er det stemmens klang, som
+ingen måling her fanger. Lyttepakken (`stemmeproever/piper-talesyntese/` mod `apple-sara/`, tre
+almindelige danske tekster) er lavet for at afgøre det. Engelske ord i dansk tekst er en selvstændig
+opgave (AP-24).
+
 ### Cloud-stemmer (ElevenLabs m.fl.)
 
 Undersøgt på brugerens ønske. **Dette er et brud med specifikationens principper om offline-first

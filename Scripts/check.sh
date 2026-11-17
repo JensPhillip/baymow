@@ -26,6 +26,12 @@ else
   fail "swift test"; echo "$test_output" | grep -E "error:|failed" | head -20
 fi
 
+if python3 tools/stemmetest/sync_swift_cases.py --check 2>/dev/null; then
+  ok "testsætningerne i Swift følger tools/stemmetest/sentences.py"
+else
+  fail "testsætningerne er ude af trit: kør python3 tools/stemmetest/sync_swift_cases.py"
+fi
+
 echo "2. Privatliv"
 # Værktøjerne i Tools/ kører kun fra kommandolinjen og må skrive ud. Resten af appen må ikke.
 hits=$(grep -rnE '(^|[^A-Za-z_.])(print|debugPrint|dump|NSLog|os_log)\(|Logger\(' \

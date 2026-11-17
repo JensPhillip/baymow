@@ -71,6 +71,22 @@ public final class PiperBackend: SynthesisBackend, @unchecked Sendable {
         }
     }
 
+    public func pronunciationOverrides(for language: Language) -> [String: String] {
+        language == .danish ? Self.danishOverrides : [:]
+    }
+
+    /// Engelske ord, som den danske Piper-stemme udtaler forkert, og stavemåder, der blev genkendt
+    /// rigtigt af talegenkendelsen i en ordprøve (16. november 2026, tools/stemmetest/word_probe.py).
+    /// Virkning på hele sætninger: 14 → 18 af 30 rigtige, tegnfejl 8,4 % → 6,4 %. Beskeden, og ikke
+    /// bedømt af et menneske. Ikke løst: "nice", "Apple", "webshop". Se docs/afleveringer/AP-24.md.
+    static let danishOverrides: [String: String] = [
+        "chrome": "krovm", "cloud": "klawd", "update": "opdæjt", "website": "vebsajt", "youtube": "jutjub",
+        "iphone": "ajfon", "powerpoint": "pauerpojnt", "slack": "slagk", "feedback": "fidbæk",
+        "smartphone": "smartfon", "login": "log in", "gaming": "gejming", "like": "lajk",
+        "instagram": "instagræm", "messenger": "mæssendsjer", "chatgpt": "chat G P T", "safari": "sa-fari",
+        "android": "androjd", "screenshot": "skrinsjot", "touchscreen": "totj-skrin",
+    ]
+
     public func prepare(_ voice: Voice) { _ = model(for: voice.id) }
 
     public func synthesize(_ sentence: String, voice: Voice, rate: Double) throws -> PCMChunk {

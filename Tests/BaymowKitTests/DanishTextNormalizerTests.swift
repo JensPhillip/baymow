@@ -1,9 +1,11 @@
 import XCTest
 @testable import BaymowKit
 
-/// Samme 36 sætninger som i stemmetesten (tools/stemmetest/sentences.py): skrevet tekst → sagt tekst.
+/// Samme sætninger som i stemmetesten: skrevet tekst → sagt tekst.
+/// Listen genereres fra tools/stemmetest/sentences.py. Ret dér, og kør sync_swift_cases.py.
 final class DanishTextNormalizerTests: XCTestCase {
     private static let cases: [(written: String, spoken: String)] = [
+        // GENERERET-START (tools/stemmetest/sync_swift_cases.py)
         ("Ordblindhed handler ikke om intelligens, men om hvordan hjernen afkoder skrevne ord.", "ordblindhed handler ikke om intelligens men om hvordan hjernen afkoder skrevne ord"),
         ("Mange oplever, at en tekst bliver lettere at forstå, når den bliver læst højt i et roligt tempo.", "mange oplever at en tekst bliver lettere at forstå når den bliver læst højt i et roligt tempo"),
         ("Hun cyklede hjem gennem regnen og glemte helt, at hun havde lovet at købe mælk.", "hun cyklede hjem gennem regnen og glemte helt at hun havde lovet at købe mælk"),
@@ -40,6 +42,7 @@ final class DanishTextNormalizerTests: XCTestCase {
         ("Virksomheden opdaterede sin software og sit website i weekenden.", "virksomheden opdaterede sin software og sit website i weekenden"),
         ("Psykologen talte om selvværd, angst og stress hos unge.", "psykologen talte om selvværd angst og stress hos unge"),
         ("Folketinget vedtog lovforslaget efter tredjebehandlingen.", "folketinget vedtog lovforslaget efter tredjebehandlingen"),
+        // GENERERET-SLUT
     ]
 
     /// Små bogstaver uden tegnsætning, så kun ordene sammenlignes.

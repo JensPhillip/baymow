@@ -6,15 +6,22 @@ Sidst opdateret: 2026-11-16 af arkitekten.
 ## Lige nu
 
 - **Færdigt:** AP-00 (permanent mappe, git, omdøbning til Baymow), AP-01 (Apple som standard igen),
-  AP-10 (fælles lydafspiller og `SynthesisBackend`; ikke committet endnu).
+  AP-10 (fælles lydafspiller og `SynthesisBackend`), AP-02 (reproducerbar stemmetest).
+- **AP-12 afsluttet:** brugeren har hørt lyttepakken og bekræftet, at Piper er til at forstå på almindelig
+  dansk tekst. Problemet var teksten (engelske ord), ikke appen. Det flytter AP-24 frem.
+- **AP-24 delvist:** udtalelister pr. motor er bygget og testet, men gav kun en lille forbedring for Piper
+  (14 → 18 af 30) og ingen for Apple. Målet om en halvering blev ikke nået.
+- **Afventer bruger:** AP-03 (tal 1–5 i lytteskemaet mangler stadig for begge stemmer).
 - **I gang:** intet.
-- **Næste ledige pakker:** AP-02 (reproducerbar stemmetest), AP-30 (Chrome), AP-12 (hvorfor er Piper uforståelig?).
+- **Næste ledige pakker:** AP-11 (Apples større stemmer – kræver, at brugeren henter dem), AP-30 (Chrome),
+  AP-22 (tekstforberedelse, runde 2), AP-23 (kernen som eget kompileringsmål).
   De rører ikke de samme filer og kan løses hver for sig.
 
 ## Venter på brugeren
 
 | Hvad | Hvorfor | Blokerer |
 |---|---|---|
+| Hør lyttepakkerne, og udfyld `docs/LYTTESKEMA.md` | Kun brugeren kan afgøre, om en stemme er til at forstå | AP-03, AP-12, AP-19 |
 | Giv Baymow adgang under Tilgængelighed | Appen har fået nyt id og ses som en ny app | Al brug af genvejen |
 | Hent Apples større danske stemmer i Systemindstillinger | Billigste forsøg på en bedre stemme | AP-11 |
 | Bekræft B6: cloud-stemmer som tydeligt tilvalg | Bryder ellers med privatlivsløftet | AP-13, AP-14 |
@@ -23,8 +30,9 @@ Sidst opdateret: 2026-11-16 af arkitekten.
 
 ## Senest kontrolleret (2026-11-16)
 
-- `./Scripts/check.sh`: ALT GRØNT, 40 tests.
+- `./Scripts/check.sh`: ALT GRØNT, 47 tests.
 - `Baymow --player-selftest`: den rigtige afspiller bestod alle fem punkter, lydløst.
+- `./Scripts/test-voice.sh`: Piper 25–26 af 36 (2,3–2,7 %), Apple Sara 23 af 36 (2,7 %).
 - Baymow.app er bygget, signeret, installeret i Programmer og startet.
 - Automatisk dansk stemme er Apple Sara, selv om Piper er installeret (`--measure-latency`).
 - En frisk kopi af arkivet bygger efter `fetch-vendor.sh`: se seneste commit-besked.
@@ -42,4 +50,5 @@ Sidst opdateret: 2026-11-16 af arkitekten.
 - sherpa-onnx 2.x har fjernet espeak-ng; projektet bruger derfor 1.13.8.
 - Bundle-id'et bestemmer Tilgængelighed-tilladelsen. Ændres det, skal brugeren give adgang igen.
 - Flyttes projektmappen med appens egen flytning, følger `.git` og `Vendor/` ikke med. Hent `Vendor/` med `fetch-vendor.sh`.
-- De midlertidige Python-miljøer fra de første stemmetests findes ikke længere; AP-02 genskaber dem.
+- Stemmetestens miljø ligger i `tools/stemmetest/env/` (ikke i git); `setup.sh` opretter det.
+- Piper giver ikke samme lyd to gange, så stemmetesten svinger ±1 sætning. Kør tre gange før en port.

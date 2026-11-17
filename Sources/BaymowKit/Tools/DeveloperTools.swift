@@ -6,7 +6,8 @@ import CSherpaOnnx
 public enum DeveloperTools {
     /// `--synthesize <stemmemappe> <tekstfil> <ud-mappe>`: læser én sætning pr. linje, forbereder teksten
     /// og skriver `00.wav`, `01.wav` … med Piper. Bruges til at måle appens egen oplæsning med talegenkendelse.
-    public static func synthesize(voiceDirectory: String, textFile: String, outputDirectory: String) -> Int32 {
+    public static func synthesize(voiceDirectory: String, textFile: String, outputDirectory: String, raw: Bool = false,
+                                  overrides: Bool = true) -> Int32 {
         guard let model = PiperModel(directory: URL(fileURLWithPath: voiceDirectory)),
               let text = try? String(contentsOfFile: textFile, encoding: .utf8) else {
             print("Kunne ikke indlæse stemme eller tekst")
@@ -17,7 +18,8 @@ public enum DeveloperTools {
         let begin = Date()
         var seconds = 0.0
         for (index, line) in lines.enumerated() {
-            let samples = model.synthesize(DanishTextNormalizer.normalize(line), speed: 1.0)
+            // raw: uden tekstforberedelse, til afprøvning af stavemåder.
+            let samples = model.synthesize(raw ? line : prepare(line, engineID: "piper", overrides: overrides), speed: 1.0)
             seconds += Double(samples.count) / model.sampleRate
             let path = "\(outputDirectory)/\(String(format: "%02d", index)).wav"
             _ = samples.withUnsafeBufferPointer { SherpaOnnxWriteWave($0.baseAddress, Int32(samples.count), Int32(model.sampleRate), path) }
@@ -25,6 +27,25 @@ public enum DeveloperTools {
         let elapsed = Date().timeIntervalSince(begin)
         print(String(format: "%d sætninger, %.1f s lyd lavet på %.2f s (faktor %.3f)", lines.count, seconds, elapsed, elapsed / max(seconds, 0.001)))
         return 0
+    }
+
+    /// `--synthesize-text <stemmemappe> <tekstfil> <ud.wav>`: læser hele teksten med Piper, forberedt og
+    /// delt i sætninger på samme måde som i appen, og skriver én lydfil. Bruges til lyttepakker.
+    public static func synthesizeText(voiceDirectory: String, textFile: String, output: String) -> Int32 {
+        guard let model = PiperModel(directory: URL(fileURLWithPath: voiceDirectory)),
+              let text = try? String(contentsOfFile: textFile, encoding: .utf8) else {
+            print("Kunne ikke indlæse stemme eller tekst")
+            return 1
+        }
+        var samples: [Float] = []
+        for chunk in TextChunker.chunks(for: text) {
+            for sentence in BackendSpeechEngine.sentences(in: prepare(chunk, engineID: "piper", overrides: true)) {
+                samples += model.synthesize(sentence.text, speed: 1.0)
+            }
+        }
+        let ok = samples.withUnsafeBufferPointer { SherpaOnnxWriteWave($0.baseAddress, Int32(samples.count), Int32(model.sampleRate), output) }
+        print(String(format: "%.1f s lyd skrevet til %@", Double(samples.count) / model.sampleRate, output))
+        return ok == 1 ? 0 : 1
     }
 
     /// `--install-voice <id>`: henter og installerer en stemme med samme kode som knappen "Hent".
@@ -114,8 +135,22 @@ public enum DeveloperTools {
         return failures == 0 ? 0 : 1
     }
 
-    /// `--normalize`: læser linjer fra standard input og skriver den forberedte tekst.
+    /// `--normalize`: læser linjer fra standard input og skriver den forberedte tekst (uden udtalelister).
     public static func normalizeStandardInput() {
         while let line = readLine() { print(DanishTextNormalizer.normalize(line)) }
+    }
+
+    /// `--prepare <piper|apple>`: som `--normalize`, men med motorens udtaleliste – præcis den tekst,
+    /// motoren får i appen.
+    public static func prepareStandardInput(engineID: String) {
+        while let line = readLine() { print(prepare(line, engineID: engineID, overrides: true)) }
+    }
+
+    /// Dansk tekst, som sessionen ville give den til motoren.
+    static func prepare(_ text: String, engineID: String, overrides: Bool) -> String {
+        let prepared = DanishTextNormalizer.normalize(text)
+        guard overrides else { return prepared }
+        let list = engineID == "piper" ? PiperBackend.danishOverrides : AppleSpeechEngine.danishOverrides
+        return PronunciationOverrides.apply(list, to: prepared)
     }
 }

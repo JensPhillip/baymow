@@ -31,6 +31,16 @@ public final class AppleSpeechEngine: NSObject, SpeechEngine {
         }
     }
 
+    public func pronunciationOverrides(for language: Language) -> [String: String] {
+        language == .danish ? Self.danishOverrides : [:]
+    }
+
+    /// Tom med vilje. For Apples danske stemme (Sara) blev otte stavemåder fundet i ordprøven
+    /// (azure→asjur, nice→najs, like→lajk, messenger→messendjer, chatgpt→"tjat ge pe te", docs→doks,
+    /// touchscreen→tutsjskrin, checkout→check-out), men på hele sætninger gav de ingen målbar
+    /// forbedring (17 → 18 af 30, inden for målestøjen). Se docs/afleveringer/AP-24.md.
+    static let danishOverrides: [String: String] = [:]
+
     public func speak(_ text: String, voice: Voice, rate: Double, onEvent: @escaping (SpeechEvent) -> Void) {
         // Afbrydes en igangværende oplæsning, kasseres synthesizeren. En ny instans er den
         // mest pålidelige måde at undgå hængende pause-tilstand og forsinkede callbacks.

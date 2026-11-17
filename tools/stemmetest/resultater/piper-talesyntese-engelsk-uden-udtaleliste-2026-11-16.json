@@ -1,0 +1,280 @@
+{
+ "name": "piper-talesyntese-engelsk-uden-udtaleliste",
+ "clean": 14,
+ "total": 30,
+ "cer": 0.08404380160901902,
+ "repeats": 0,
+ "omits": 0,
+ "rows": [
+  {
+   "cat": "liste",
+   "written": "Jeg åbner Chrome hver morgen.",
+   "ref": "jeg åbner chrome hver morgen",
+   "hyp": "jeg erobner krumme værmån",
+   "cer": 0.5416666666666666,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "liste",
+   "written": "Vi gemmer alle filer i cloud.",
+   "ref": "vi gemmer alle filer i cloud",
+   "hyp": "vi gemmer alle filer i kødet",
+   "cer": 0.21739130434782608,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "liste",
+   "written": "Husk at lave en update i aften.",
+   "ref": "husk at lave en update i aften",
+   "hyp": "husk at lave en uddater i aften",
+   "cer": 0.08333333333333333,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "liste",
+   "written": "Butikken har fået en ny website.",
+   "ref": "butikken har fået en ny website",
+   "hyp": "butikken har fået en ny website",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "liste",
+   "written": "Hun så en video på YouTube.",
+   "ref": "hun så en video på youtube",
+   "hyp": "hun så en video på youtube",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "liste",
+   "written": "Min iPhone er løbet tør for strøm.",
+   "ref": "min iphone er løbet tør for strøm",
+   "hyp": "minipolen er løbet tør for strøm",
+   "cer": 0.1111111111111111,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "liste",
+   "written": "Læreren viste en PowerPoint i timen.",
+   "ref": "læreren viste en powerpoint i timen",
+   "hyp": "læreren viste en på point i tiden",
+   "cer": 0.16666666666666666,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "liste",
+   "written": "Skriv til mig på Slack.",
+   "ref": "skriv til mig på slack",
+   "hyp": "skriv til mig på sørg",
+   "cer": 0.2222222222222222,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "liste",
+   "written": "Tak for din feedback på opgaven.",
+   "ref": "tak for din feedback på opgaven",
+   "hyp": "tak for din fed bak på opgaven",
+   "cer": 0.07692307692307693,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "liste",
+   "written": "Næsten alle børn har en smartphone.",
+   "ref": "næsten alle børn har en smartphone",
+   "hyp": "næsten alle børn har en smartphone",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "liste",
+   "written": "Du skal bruge dit login for at komme ind.",
+   "ref": "du skal bruge dit login for at komme ind",
+   "hyp": "du skal bruge dit login for at komme ind",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "liste",
+   "written": "Han bruger meget tid på gaming.",
+   "ref": "han bruger meget tid på gaming",
+   "hyp": "han bruger meget tid på kamin",
+   "cer": 0.08,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "liste",
+   "written": "Hun lagde et billede på Instagram.",
+   "ref": "hun lagde et billede på instagram",
+   "hyp": "hun lagde et billede på instagram",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "liste",
+   "written": "Send mig en besked på Messenger.",
+   "ref": "send mig en besked på messenger",
+   "hyp": "send mig en besked på missinger",
+   "cer": 0.07692307692307693,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "liste",
+   "written": "Jeg spurgte ChatGPT om hjælp.",
+   "ref": "jeg spurgte chatgpt om hjælp",
+   "hyp": "jeg spurgte chat gpt om hjælp",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "liste",
+   "written": "Åbn siden i Safari i stedet.",
+   "ref": "åbn siden i safari i stedet",
+   "hyp": "åbne siden i savai i stedet",
+   "cer": 0.13636363636363635,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "liste",
+   "written": "Appen findes også til Android.",
+   "ref": "appen findes også til android",
+   "hyp": "af dem findes også teranoid",
+   "cer": 0.28,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "liste",
+   "written": "Tag et screenshot af fejlen.",
+   "ref": "tag et screenshot af fejlen",
+   "hyp": "tag et screenshot af fejlen",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "liste",
+   "written": "Dokumentet ligger i Google Docs.",
+   "ref": "dokumentet ligger i google docs",
+   "hyp": "dokumentet ligger i google docs",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "liste",
+   "written": "Firmaet flytter sine servere til Azure.",
+   "ref": "firmaet flytter sine servere til azure",
+   "hyp": "firmaet føtter sine serverer til asur",
+   "cer": 0.15151515151515152,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "bøjet",
+   "written": "Chromes nye faner er hurtigere.",
+   "ref": "chromes nye faner er hurtigere",
+   "hyp": "krummes nye faner er hurtigere",
+   "cer": 0.15384615384615385,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "bøjet",
+   "written": "Der kom to updates i denne uge.",
+   "ref": "der kom to updates i denne uge",
+   "hyp": "der kom to updates i denne uge",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "bøjet",
+   "written": "Alle elevernes smartphones blev samlet ind.",
+   "ref": "alle elevernes smartphones blev samlet ind",
+   "hyp": "alle elevernes smartphones blev samlet ind",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "bøjet",
+   "written": "Det er et cloud-valg, vi må træffe.",
+   "ref": "det er et cloud valg vi må træffe",
+   "hyp": "det er et kludvalg vi må træffe",
+   "cer": 0.07692307692307693,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "uset",
+   "written": "Vi holder et meeting om projektets deadline.",
+   "ref": "vi holder et meeting om projektets deadline",
+   "hyp": "vi holder et meeting om projektets deadline",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "uset",
+   "written": "Jeg hørte en podcast om streaming.",
+   "ref": "jeg hørte en podcast om streaming",
+   "hyp": "jeg hørte en podcast om stræming",
+   "cer": 0.07142857142857142,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "uset",
+   "written": "Hun købte en ny laptop og et keyboard.",
+   "ref": "hun købte en ny laptop og et keyboard",
+   "hyp": "hun købte en ny laptop og et keyboard",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "uset",
+   "written": "Min manager bad om en statusrapport og et dashboard.",
+   "ref": "min manager bad om en statusrapport og et dashboard",
+   "hyp": "min manager bad om en statusrapport og et dashboard",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "uset",
+   "written": "Vi brainstormer på et whiteboard efter frokost.",
+   "ref": "vi brainstormer på et whiteboard efter frokost",
+   "hyp": "vi brainstormer på et videboard efter frokost",
+   "cer": 0.075,
+   "repeats": false,
+   "omits": false
+  },
+  {
+   "cat": "uset",
+   "written": "Download filen, og upload den til serveren.",
+   "ref": "download filen og upload den til serveren",
+   "hyp": "download filen og upload den til serveren",
+   "cer": 0.0,
+   "repeats": false,
+   "omits": false
+  }
+ ]
+}

@@ -20,6 +20,9 @@ final class FakeEngine: SpeechEngine {
         Voice(id: "en-1", name: "English", language: .english, locale: "en-US", quality: .standard, engineID: engineID),
     ]
     var extraVoices: [Voice] = []
+    var overrides: [String: String] = [:]
+
+    func pronunciationOverrides(for language: Language) -> [String: String] { language == .danish ? overrides : [:] }
 
     func installedVoices() -> [Voice] { baseVoices + extraVoices }
 
@@ -251,6 +254,17 @@ final class CoreContractTests: XCTestCase {
         XCTAssertTrue(engine.spoken.last?.text.contains("klokken fjorten tredive") == true)
     }
 
+    func testEngineSpecificPronunciationIsAppliedToDanishOnly() {
+        engine.overrides = ["chrome": "krovm"]
+        sessions.start(text: "Jeg åbner Chrome hver morgen, når jeg møder på arbejde og skal læse mine mails.")
+        XCTAssertEqual(sessions.language, .danish)
+        XCTAssertTrue(engine.spoken.last?.text.contains("krovm") == true)
+
+        sessions.start(text: "I open Chrome every morning when I arrive at work and need to read my mail.")
+        XCTAssertEqual(sessions.language, .english)
+        XCTAssertTrue(engine.spoken.last?.text.contains("Chrome") == true)
+    }
+
     func testEnglishTextIsNotChanged() {
         let text = "The meeting about the budget has been moved to Thursday at 14.30, said the teacher."
         sessions.start(text: text)
@@ -292,6 +306,8 @@ final class CoreContractTests: XCTestCase {
         XCTAssertTrue(log.contains("speechStarted"))
         XCTAssertTrue(log.contains("speechFailed"))
         XCTAssertTrue(log.contains("com.apple.Safari"))
+        XCTAssertTrue(log.contains("\"voice\":\"da-2\""), "loggen skal vise, hvilken stemme der læste")
+        XCTAssertTrue(log.contains("\"language\":\"da\""))
         for word in ["almindelig", "sætning", "vejret"] {
             XCTAssertFalse(log.contains(word))
         }
