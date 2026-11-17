@@ -150,59 +150,111 @@ struct MainView: View {
 
             ForEach(Language.allCases) { language in
                 Section("Stemmer – \(language.displayName.lowercased())") {
-                    let voices = catalog.voices(for: language)
-                    if voices.isEmpty {
+                    if language == .danish, VoiceLibrary.needsMainVoiceGuide(installed: catalog.voices) {
+                        MainVoiceGuide()
+                    }
+                    let rows = VoiceLibrary.rows(for: language, installed: catalog.voices, downloadable: DownloadableVoice.catalog,
+                                                 isDownloaded: { id in downloader.store.isInstalled(id) },
+                                                 chosenID: catalog.voice(for: language)?.id)
+                    if rows.isEmpty {
                         Text("Ingen stemmer installeret til \(language.displayName.lowercased()).").foregroundStyle(.secondary)
                     }
-                    let selectedID = catalog.voice(for: language)?.id
-                    ForEach(voices) { voice in
-                        HStack {
-                            Image(systemName: voice.id == selectedID ? "largecircle.fill.circle" : "circle")
-                                .foregroundStyle(voice.id == selectedID ? Color.accentColor : .secondary)
-                            Text(voice.name)
-                            Text("\(voice.locale) · \(voice.quality.displayName)").font(.caption).foregroundStyle(.secondary)
-                            Spacer()
-                            Button("Prøv") { model.playSample(voice) }.controlSize(.small)
-                        }
-                        .contentShape(Rectangle())
-                        .onTapGesture { settings.preferredVoiceIDs[language.rawValue] = voice.id }
-                        .accessibilityAddTraits(voice.id == selectedID ? .isSelected : [])
+                    ForEach(rows) { row in
+                        VoiceRowView(row: row, model: model, settings: settings, downloader: downloader)
                     }
                 }
-            }
-
-            Section("Hent stemmer") {
-                ForEach(DownloadableVoice.catalog) { voice in
-                    HStack {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("\(voice.name) · \(voice.language.displayName)")
-                            Text(downloader.errors[voice.id] ?? voice.licenseNote)
-                                .font(.caption)
-                                .foregroundStyle(downloader.errors[voice.id] == nil ? Color.secondary : Color.orange)
-                        }
-                        Spacer()
-                        if let fraction = downloader.progress[voice.id] {
-                            ProgressView(value: fraction).frame(width: 120)
-                        } else if downloader.isInstalled(voice) {
-                            Text("Installeret").font(.caption).foregroundStyle(.secondary)
-                            Button("Fjern") { downloader.remove(voice) }.controlSize(.small)
-                        } else {
-                            Button("Hent (\(voice.sizeMB) MB)") { downloader.download(voice) }.controlSize(.small)
-                        }
-                    }
-                }
-                Text("Hentede stemmer virker uden internet. Baymow bruger kun nettet, når du selv trykker Hent.")
-                    .font(.caption).foregroundStyle(.secondary)
             }
 
             Section {
-                Text("Flere og bedre systemstemmer hentes i Systemindstillinger → Tilgængelighed → Oplæst indhold → Systemstemme → Administrer stemmer. De dukker op her, når de er hentet.")
+                Text("Hentede stemmer virker uden internet. Baymow bruger kun nettet, når du selv trykker Hent.")
                     .font(.caption).foregroundStyle(.secondary)
+                Text("Flere systemstemmer hentes i \(VoiceLibrary.voiceSettingsPath). De dukker op her, så snart de er hentet.")
+                    .font(.caption).foregroundStyle(.secondary)
+                Button("Åbn Systemindstillinger for flere stemmer") { VoiceLibrary.openVoiceSettings() }
+                    .controlSize(.small)
             }
         }
         .formStyle(.grouped)
         .frame(minWidth: 520, minHeight: 560)
         .onAppear { model.startPolling() }
         .onDisappear { model.stopPolling() }
+    }
+}
+
+/// Vejledning, når Baymows danske hovedstemme, Sara (forbedret), ikke er hentet endnu.
+private struct MainVoiceGuide: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Label("Hent den anbefalede stemme: Sara (forbedret)", systemImage: "arrow.down.circle")
+                .font(.headline)
+            Text("Baymow læser dansk bedst med Apples stemme Sara (forbedret). Den er gratis, men skal hentes én gang.")
+                .fixedSize(horizontal: false, vertical: true)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("1. Tryk på knappen nedenfor.")
+                Text("2. Ud for Systemstemme: vælg Administrer stemmer… nederst i menuen.")
+                Text("3. Find Dansk, og tryk på pilen ud for Sara (forbedret).")
+                Text("4. Kom tilbage hertil. Stemmen dukker op af sig selv, når den er hentet.")
+            }
+            .font(.callout)
+            Text("Vejen er: \(VoiceLibrary.voiceSettingsPath)")
+                .font(.caption).foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+            Button("Åbn Systemindstillinger") { VoiceLibrary.openVoiceSettings() }
+                .buttonStyle(.borderedProminent)
+        }
+        .padding(.vertical, 6)
+    }
+}
+
+/// Én stemme i biblioteket: navn, type, størrelse og de knapper, der giver mening for den.
+private struct VoiceRowView: View {
+    let row: VoiceLibrary.Row
+    @ObservedObject var model: MainWindowModel
+    @ObservedObject var settings: SettingsStore
+    @ObservedObject var downloader: ModelDownloader
+
+    var body: some View {
+        HStack(alignment: .center, spacing: 10) {
+            Image(systemName: row.isChosen ? "largecircle.fill.circle" : "circle")
+                .foregroundStyle(row.isChosen ? Color.accentColor : .secondary)
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 2) {
+                HStack(spacing: 6) {
+                    Text(row.name)
+                    if row.id == VoiceLibrary.mainDanishVoiceID {
+                        Text("Anbefalet").font(.caption2.weight(.semibold)).foregroundStyle(.green)
+                    } else if !row.isApproved {
+                        Text("Ikke anbefalet").font(.caption2.weight(.semibold)).foregroundStyle(.orange)
+                    }
+                }
+                Text("\(row.kind.displayName) · \(row.details)").font(.caption).foregroundStyle(.secondary)
+                if let entry = row.downloadable, let error = downloader.errors[entry.id] {
+                    Text(error).font(.caption).foregroundStyle(.orange).fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            Spacer()
+            if let voice = row.installed {
+                Button("Prøv") { model.playSample(voice) }.controlSize(.small)
+                if row.isChosen {
+                    Text("Valgt").font(.caption).foregroundStyle(.secondary).frame(minWidth: 44)
+                } else {
+                    Button("Vælg") { settings.preferredVoiceIDs[voice.language.rawValue] = voice.id }
+                        .controlSize(.small)
+                        .help("Brug denne stemme til \(voice.language.displayName.lowercased())")
+                }
+            }
+            if let entry = row.downloadable {
+                if let fraction = downloader.progress[entry.id] {
+                    ProgressView(value: fraction).frame(width: 90)
+                } else if downloader.isInstalled(entry) {
+                    Button("Fjern") { downloader.remove(entry) }.controlSize(.small)
+                } else {
+                    Button(downloader.errors[entry.id] == nil ? "Hent" : "Prøv igen") { downloader.download(entry) }
+                        .controlSize(.small)
+                }
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("\(row.name), \(row.kind.displayName)\(row.isChosen ? ", valgt" : "")")
     }
 }

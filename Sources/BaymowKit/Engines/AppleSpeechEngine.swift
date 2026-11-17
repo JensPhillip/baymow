@@ -33,6 +33,9 @@ public final class AppleSpeechEngine: NSObject, SpeechEngine {
         }
     }
 
+    /// Baymows danske hovedstemme (B7, valgt af brugeren 17. november 2026).
+    public nonisolated static let recommendedDanishVoiceID = "com.apple.voice.enhanced.da-DK.Sara"
+
     /// Apple-stemmer, der er målt og ikke bestod stemmeportens krav 1 (docs/PROJEKTPLAN.md afsnit 7).
     /// De vælges aldrig automatisk, men brugeren kan stadig selv vælge dem. Umålte stemmer er godkendt (B4).
     static let failedVoiceGate: Set<String> = [

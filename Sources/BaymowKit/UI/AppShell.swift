@@ -1,4 +1,5 @@
 import AppKit
+import AVFoundation
 import SwiftUI
 import Combine
 import BaymowCore
@@ -44,6 +45,12 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
             self.prepareNeuralVoices()
         }
         prepareNeuralVoices()
+
+        // Henter brugeren en systemstemme (fx Sara (forbedret)), skal den kunne bruges uden genstart.
+        NotificationCenter.default.addObserver(forName: AVSpeechSynthesizer.availableVoicesDidChangeNotification,
+                                               object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated { self?.catalog.refresh() }
+        }
 
         shortcuts.onTrigger = { [weak self] in self?.readSelection() }
         settings.$shortcut.removeDuplicates().sink { [weak self] shortcut in

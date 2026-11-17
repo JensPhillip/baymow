@@ -397,7 +397,7 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 | AP-30 | Chrome | 3 | Udfører + bruger | AP-00 | Delvist: brugeren har bekræftet, at genvejen virker (via kopiering, 0,65 s) |
 | AP-31 | Word og Preview/PDF | 3 | Udfører + bruger | AP-00 | Ikke startet |
 | AP-32 | Google Docs og testmatrix | 3 | Udfører + bruger | AP-30 | Ikke startet |
-| AP-40 | Stemmebibliotek færdigt | 4 | Udfører | AP-19 | Ikke startet |
+| AP-40 | Stemmebibliotek færdigt | 4 | Udfører | AP-19 | Afventer bruger (se skærmen) |
 | AP-41 | Førstegangsopsætning | 4 | Udfører + bruger | AP-40 | Ikke startet |
 | AP-50 | Licensoprydning | 5 | Arkitekt + udfører | AP-19, B8 | Ikke startet |
 | AP-51 | Stabilitet, hukommelse og privatlivskontrol | 5 | Udfører | AP-20 til AP-41 | Ikke startet |
@@ -667,8 +667,8 @@ Matrixen dækker også Mail, Noter, Slack, VS Code og Outlook.
 "Prøv", "Vælg som standard", og "Hent"/"Fjern" hvor det giver mening. Afbrudt download kan
 gentages og efterlader ingen halve filer. Diskplads kontrolleres før download.
 **Hovedstemmen (B7):** Er Sara (Enhanced) ikke installeret, skal biblioteket sige det tydeligt og vise,
-hvordan hun hentes: Systemindstillinger → Tilgængelighed → Oplæst indhold → Systemstemme → Administrer
-stemmer → Dansk → Sara (forbedret). Knappen "Åbn Systemindstillinger" skal åbne Oplæst indhold direkte, og
+hvordan hun hentes: Systemindstillinger → Tilgængelighed → Læs og tal (hed "Oplæst indhold" før macOS 26) → Systemstemme →
+Administrer stemmer → Dansk → Sara (forbedret). Knappen "Åbn Systemindstillinger" skal åbne Læs og tal direkte, og
 biblioteket skal opdage, når stemmen er hentet, uden at appen genstartes.
 **Acceptkriterier:** Tests for afbrudt download, forkert kontrolsum og manglende diskplads. Med kun den kompakte
 Sara installeret vises vejledningen; med Sara (Enhanced) installeret vises den ikke.

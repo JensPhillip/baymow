@@ -18,10 +18,11 @@ Sidst opdateret: 2026-11-17 af udfører (Claude Opus 5.5).
 - **Brugerens beslutninger 2026-11-17:** cloud-stemmer udskudt (AP-13/14), open source med mulighed for indtjening
   (licens afventer bekræftelse), Speechify-idéer lagt i planens idékatalog (fase 6).
 - **AP-30 delvist:** brugeren har bekræftet, at genvejen virker i Chrome.
-- **Afventer bruger:** AP-03 (tal 1–5 i lytteskemaet mangler stadig for begge stemmer).
+- **AP-40 bygget:** stemmebiblioteket med Prøv/Vælg/Hent/Fjern, robust download og vejledning til Sara
+  (forbedret). Logikken er testet; udseendet skal ses af brugeren.
+- **Afventer bruger:** AP-40 (se biblioteket på skærmen), AP-03 (tal 1–5 i lytteskemaet mangler stadig for begge stemmer).
 - **I gang:** intet.
-- **Næste ledige pakker:** AP-40 (stemmebibliotek – nu med vejledning til at hente Sara (Enhanced)),
-  AP-21 (lange tekster og programskift), AP-20 (afspilleren – kræver en testrunde med brugeren),
+- **Næste ledige pakker:** AP-41 (førstegangsopsætning), AP-21 (lange tekster og programskift), AP-20 (afspilleren – kræver en testrunde med brugeren),
   AP-31 (Word og Preview – kræver brugeren).
   De rører ikke de samme filer og kan løses hver for sig.
 
@@ -31,12 +32,13 @@ Sidst opdateret: 2026-11-17 af udfører (Claude Opus 5.5).
 |---|---|---|
 | Prøv genvejen ⌃⌥S én gang efter omdøbningen | Den er ikke brugt siden; tilladelsen er bekræftet (2026-11-17) | – |
 | Hør lyttepakkerne, og udfyld `docs/LYTTESKEMA.md` | Kun brugeren kan afgøre, om en stemme er til at forstå | AP-03, AP-12, AP-19 |
+| Se stemmebiblioteket i Baymows vindue (testvejledning i AP-40-afleveringen) | Udseendet kan kun ses af brugeren | AP-40 |
 | Bekræft licensen (anbefaling: GPL-3.0-or-later) | Open source er besluttet; den konkrete licens mangler | AP-50 |
 | Acceptér vilkår for `syvai/plapre-3` på Hugging Face | Originalmodellen kræver det | AP-15 |
 
 ## Senest kontrolleret (2026-11-17)
 
-- `./Scripts/check.sh`: ALT GRØNT, 49 tests.
+- `./Scripts/check.sh`: ALT GRØNT, 59 tests.
 - `Baymow --player-selftest`: den rigtige afspiller bestod alle fem punkter, lydløst.
 - `./Scripts/test-voice.sh`: Piper 28 af 36 (1,4 %), Apple Sara 23 af 36 (2,8 %) efter AP-22.
 - Baymow.app er bygget, signeret, installeret i Programmer og startet.
