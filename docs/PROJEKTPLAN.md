@@ -397,7 +397,7 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 | AP-30 | Chrome | 3 | Udfører + bruger | AP-00 | Delvist: brugeren har bekræftet, at genvejen virker (via kopiering, 0,65 s) |
 | AP-31 | Word og Preview/PDF | 3 | Udfører + bruger | AP-00 | Ikke startet |
 | AP-32 | Google Docs og testmatrix | 3 | Udfører + bruger | AP-30 | Ikke startet |
-| AP-40 | Stemmebibliotek færdigt | 4 | Udfører | AP-19 | Afventer bruger (se skærmen) |
+| AP-40 | Stemmebibliotek færdigt | 4 | Udfører | AP-19 | Færdig |
 | AP-41 | Førstegangsopsætning | 4 | Udfører + bruger | AP-40 | Ikke startet |
 | AP-50 | Licensoprydning | 5 | Arkitekt + udfører | AP-19, B8 | Ikke startet |
 | AP-51 | Stabilitet, hukommelse og privatlivskontrol | 5 | Udfører | AP-20 til AP-41 | Ikke startet |
