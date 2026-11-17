@@ -1,5 +1,6 @@
 import AppKit
 import SwiftUI
+import BaymowCore
 
 /// Tilstand for hovedvinduet: tilladelser, optagelse af genvej og stemmeprøver.
 @MainActor

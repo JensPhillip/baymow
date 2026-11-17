@@ -3,7 +3,7 @@
 // Fejler en af dem efter din ændring, er det din ændring, der er forkert – ikke testen.
 
 import XCTest
-@testable import BaymowKit
+@testable import BaymowCore
 
 /// TTS-motor til tests: taler ikke, men husker kald og lader testen styre events.
 @MainActor

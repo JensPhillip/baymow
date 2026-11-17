@@ -7,15 +7,16 @@ Sidst opdateret: 2026-11-17 af udfører (Claude Opus 5.5).
 
 - **Færdigt:** AP-00 (permanent mappe, git, omdøbning til Baymow), AP-01 (Apple som standard igen),
   AP-10 (fælles lydafspiller og `SynthesisBackend`), AP-02 (reproducerbar stemmetest),
-  AP-22 (tekstforberedelse, runde 2: 52 nye tilfælde, alle bestået).
+  AP-22 (tekstforberedelse, runde 2: 52 nye tilfælde, alle bestået),
+  AP-23 (kernen er nu sit eget mål, `BaymowCore`; compileren afviser afhængigheder ud af kernen).
 - **AP-12 afsluttet:** brugeren har hørt lyttepakken og bekræftet, at Piper er til at forstå på almindelig
   dansk tekst. Problemet var teksten (engelske ord), ikke appen. Det flytter AP-24 frem.
 - **AP-24 delvist:** udtalelister pr. motor er bygget og testet, men gav kun en lille forbedring for Piper
   (14 → 18 af 30) og ingen for Apple. Målet om en halvering blev ikke nået.
 - **Afventer bruger:** AP-03 (tal 1–5 i lytteskemaet mangler stadig for begge stemmer).
 - **I gang:** intet.
-- **Næste ledige pakker:** AP-23 (kernen som eget kompileringsmål), AP-30 (Chrome – kræver brugeren ved tasterne),
-  AP-11 (Apples større stemmer – kræver, at brugeren henter dem).
+- **Næste ledige pakker:** AP-30 (Chrome – kræver brugeren ved tasterne), AP-11 (Apples større stemmer –
+  kræver, at brugeren henter dem), AP-21 (lange tekster og programskift – kan laves uden brugeren).
   De rører ikke de samme filer og kan løses hver for sig.
 
 ## Venter på brugeren
@@ -46,6 +47,7 @@ Sidst opdateret: 2026-11-17 af udfører (Claude Opus 5.5).
 
 ## Kendte fælder
 
+- Kernen ligger i `Sources/BaymowCore/` (ikke længere `Sources/BaymowKit/Core/`). Ældre afleveringer bruger de gamle stier.
 - Brug altid scripts eller `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer` – systemets `swift` er for gammel.
 - espeak-ng fejler, hvis stien til dens data er over ca. 160 tegn.
 - sherpa-onnx 2.x har fjernet espeak-ng; projektet bruger derfor 1.13.8.

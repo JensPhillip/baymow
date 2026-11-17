@@ -1,4 +1,5 @@
 import AVFoundation
+import BaymowCore
 
 /// macOS' indbyggede talesyntese. Kører lokalt og offline med de stemmer, der er installeret i systemet.
 @MainActor

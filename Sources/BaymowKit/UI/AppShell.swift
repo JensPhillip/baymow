@@ -1,6 +1,7 @@
 import AppKit
 import SwiftUI
 import Combine
+import BaymowCore
 
 /// Applikationens livscyklus: hovedvindue, menulinje og sammenkobling af tjenesterne.
 @MainActor

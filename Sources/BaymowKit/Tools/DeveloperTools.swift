@@ -1,5 +1,6 @@
 import Foundation
 import CSherpaOnnx
+import BaymowCore
 
 /// Udviklerværktøjer, der køres fra kommandolinjen.
 @MainActor

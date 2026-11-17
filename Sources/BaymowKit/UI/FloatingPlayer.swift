@@ -1,5 +1,6 @@
 import AppKit
 import SwiftUI
+import BaymowCore
 
 /// Lille flytbar afspiller, der ligger oven på andre vinduer uden at tage fokus fra dem.
 @MainActor

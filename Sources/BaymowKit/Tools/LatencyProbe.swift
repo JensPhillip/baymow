@@ -1,4 +1,5 @@
 import Foundation
+import BaymowCore
 
 /// Lydløs måling af tid fra `speak` til motoren melder, at talen er startet.
 /// Køres med `Baymow --measure-latency`.

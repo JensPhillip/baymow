@@ -1,5 +1,6 @@
 import AppKit
 import ApplicationServices
+import BaymowCore
 
 /// Udviklerværktøj: beskriver, hvad et kørende program udstiller via Accessibility.
 ///

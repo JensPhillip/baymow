@@ -78,7 +78,6 @@ Derfor er maskinmålingen et *nødvendigt* krav, mens brugerens lytning er det *
 - Appen er i sin nuværende form bundet af GPL (espeak-ng er linket ind).
 - Engelske ord i dansk tekst læses forkert af alle afprøvede lokale stemmer. Omstavning (AP-24) hjalp
   kun lidt; en stemme, der selv kan skifte sprog, er den realistiske løsning.
-- Kernen er adskilt fra resten med mapper og kontrolscript, men ikke af compileren (AP-23).
 
 ---
 
@@ -99,44 +98,47 @@ FloatingPlayer og MainWindow observerer ReadingSessionManager / SettingsStore.
 DiagnosticsService logger hændelser uden tekst.
 ```
 
-| Mappe i `Sources/BaymowKit/` | Fil | Ansvar |
+| Mappe | Fil | Ansvar |
 |---|---|---|
-| `Core/` | `ReadingSessionManager.swift` | Den ene aktive session og dens tilstand |
-| `Core/` | `TextCaptureService.swift` | Markeret tekst via Accessibility, ellers ⌘C med gendannelse |
-| `Core/` | `GlobalShortcutManager.swift` | Carbon-hotkey |
-| `Core/` | `SpeechEngine.swift` | Protokollen, alle stemmemotorer opfylder |
-| `Core/` | `VoiceCatalog.swift` | Installerede stemmer og valg af stemme |
-| `Core/` | `LanguageDetectionService.swift` | Sproggenkendelse og `TextChunker` |
-| `Core/` | `DanishTextNormalizer.swift` | Skriver dansk tekst, som den siges |
-| `Core/` | `SettingsStore.swift`, `Models.swift` | Indstillinger (UserDefaults) og fælles typer |
-| `Core/` | `DiagnosticsService.swift` | Lokal log uden brugerindhold |
-| `Engines/` | `AppleSpeechEngine.swift` | macOS' egne stemmer |
-| `Engines/` | `SynthesisBackend.swift` | `SynthesisBackend`, `PCMOutput` og `BackendSpeechEngine` |
-| `Engines/` | `PCMPlayer.swift` | Fælles lydafspiller for alle backends |
-| `Engines/` | `PiperBackend.swift` | Piper via sherpa-onnx (laver kun lyd) |
-| `Engines/` | `ModelDownloader.swift` | Stemmer, der kan hentes; `VoiceStore` |
-| `UI/` | `AppShell.swift` | Livscyklus, menulinje, kobler tjenesterne sammen |
-| `UI/` | `FloatingPlayer.swift`, `MainWindow.swift` | Afspiller, beskeder, indstillinger, stemmebibliotek |
-| `Tools/` | `AccessibilityDiagnostics.swift`, `DeveloperTools.swift`, `LatencyProbe.swift` | Kommandolinjeværktøjer |
-| `Features/` | (findes ikke endnu) | Fremtidige funktioner, én undermappe pr. funktion |
+| `Sources/BaymowCore/` | `ReadingSessionManager.swift` | Den ene aktive session og dens tilstand |
+| `Sources/BaymowCore/` | `TextCaptureService.swift` | Markeret tekst via Accessibility, ellers ⌘C med gendannelse |
+| `Sources/BaymowCore/` | `GlobalShortcutManager.swift` | Carbon-hotkey |
+| `Sources/BaymowCore/` | `SpeechEngine.swift` | Protokollen, alle stemmemotorer opfylder |
+| `Sources/BaymowCore/` | `VoiceCatalog.swift` | Installerede stemmer og valg af stemme |
+| `Sources/BaymowCore/` | `LanguageDetectionService.swift` | Sproggenkendelse og `TextChunker` |
+| `Sources/BaymowCore/` | `DanishTextNormalizer.swift` | Skriver dansk tekst, som den siges |
+| `Sources/BaymowCore/` | `SettingsStore.swift`, `Models.swift` | Indstillinger (UserDefaults) og fælles typer |
+| `Sources/BaymowCore/` | `DiagnosticsService.swift` | Lokal log uden brugerindhold |
+| `Sources/BaymowCore/` | `PronunciationOverrides.swift` | Udskifter ord med en stavemåde, motoren udtaler rigtigt |
+| `Sources/BaymowKit/Engines/` | `AppleSpeechEngine.swift` | macOS' egne stemmer |
+| `Sources/BaymowKit/Engines/` | `SynthesisBackend.swift` | `SynthesisBackend`, `PCMOutput` og `BackendSpeechEngine` |
+| `Sources/BaymowKit/Engines/` | `PCMPlayer.swift` | Fælles lydafspiller for alle backends |
+| `Sources/BaymowKit/Engines/` | `PiperBackend.swift` | Piper via sherpa-onnx (laver kun lyd) |
+| `Sources/BaymowKit/Engines/` | `ModelDownloader.swift` | Stemmer, der kan hentes; `VoiceStore` |
+| `Sources/BaymowKit/UI/` | `AppShell.swift` | Livscyklus, menulinje, kobler tjenesterne sammen |
+| `Sources/BaymowKit/UI/` | `FloatingPlayer.swift`, `MainWindow.swift` | Afspiller, beskeder, indstillinger, stemmebibliotek |
+| `Sources/BaymowKit/Tools/` | `AccessibilityDiagnostics.swift`, `DeveloperTools.swift`, `LatencyProbe.swift` | Kommandolinjeværktøjer |
+| `Sources/BaymowKit/Features/` | (findes ikke endnu) | Fremtidige funktioner, én undermappe pr. funktion |
 
 ### Kernen
 
-**Kernen er MVP'en:** genvej → markeret tekst → session → stemme. Den består af alt i
-`Sources/BaymowKit/Core/` og af testfilen `Tests/BaymowKitTests/CoreContractTests.swift`.
+**Kernen er MVP'en:** genvej → markeret tekst → session → stemme. Den er SwiftPM-målet `BaymowCore`
+(`Sources/BaymowCore/`) med testmålet `BaymowCoreTests` (`Tests/BaymowCoreTests/`).
 
 Afhængigheder må kun pege indad:
 
 ```
-Tools ─┐
-UI ────┼──▶ Engines ──▶ Core        Features ──▶ Core
-       └──────────────▶ Core        UI ──▶ Features
+BaymowKit: Tools ─┐
+           UI ────┼──▶ Engines ──▶ BaymowCore        Features ──▶ BaymowCore
+                  └──────────────▶ BaymowCore        UI ──▶ Features
 ```
 
-`Core` må aldrig referere til en type fra `Engines`, `UI`, `Tools` eller `Features`.
+`BaymowCore` afhænger ikke af `BaymowKit`, og **compileren afviser det**: en kernefil, der importerer
+`BaymowKit` eller bruger en type derfra, kan ikke bygges. Har kernen brug for noget udefra, defineres en
+protokol i kernen, som `BaymowKit` opfylder – sådan som `SpeechEngine` gør for stemmemotorerne.
 
 **Kernekontrakten** er den adfærd, der ikke må ændre sig ved et uheld. Hvert punkt har tests i
-`CoreContractTests.swift`:
+`Tests/BaymowCoreTests/` (K7 også i `DanishTextNormalizerTests.swift`):
 
 | # | Kontrakt |
 |---|---|
@@ -151,7 +153,7 @@ UI ────┼──▶ Engines ──▶ Core        Features ──▶ Cor
 | K9 | Indstillinger overlever en genstart; standarderne er dansk, automatisk sprog, hastighed 1,0 og ⌃⌥S |
 | K10 | Loggen indeholder aldrig oplæst tekst |
 
-Fejler en kontrakt-test efter din ændring, er det ændringen, der er forkert. Ret ikke testen.
+Fejler en test i `Tests/BaymowCoreTests/` efter din ændring, er det ændringen, der er forkert. Ret ikke testen.
 
 **Bevidst kerneændring.** Kernen må gerne ændres – men kun med vilje. En ændring i en kernefil
 kræver et nyt afsnit i `docs/KERNEAENDRINGER.md` (hvad, hvorfor, hvilke kontrakter, godkendt af).
@@ -167,18 +169,18 @@ Brug de faste udvidelsespunkter. Passer funktionen ikke i et af dem, så stop og
 | En ny stemme eller stemmemotor | Ny `SynthesisBackend` (efter AP-10) eller `SpeechEngine` i `Engines/`; registrér den i `AppShell` | Nej |
 | En stemme, der kan hentes | Ny post i `DownloadableVoice.catalog` med SHA-256; `isApprovedDefault: false`, indtil stemmeporten er bestået | Nej |
 | En cloud-tjeneste | Som stemmemotor, med `requiresNetwork = true`, filen tilføjet til `Scripts/network-allowlist.txt`, slået fra som standard | Nej |
-| Noget, der følger oplæsningen (fx ordfremhævning, statistik) | Ny mappe i `Features/`, som observerer `ReadingSessionManager`s `@Published`-felter (`state`, `progress`, `language`, `sourceAppName`) | Nej |
+| Noget, der følger oplæsningen (fx ordfremhævning, statistik) | Ny mappe i `Sources/BaymowKit/Features/`, som observerer `ReadingSessionManager`s `@Published`-felter (`state`, `progress`, `language`, `sourceAppName`) | Nej |
 | En ny indstilling | Nyt felt i `SettingsStore` med en standardværdi, der giver uændret adfærd | Ja, lille – begrund i `KERNEAENDRINGER.md` |
 | Et nyt sprog | Ny `case` i `Language` + regler for stemmevalg; evt. en tekstforberedelse for sproget | Ja – begrund |
 | En ny måde at hente tekst på | Ny strategi i `TextCaptureService`, efter de eksisterende | Ja – begrund |
 | En ny loghændelse | Ny `case` i `DiagnosticsService.Event`; aldrig en fritekst-parameter | Ja, lille – begrund |
-| Noget, der bruger selve teksten (opsummering, stavehjælp) | Ny mappe i `Features/`. Teksten må kun hentes fra en ny, udtrykkelig metode på sessionen, og funktionen skal være slået fra som standard | Ja – kræver arkitektens ja |
+| Noget, der bruger selve teksten (opsummering, stavehjælp) | Ny mappe i `Sources/BaymowKit/Features/`. Teksten må kun hentes fra en ny, udtrykkelig metode på sessionen, og funktionen skal være slået fra som standard | Ja – kræver arkitektens ja |
 
 Tre regler for enhver ny funktion:
 
 1. **Slået fra som standard**, med en indstilling. Med funktionen slået fra opfører appen sig
    nøjagtigt som før – skriv en test, der viser det.
-2. **Egen mappe** under `Features/` og egne tests. Ingen ændringer i andre funktioners mapper.
+2. **Egen mappe** under `Sources/BaymowKit/Features/` og egne tests. Ingen ændringer i andre funktioners mapper.
 3. **Kernekontrakten består uændret.** Hvis den ikke kan det, er det en kerneændring, og så
    gælder afsnittet ovenfor.
 
@@ -290,7 +292,7 @@ En arbejdspakke er færdig, når **alle** punkter er opfyldt:
 
 - Pakkens acceptkriterier er opfyldt, og du har selv kørt kontrollen, der står under dem.
 - `./Scripts/check.sh` slutter med "ALT GRØNT".
-- Ny logik har tests. Tests bruger `FakeEngine`-mønstret fra `CoreContractTests.swift`, ikke lyd.
+- Ny logik har tests. Tests bruger `FakeEngine`-mønstret fra `Tests/BaymowCoreTests/CoreContractTests.swift`, ikke lyd.
 - `TEKNISK-VURDERING.md` er opdateret med nye målinger og begrænsninger.
 - Der ligger en aflevering i `docs/afleveringer/AP-xx.md` (skabelon: `docs/afleveringer/SKABELON.md`),
   og `docs/STATUS.md` og statuskolonnen i afsnit 6 er opdateret.
@@ -373,7 +375,7 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 | AP-20 | Afspilleren: afprøvning og rettelser | 2 | Udfører + bruger | AP-10 | Ikke startet |
 | AP-21 | Lange tekster og programskift | 2 | Udfører | AP-10 | Ikke startet |
 | AP-22 | Tekstforberedelse, runde 2 | 2 | Udfører | AP-02 | Færdig |
-| AP-23 | Kernen som eget kompileringsmål | 2 | Arkitekt eller stærk udfører | AP-10 | Ikke startet |
+| AP-23 | Kernen som eget kompileringsmål | 2 | Udfører | AP-10 | Færdig |
 | AP-24 | Engelske ord i dansk tekst | 2 | Arkitekt | – | Delvist: mekanismen er bygget, målet ikke nået (se afleveringen) |
 | AP-30 | Chrome | 3 | Udfører + bruger | AP-00 | Ikke startet |
 | AP-31 | Word og Preview/PDF | 3 | Udfører + bruger | AP-00 | Ikke startet |

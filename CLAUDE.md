@@ -1,7 +1,8 @@
 # Baymow
 
 Native macOS-app, der læser markeret tekst højt for mennesker med ordblindhed (⌃⌥S).
-Swift-pakke: `BaymowKit` (al logik og UI), `Baymow` (eksekverbar), `CSherpaOnnx` (C-header).
+Swift-pakke: `BaymowCore` (kernen), `BaymowKit` (stemmer, brugerflade, værktøjer), `Baymow` (eksekverbar),
+`CSherpaOnnx` (C-header).
 
 ## Læs først
 
@@ -37,14 +38,16 @@ Bygger, signerer, lægger appen i Programmer og genstarter den.
 
 ## Kernen må kun ændres med vilje
 
-Kernen er `Sources/BaymowKit/Core/` og `Tests/BaymowKitTests/CoreContractTests.swift`. Den er
+Kernen er målet `BaymowCore` (`Sources/BaymowCore/`) og dets tests (`Tests/BaymowCoreTests/`). Den er
 MVP'en: genvej → markeret tekst → session → stemme.
 
-- Nye funktioner bygges uden om kernen, i `Engines/` (stemmer) eller `Features/<Navn>/` (alt andet),
+- Nye funktioner bygges uden om kernen, i `Sources/BaymowKit/Engines/` (stemmer) eller
+  `Sources/BaymowKit/Features/<Navn>/` (alt andet),
   er slået fra som standard og bruger udvidelsespunkterne i planens afsnit 3.
-- Fejler en test i `CoreContractTests.swift` efter din ændring, er ændringen forkert. Ret ikke testen.
+- Fejler en test i `Tests/BaymowCoreTests/` efter din ændring, er ændringen forkert. Ret ikke testen.
 - Må kernen ændres, kræver det et nyt afsnit i `docs/KERNEAENDRINGER.md`. `check.sh` afviser ellers.
-- `Core/` må aldrig referere til typer fra `Engines/`, `UI/`, `Tools/` eller `Features/`.
+- `BaymowCore` kan ikke se `BaymowKit` – compileren afviser det. Har kernen brug for noget udefra, så lav
+  en protokol i kernen, som `BaymowKit` opfylder (som `SpeechEngine`).
 
 ## Regler, der ikke må brydes
 
@@ -63,7 +66,7 @@ MVP'en: genvej → markeret tekst → session → stemme.
 
 Du kan ikke høre lyd eller se skærmen. Skriv ikke, at noget virker, fordi det kompilerer.
 
-- Logik: tests med `FakeEngine`-mønstret i `Tests/BaymowKitTests/CoreContractTests.swift`.
+- Logik: tests med `FakeEngine`-mønstret i `Tests/BaymowCoreTests/CoreContractTests.swift`.
 - Oplæsningsfejl: stemmetesten i `tools/stemmetest/` (36 sætninger kontrolleret med talegenkendelse).
 - Lyd og udseende: giv brugeren en konkret testvejledning, og sæt pakken til "Afventer bruger".
 - Brugerens afprøvninger kan ses i `~/Library/Logs/Baymow/baymow.log`.

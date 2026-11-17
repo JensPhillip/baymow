@@ -1,5 +1,6 @@
 import AppKit
 import BaymowKit
+import BaymowCore
 
 // Programmet starter altid på hovedtråden.
 MainActor.assumeIsolated {

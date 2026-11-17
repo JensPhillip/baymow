@@ -137,7 +137,7 @@ public final class TextCaptureService: Sendable {
     }
 
     /// Finder webområder (AXWebArea) i et vindue med en bredde-først-søgning af begrænset størrelse.
-    static func webAreas(in window: AXUIElement, maxVisited: Int = 400) -> [AXUIElement] {
+    public static func webAreas(in window: AXUIElement, maxVisited: Int = 400) -> [AXUIElement] {
         var found: [AXUIElement] = []
         var queue: [AXUIElement] = [window]
         var visited = 0

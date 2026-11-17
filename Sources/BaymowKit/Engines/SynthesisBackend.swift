@@ -1,5 +1,6 @@
 import Foundation
 import NaturalLanguage
+import BaymowCore
 
 /// En bid mono-lyd i intervallet -1…1.
 public struct PCMChunk: Sendable {

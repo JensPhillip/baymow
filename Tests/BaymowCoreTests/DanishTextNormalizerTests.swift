@@ -1,5 +1,5 @@
 import XCTest
-@testable import BaymowKit
+@testable import BaymowCore
 
 /// Samme sætninger som i stemmetesten: skrevet tekst → sagt tekst.
 /// Listen genereres fra tools/stemmetest/sentences.py. Ret dér, og kør sync_swift_cases.py.

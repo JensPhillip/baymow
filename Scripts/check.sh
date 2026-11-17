@@ -32,14 +32,22 @@ else
   fail "testsætningerne er ude af trit: kør python3 tools/stemmetest/sync_swift_cases.py"
 fi
 
+# Kernen må kun afhænge af systemets egne rammer – aldrig af resten af pakken (compileren afviser det også).
+hits=$(grep -rnE '^\s*(@testable )?import (BaymowKit|CSherpaOnnx)' Sources/BaymowCore Tests/BaymowCoreTests || true)
+if [ -z "$hits" ] && swift build --target BaymowCore 2>&1 | tail -1 | grep -q "complete"; then
+  ok "kernen bygger alene og importerer intet fra resten af pakken"
+else
+  fail "kernen afhænger af resten af pakken:"; echo "$hits"
+fi
+
 echo "2. Privatliv"
 # Værktøjerne i Tools/ kører kun fra kommandolinjen og må skrive ud. Resten af appen må ikke.
 hits=$(grep -rnE '(^|[^A-Za-z_.])(print|debugPrint|dump|NSLog|os_log)\(|Logger\(' \
-  Sources/BaymowKit/Core Sources/BaymowKit/Engines Sources/BaymowKit/UI Sources/Baymow || true)
+  Sources/BaymowCore Sources/BaymowKit/Engines Sources/BaymowKit/UI Sources/Baymow || true)
 if [ -z "$hits" ]; then ok "ingen udskrift eller logning uden for DiagnosticsService"; else fail "udskrift/logning i app-koden:"; echo "$hits"; fi
 
-hits=$(grep -rnE '\.write\(to|FileHandle\(forWriting|createFile\(' Sources/BaymowKit/Core \
-  | grep -v 'Core/DiagnosticsService.swift' || true)
+hits=$(grep -rnE '\.write\(to|FileHandle\(forWriting|createFile\(' Sources/BaymowCore \
+  | grep -v 'BaymowCore/DiagnosticsService.swift' || true)
 if [ -z "$hits" ]; then ok "kernen skriver kun til disk i DiagnosticsService"; else fail "filskrivning i kernen:"; echo "$hits"; fi
 
 echo "3. Netværk"
@@ -53,7 +61,7 @@ echo "4. Kerne"
 if git rev-parse --git-dir >/dev/null 2>&1; then
   base=$(git merge-base HEAD "${BASE:-main}" 2>/dev/null || git rev-parse HEAD)
   changed=$( (git diff --name-only "$base"; git ls-files --others --exclude-standard) | sort -u)
-  core=$(echo "$changed" | grep -E '^(Sources/BaymowKit/Core/|Tests/BaymowKitTests/CoreContractTests\.swift)' || true)
+  core=$(echo "$changed" | grep -E '^(Sources/BaymowCore/|Tests/BaymowCoreTests/)' || true)
   if [ -z "$core" ]; then
     ok "kernen er uændret"
   elif echo "$changed" | grep -qx 'docs/KERNEAENDRINGER.md'; then

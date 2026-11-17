@@ -1,5 +1,6 @@
 import XCTest
 @testable import BaymowKit
+import BaymowCore
 
 /// Backend til tests: laver ingen lyd, men kan holdes tilbage, fejle og tælle kald.
 private final class FakeBackend: SynthesisBackend, @unchecked Sendable {

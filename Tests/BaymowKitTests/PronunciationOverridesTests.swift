@@ -1,5 +1,6 @@
 import XCTest
 @testable import BaymowKit
+import BaymowCore
 
 final class PronunciationOverridesTests: XCTestCase {
     private let list = ["chrome": "krovm", "cloud": "klawd", "login": "log in", "smartphone": "smartfon", "like": "lajk"]

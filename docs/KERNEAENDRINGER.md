@@ -1,6 +1,7 @@
 # Kerneændringer
 
-Kernen er filerne i `Sources/BaymowKit/Core/` og `Tests/BaymowKitTests/CoreContractTests.swift`.
+Kernen er målet `BaymowCore` (`Sources/BaymowCore/`) og dets tests (`Tests/BaymowCoreTests/`).
+Indtil 2026-11-17 lå den i `Sources/BaymowKit/Core/`; ældre afsnit nedenfor bruger de gamle stier.
 Den bærer MVP'en: genvej → markeret tekst → session → stemme. Nye funktioner bygges uden om den
 (se `PROJEKTPLAN.md` afsnit 3). Skal kernen alligevel ændres, skal det være med vilje, og hver
 ændring får et afsnit her. `Scripts/check.sh` afviser kerneændringer uden et nyt afsnit.
@@ -58,3 +59,14 @@ Kontrakt: K7 udvidet med 52 nye tilfælde (`tools/stemmetest/sentences_tekstforb
 `DanishTextNormalizerTests`) og 12 regressionstilfælde. Ingen af de 36 gamle tilfælde er ændret.
 Engelsk tekst forberedes fortsat ikke (`testEnglishTextIsNotChanged` uændret).
 Godkendt af: udfører efter planens AP-22, hvor kerneændringen er forudset.
+
+## 2026-11-17 · AP-23 · Kernen som eget kompileringsmål
+Hvad: `Sources/BaymowKit/Core/` er flyttet til målet `BaymowCore` (`Sources/BaymowCore/`).
+`CoreContractTests.swift` og `DanishTextNormalizerTests.swift` er flyttet til testmålet `BaymowCoreTests`,
+som kun afhænger af `BaymowCore`. `Language.sampleText` og `TextCaptureService.webAreas` er gjort `public`,
+fordi `BaymowKit` bruger dem. Ingen adfærd er ændret.
+Hvorfor: Planens AP-23. Compileren afviser nu, at kernen afhænger af motorer, brugerflade eller værktøjer.
+Kontrakt: Ingen tests er ændret i indhold – kun flyttet og med `@testable import BaymowCore`.
+`DanishTextNormalizerTests` hører nu formelt til kernen (kontrakt K7), så ændringer i testsætningerne,
+der genereres ind i den, er kerneændringer og skal begrundes her.
+Godkendt af: udfører efter planens AP-23, hvor kerneændringen er forudset.

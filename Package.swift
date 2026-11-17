@@ -14,15 +14,20 @@ let package = Package(
     platforms: [.macOS(.v14)],
     targets: [
         .target(name: "CSherpaOnnx", path: "Sources/CSherpaOnnx"),
-        // Al logik og UI ligger i BaymowKit, så det kan testes uden at starte appen.
+        // Kernen (MVP'en): genvej → markeret tekst → session → stemme. Må ikke afhænge af andre mål i
+        // pakken – det håndhæver compileren. Se docs/PROJEKTPLAN.md afsnit 3 og docs/KERNEAENDRINGER.md.
+        .target(name: "BaymowCore", path: "Sources/BaymowCore"),
+        // Stemmemotorer, brugerflade og værktøjer. Bygger oven på kernen.
         .target(
             name: "BaymowKit",
-            dependencies: ["CSherpaOnnx"],
+            dependencies: ["BaymowCore", "CSherpaOnnx"],
             path: "Sources/BaymowKit",
             linkerSettings: [.unsafeFlags(["-LVendor/sherpa-onnx/lib"]), .linkedLibrary("c++")]
                 + sherpaLibraries.map { .linkedLibrary($0) }
         ),
         .executableTarget(name: "Baymow", dependencies: ["BaymowKit"], path: "Sources/Baymow"),
-        .testTarget(name: "BaymowKitTests", dependencies: ["BaymowKit"], path: "Tests/BaymowKitTests"),
+        // Kernekontrakten testes mod kernen alene.
+        .testTarget(name: "BaymowCoreTests", dependencies: ["BaymowCore"], path: "Tests/BaymowCoreTests"),
+        .testTarget(name: "BaymowKitTests", dependencies: ["BaymowKit", "BaymowCore"], path: "Tests/BaymowKitTests"),
     ]
 )

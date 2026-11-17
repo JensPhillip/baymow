@@ -30,7 +30,7 @@ public enum Language: String, CaseIterable, Codable, Sendable, Identifiable {
         }
     }
 
-    var sampleText: String {
+    public var sampleText: String {
         switch self {
         case .danish: return "Hej! Sådan lyder jeg, når jeg læser dansk tekst højt."
         case .english: return "Hello! This is how I sound when I read English text aloud."

@@ -1,6 +1,7 @@
 import Foundation
 import CryptoKit
 import Combine
+import BaymowCore
 
 /// En stemme, der kan hentes til appen. Listen er fast og kontrolleret: hver post har en kontrolsum,
 /// så appen kun installerer præcis den fil, der er afprøvet.

@@ -8,7 +8,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
-TARGET = os.path.join(ROOT, "Tests/BaymowKitTests/DanishTextNormalizerTests.swift")
+TARGET = os.path.join(ROOT, "Tests/BaymowCoreTests/DanishTextNormalizerTests.swift")
 START, END = "        // GENERERET-START (tools/stemmetest/sync_swift_cases.py)\n", "        // GENERERET-SLUT\n"
 
 sys.path.insert(0, HERE)

@@ -1,5 +1,6 @@
 import Foundation
 import CSherpaOnnx
+import BaymowCore
 
 /// En indlæst Piper-model. Syntesen er blokerende og kaldes fra én seriel kø ad gangen.
 final class PiperModel: @unchecked Sendable {
