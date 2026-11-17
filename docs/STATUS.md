@@ -23,8 +23,8 @@ Sidst opdateret: 2026-11-17 af udfører (Claude Opus 5.5).
 
 | Hvad | Hvorfor | Blokerer |
 |---|---|---|
+| Prøv genvejen ⌃⌥S én gang efter omdøbningen | Den er ikke brugt siden; tilladelsen er bekræftet (2026-11-17) | – |
 | Hør lyttepakkerne, og udfyld `docs/LYTTESKEMA.md` | Kun brugeren kan afgøre, om en stemme er til at forstå | AP-03, AP-12, AP-19 |
-| Giv Baymow adgang under Tilgængelighed | Appen har fået nyt id og ses som en ny app | Al brug af genvejen |
 | Hent Apples større danske stemmer i Systemindstillinger | Billigste forsøg på en bedre stemme | AP-11 |
 | Bekræft B6: cloud-stemmer som tydeligt tilvalg | Bryder ellers med privatlivsløftet | AP-13, AP-14 |
 | Beslut B8: åben eller lukket kildekode | Piper/espeak-ng er GPL | AP-50 |
