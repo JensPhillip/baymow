@@ -1,0 +1,2 @@
+start 2026-11-18 11:03:58 · kørsel pid 89189
+slut 2026-11-18 19:55:33 · kørslens afslutningskode 0

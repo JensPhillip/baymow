@@ -403,7 +403,7 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 | AP-40 | Stemmebibliotek færdigt | 4 | Udfører | AP-19 | Færdig |
 | AP-41 | Førstegangsopsætning | 4 | Udfører + bruger | AP-40 | Afventer bruger (testperson) |
 | AP-50 | Licensoprydning | 5 | Arkitekt + udfører | AP-19, B8 | Ikke startet |
-| AP-51 | Stabilitet, hukommelse og privatlivskontrol | 5 | Udfører | AP-20 til AP-41 | I gang (otte timers kørsel 2026-11-18) |
+| AP-51 | Stabilitet, hukommelse og privatlivskontrol | 5 | Udfører | AP-20 til AP-41 | Færdig |
 | AP-52 | Developer ID, notarisering og DMG | 5 | Udfører + bruger | AP-50, B9 | Ikke startet |
 
 ### Fase 0 – Grundlag

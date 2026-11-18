@@ -303,6 +303,18 @@ Målt med `Baymow --memory-selftest` (20.000 tegn, skift af tekst midt i, luk; t
 Pipers motor bruger selv 180 MB på én kort sætning og 350 MB på en lang tekst og giver det ikke tilbage,
 før den lukkes. Baymow laver nu højst to sætninger lyd forud og lukker Pipers motor efter 60 s uden brug.
 
+### Programmer i brug (fra loggen, 18. november 2026)
+
+Loggen gemmer kun program, metode og tid – aldrig tekst. Brugerens egen brug efter nedbrudsrettelsen:
+
+| Program | Metode | Antal |
+|---|---|---|
+| VS Code | Tilgængelighed (26), webtekst (8), kopiering (1) | 35 |
+| Google Chrome | Kopiering | 4 |
+| Codex | Kopiering | 4 |
+| Claude | Tilgængelighed | 2 |
+| Mail | Webtekst | 2 |
+
 ### Cloud-stemmer (ElevenLabs m.fl.)
 
 Undersøgt på brugerens ønske. **Dette er et brud med specifikationens principper om offline-first
