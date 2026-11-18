@@ -27,6 +27,9 @@ MainActor.assumeIsolated {
         exit(DeveloperTools.synthesizeText(voiceDirectory: arguments[index + 1], textFile: arguments[index + 2],
                                            output: arguments[index + 3]))
     }
+    if arguments.contains("--capture-selftest") {
+        exit(CaptureSelfTest.run())
+    }
     if let index = arguments.firstIndex(of: "--memory-selftest") {
         exit(MemorySelfTest.run(engineName: arguments.count > index + 1 ? arguments[index + 1] : "apple"))
     }

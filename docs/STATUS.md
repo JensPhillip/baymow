@@ -23,9 +23,12 @@ Sidst opdateret: 2026-11-17 af udfører (Claude Opus 5.5).
   lander rigtigt.
 - **AP-21 færdig:** lange tekster bruger ikke længere hukommelse uden grænse (højst 2 sætninger lyd forud;
   Pipers motor lukkes ned efter 60 s uden brug); tekster over 200.000 tegn afvises med en venlig besked.
-- **Afventer bruger:** AP-03 (tal 1–5 i lytteskemaet mangler stadig for begge stemmer).
+- **AP-41 bygget:** velkomstvinduet "Kom i gang med Baymow" med tre trin; vises ved første start og fra
+  menulinjen. Afventer en testperson, der ikke har set Baymow før.
+- **Afventer bruger:** AP-41 (testperson), AP-03 (tal 1–5 i lytteskemaet mangler stadig for begge stemmer).
 - **I gang:** intet.
-- **Næste ledige pakker:** AP-41 (førstegangsopsætning), AP-20 (afspilleren – testrunde med brugeren) (lange tekster og programskift), AP-20 (afspilleren – kræver en testrunde med brugeren),
+- **Næste ledige pakker:** AP-20 (afspilleren – testrunde med brugeren, plus Rediger-menu), AP-31 (Word og
+  Preview – kræver brugeren), AP-51 (stabilitet og privatlivskontrol – kan laves uden brugeren) (lange tekster og programskift), AP-20 (afspilleren – kræver en testrunde med brugeren),
   AP-31 (Word og Preview – kræver brugeren).
   De rører ikke de samme filer og kan løses hver for sig.
 
@@ -35,12 +38,13 @@ Sidst opdateret: 2026-11-17 af udfører (Claude Opus 5.5).
 |---|---|---|
 | Prøv genvejen ⌃⌥S én gang efter omdøbningen | Den er ikke brugt siden; tilladelsen er bekræftet (2026-11-17) | – |
 | Hør lyttepakkerne, og udfyld `docs/LYTTESKEMA.md` | Kun brugeren kan afgøre, om en stemme er til at forstå | AP-03, AP-12, AP-19 |
+| Prøv "Kom i gang…" fra menulinjen, og find en testperson til førstegangsopsætningen | Kun et nyt menneske kan vise, om den er til at forstå | AP-41 |
 | Bekræft licensen (anbefaling: GPL-3.0-or-later) | Open source er besluttet; den konkrete licens mangler | AP-50 |
 | Acceptér vilkår for `syvai/plapre-3` på Hugging Face | Originalmodellen kræver det | AP-15 |
 
 ## Senest kontrolleret (2026-11-17)
 
-- `./Scripts/check.sh`: ALT GRØNT, 64 tests.
+- `./Scripts/check.sh`: ALT GRØNT, 69 tests.
 - `Baymow --memory-selftest apple|piper`: begge bestået (efter luk inden for 10 MB af udgangspunktet).
 - `Baymow --player-selftest`: den rigtige afspiller bestod alle fem punkter, lydløst.
 - `./Scripts/test-voice.sh`: Piper 28 af 36 (1,4 %), Apple Sara 23 af 36 (2,8 %) efter AP-22.

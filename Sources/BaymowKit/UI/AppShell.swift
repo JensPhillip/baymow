@@ -22,6 +22,9 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private lazy var windowModel = MainWindowModel(settings: settings, catalog: catalog, downloader: downloader,
                                                        sampleEngines: [AppleSpeechEngine(), BackendSpeechEngine(backend: piperBackend)])
 
+    private lazy var onboarding = OnboardingWindowController(
+        model: OnboardingModel(settings: settings, catalog: catalog, sampleEngine: AppleSpeechEngine()))
+
     private var statusItem: NSStatusItem?
     private var readMenuItem: NSMenuItem?
     private var mainWindow: NSWindow?
@@ -57,9 +60,10 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
             self?.registerShortcut(shortcut)
         }.store(in: &cancellables)
 
-        // Første opstart, eller manglende tilladelse: vis vinduet, så brugeren kan komme i gang.
-        if !settings.hasCompletedOnboarding || !TextCaptureService.hasPermission {
-            settings.hasCompletedOnboarding = true
+        // Første opstart: velkomstvinduet. Senere, hvis adgangen mangler: hovedvinduet, der forklarer det.
+        if !settings.hasCompletedOnboarding {
+            showOnboarding()
+        } else if !TextCaptureService.hasPermission {
             showMainWindow()
         }
     }
@@ -87,6 +91,19 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
         let triggeredAt = Date()
         notices.dismiss()
 
+        // Markeret tekst i Baymows eget vindue (eksempelteksten i "Kom i gang").
+        if let own = OwnWindowSelection.text() {
+            isCapturing = false
+            if let notice = sessions.start(text: own, sourceAppName: "Baymow", sourceBundleID: Bundle.main.bundleIdentifier,
+                                           triggeredAt: triggeredAt) {
+                present(notice)
+            } else {
+                player.show()
+                onboarding.model.readingStarted()
+            }
+            return
+        }
+
         Task {
             let result = await capture.capture()
             isCapturing = false
@@ -99,6 +116,7 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
                     present(notice)
                 } else {
                     player.show()
+                    onboarding.model.readingStarted()
                 }
             case .failure(let failure):
                 switch failure.notice {
@@ -155,6 +173,8 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     @objc private func readSelectionFromMenu() { readSelection() }
 
+    @objc public func showOnboarding() { onboarding.show() }
+
     private func buildStatusItem() {
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         item.button?.image = NSImage(systemSymbolName: "text.bubble", accessibilityDescription: "Baymow")
@@ -168,6 +188,9 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
         let open = NSMenuItem(title: "Åbn Baymow", action: #selector(showMainWindow), keyEquivalent: "")
         open.target = self
         menu.addItem(open)
+        let welcome = NSMenuItem(title: "Kom i gang…", action: #selector(showOnboarding), keyEquivalent: "")
+        welcome.target = self
+        menu.addItem(welcome)
         let prefs = NSMenuItem(title: "Indstillinger…", action: #selector(showMainWindow), keyEquivalent: ",")
         prefs.target = self
         menu.addItem(prefs)
