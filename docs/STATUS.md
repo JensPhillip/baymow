@@ -29,7 +29,8 @@ Sidst opdateret: 2026-11-17 af udfører (Claude Opus 5.5).
   fandt brugeren et nedbrud ved genvejen (kopiering fra baggrundstråd); rettet og bekræftet af brugeren.
   Afventer testrunden på 10 punkter (står i AP-20-afleveringen).
 - **Afventer bruger:** AP-20 (testrunde), AP-41 (testperson), AP-03 (tal 1–5 i lytteskemaet mangler stadig for begge stemmer).
-- **I gang:** intet.
+- **I gang:** AP-51 – otte timers stabilitets- og netværkskørsel, startet 2026-11-18 ca. 11:05
+  (`tools/stabilitet/soak.sh`). Byg gerne imens; kørslen bruger sin egen kopi i hukommelsen.
 - **Næste ledige pakker:** AP-51 (stabilitet og privatlivskontrol – kan laves uden brugeren), AP-31 (Word og
   Preview – kræver brugeren) (lange tekster og programskift), AP-20 (afspilleren – kræver en testrunde med brugeren),
   AP-31 (Word og Preview – kræver brugeren).
