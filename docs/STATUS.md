@@ -25,8 +25,9 @@ Sidst opdateret: 2026-11-17 af udfører (Claude Opus 5.5).
   Pipers motor lukkes ned efter 60 s uden brug); tekster over 200.000 tegn afvises med en venlig besked.
 - **AP-41 bygget:** velkomstvinduet "Kom i gang med Baymow" med tre trin; vises ved første start og fra
   menulinjen. Brugeren har bekræftet, at trin 3 virker. Afventer en testperson, der ikke har set Baymow før.
-- **AP-20 bygget:** hastighedsskift uden at starte forfra (også med Piper) og en Rediger-menu. Afventer
-  brugerens testrunde på 10 punkter (står i AP-20-afleveringen).
+- **AP-20 bygget:** hastighedsskift uden at starte forfra (også med Piper) og en Rediger-menu. Under testrunden
+  fandt brugeren et nedbrud ved genvejen (kopiering fra baggrundstråd); rettet og bekræftet af brugeren.
+  Afventer testrunden på 10 punkter (står i AP-20-afleveringen).
 - **Afventer bruger:** AP-20 (testrunde), AP-41 (testperson), AP-03 (tal 1–5 i lytteskemaet mangler stadig for begge stemmer).
 - **I gang:** intet.
 - **Næste ledige pakker:** AP-51 (stabilitet og privatlivskontrol – kan laves uden brugeren), AP-31 (Word og
