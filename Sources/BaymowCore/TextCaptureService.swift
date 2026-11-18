@@ -174,7 +174,8 @@ public final class TextCaptureService: Sendable {
 
         // Genvejens egne ændringstaster (fx ⌃⌥) må ikke blande sig i ⌘C.
         await waitForModifierRelease()
-        Self.postCopy()
+        // Tastaturlayoutet må kun aflæses på hovedtråden; ellers lukker macOS 26 appen (nedbrud 2026-11-18).
+        await Self.postCopy()
 
         var copied: String?
         for _ in 0..<25 {
@@ -199,6 +200,7 @@ public final class TextCaptureService: Sendable {
         }
     }
 
+    @MainActor
     private static func postCopy() {
         let source = CGEventSource(stateID: .privateState)
         let keyC = keyCodeForCopy()
@@ -211,7 +213,9 @@ public final class TextCaptureService: Sendable {
     }
 
     /// Tasten, der giver "c" på det aktive tastaturlayout (fx Dvorak), så ⌘C rammer rigtigt.
-    private static func keyCodeForCopy() -> CGKeyCode {
+    /// Skal kaldes på hovedtråden: macOS' tastaturfunktioner (TIS) afbryder appen, hvis de kaldes andre steder.
+    @MainActor
+    public static func keyCodeForCopy() -> CGKeyCode {
         let fallback: CGKeyCode = 8
         guard let source = TISCopyCurrentASCIICapableKeyboardLayoutInputSource()?.takeRetainedValue(),
               let pointer = TISGetInputSourceProperty(source, kTISPropertyUnicodeKeyLayoutData) else { return fallback }

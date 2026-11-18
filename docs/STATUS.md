@@ -65,6 +65,8 @@ Sidst opdateret: 2026-11-17 af udfører (Claude Opus 5.5).
 ## Kendte fælder
 
 - Kernen ligger i `Sources/BaymowCore/` (ikke længere `Sources/BaymowKit/Core/`). Ældre afleveringer bruger de gamle stier.
+- Kald til macOS' tastaturfunktioner (TIS) skal ske på hovedtråden – ellers lukker macOS 26 appen. En almindelig
+  test fanger det ikke; `--copykey-selftest` gør.
 - Brug altid scripts eller `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer` – systemets `swift` er for gammel.
 - espeak-ng fejler, hvis stien til dens data er over ca. 160 tegn.
 - sherpa-onnx 2.x har fjernet espeak-ng; projektet bruger derfor 1.13.8.

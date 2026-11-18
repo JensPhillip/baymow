@@ -60,6 +60,22 @@ public enum CaptureSelfTest {
         return passed ? 0 : 1
     }
 
+    /// `open -n -W build/Baymow.app --args --copykey-selftest`: aflæser tastaturet for ⌘C fra en baggrundsopgave
+    /// i en rigtig, kørende app – præcis som genvejen gør, når teksten hentes med kopiering. Før rettelsen
+    /// 2026-11-18 lukkede macOS appen her. Resultat i ~/Library/Logs/Baymow/capture-selftest.txt.
+    public static func runCopyKey() -> Int32 {
+        let app = NSApplication.shared
+        app.setActivationPolicy(.regular)
+        app.finishLaunching()
+        var code: Int?
+        Task.detached { code = Int(await TextCaptureService.keyCodeForCopy()) }
+        let end = Date().addingTimeInterval(5)
+        while code == nil, Date() < end { RunLoop.main.run(until: Date().addingTimeInterval(0.05)) }
+        let passed = code.map { (0..<128).contains($0) } ?? false
+        write(["kopieringstast fra baggrundsopgave: \(code.map(String.init) ?? "intet svar")", passed ? "BESTÅET" : "IKKE BESTÅET"])
+        return passed ? 0 : 1
+    }
+
     private static func write(_ lines: [String]) {
         let dir = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask)[0].appendingPathComponent("Logs/Baymow")
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)

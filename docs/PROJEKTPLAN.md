@@ -283,6 +283,7 @@ Nyttige værktøjer i den byggede app (`build/Baymow.app/Contents/MacOS/Baymow`)
 | `--synthesize-text <stemmemappe> <tekstfil> <ud.wav>` | Hele teksten som én lydfil, som appen ville læse den |
 | `--install-voice <id>` | Henter en stemme med samme kode som knappen "Hent" |
 | `--capture-selftest` (via `open -n -W build/Baymow.app --args …`) | Markerer eksempelteksten i Baymows eget vindue og henter den som genvejen; resultat i `~/Library/Logs/Baymow/capture-selftest.txt` |
+| `--copykey-selftest` (via `open -n -W build/Baymow.app --args …`) | Aflæser ⌘C-tasten fra en baggrundsopgave i en kørende app, som genvejen gør; fejlede med nedbrud før rettelsen 2026-11-18 |
 | `--player-selftest` | Lydløs kontrol af den rigtige afspiller: events, pause, fortsæt, stop, erstatning |
 | `--memory-selftest <apple\|piper>` | Lydløs måling af hukommelse ved 20.000 tegn, tekstskift og luk, tre gange |
 | `--ax-diagnose <bundle-id>` | Skal startes med `open -n -W build/Baymow.app --args …`; skriver til `~/Library/Logs/Baymow/ax-diagnose.txt` |

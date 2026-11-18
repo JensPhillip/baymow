@@ -27,6 +27,9 @@ MainActor.assumeIsolated {
         exit(DeveloperTools.synthesizeText(voiceDirectory: arguments[index + 1], textFile: arguments[index + 2],
                                            output: arguments[index + 3]))
     }
+    if arguments.contains("--copykey-selftest") {
+        exit(CaptureSelfTest.runCopyKey())
+    }
     if arguments.contains("--capture-selftest") {
         exit(CaptureSelfTest.run())
     }

@@ -90,3 +90,15 @@ Kontrakt: K5 udvidet med `testLiveRateChangeContinuesWithoutRestarting` og
 `testRateChangeWhenStoppedIsJustRemembered`. Eksisterende K5-tests er uændrede og består (motorer uden
 `setRate` opfører sig som før).
 Godkendt af: udfører efter planens AP-20, hvor ændringen er forudset.
+
+## 2026-11-18 · Rettelse · Nedbrud ved genvejen, når teksten hentes med kopiering
+Hvad: `TextCaptureService.postCopy` og `keyCodeForCopy` er markeret `@MainActor`, og kopierings-reserveløsningen
+kalder dem med `await`. Ingen anden adfærd er ændret.
+Hvorfor: `keyCodeForCopy` aflæser tastaturlayoutet med `TISCopyCurrentASCIICapableKeyboardLayoutInputSource`,
+som på macOS 26 kræver hovedtråden og ellers afbryder appen (`dispatch_assert_queue`). Den blev kaldt fra en
+baggrundstråd, så Baymow lukkede, hver gang genvejen brugte reserveløsningen. Fundet af brugeren under AP-20.
+`keyCodeForCopy` er gjort `public`, så selvtesten i `BaymowKit` kan kalde den.
+Kontrakt: Ingen tests ændret. En almindelig test kan ikke fange fejlen (macOS afbryder kun en kørende app,
+ikke et testprogram – afprøvet), så den fanges af selvtesten `--copykey-selftest`, som går ned uden rettelsen
+og består med den.
+Godkendt af: udfører; fejlrettelse.
