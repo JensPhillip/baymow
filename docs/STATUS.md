@@ -24,7 +24,7 @@ Sidst opdateret: 2026-11-17 af udfører (Claude Opus 5.5).
 - **AP-21 færdig:** lange tekster bruger ikke længere hukommelse uden grænse (højst 2 sætninger lyd forud;
   Pipers motor lukkes ned efter 60 s uden brug); tekster over 200.000 tegn afvises med en venlig besked.
 - **AP-41 bygget:** velkomstvinduet "Kom i gang med Baymow" med tre trin; vises ved første start og fra
-  menulinjen. Afventer en testperson, der ikke har set Baymow før.
+  menulinjen. Brugeren har bekræftet, at trin 3 virker. Afventer en testperson, der ikke har set Baymow før.
 - **Afventer bruger:** AP-41 (testperson), AP-03 (tal 1–5 i lytteskemaet mangler stadig for begge stemmer).
 - **I gang:** intet.
 - **Næste ledige pakker:** AP-20 (afspilleren – testrunde med brugeren, plus Rediger-menu), AP-31 (Word og
