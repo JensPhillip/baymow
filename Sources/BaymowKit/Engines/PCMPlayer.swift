@@ -5,9 +5,12 @@ import BaymowCore
 @MainActor
 public final class PCMPlayer: PCMOutput {
     public var volume: Float = 1 { didSet { player.volume = volume } }
+    public var rate: Double = 1 { didSet { timePitch.rate = Float(rate) } }
 
     private let engine = AVAudioEngine()
     private let player = AVAudioPlayerNode()
+    /// Ændrer tempoet uden at ændre tonehøjden.
+    private let timePitch = AVAudioUnitTimePitch()
     /// Formatet, afspilleren er koblet til. Bidder med en anden samplerate omregnes hertil.
     private var format: AVAudioFormat?
     /// Tæller op ved hvert stop, så callbacks fra bidder, der blev fjernet, kan kendes og ignoreres.
@@ -16,6 +19,7 @@ public final class PCMPlayer: PCMOutput {
 
     public init() {
         engine.attach(player)
+        engine.attach(timePitch)
     }
 
     public func enqueue(_ chunk: PCMChunk, onPlayed: @escaping () -> Void) -> Bool {
@@ -60,8 +64,10 @@ public final class PCMPlayer: PCMOutput {
         // Koblingen kan kun skiftes, når køen er tom. Ellers omregnes bidden til det aktuelle format.
         if format == nil || (format?.sampleRate != chunk.sampleRate && pendingBuffers == 0) {
             engine.stop()
-            engine.connect(player, to: engine.mainMixerNode, format: source)
+            engine.connect(player, to: timePitch, format: source)
+            engine.connect(timePitch, to: engine.mainMixerNode, format: source)
             player.volume = volume
+            timePitch.rate = Float(rate)
             format = source
             return buffer
         }

@@ -214,6 +214,21 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
         appItem.submenu = appMenu
         main.addItem(appItem)
 
+        // Rediger-menuen giver de almindelige genveje (⌘C, ⌘A …) i Baymows egne vinduer.
+        let editItem = NSMenuItem()
+        let editMenu = NSMenu(title: "Rediger")
+        editMenu.addItem(NSMenuItem(title: "Fortryd", action: Selector(("undo:")), keyEquivalent: "z"))
+        let redo = NSMenuItem(title: "Annuller fortryd", action: Selector(("redo:")), keyEquivalent: "z")
+        redo.keyEquivalentModifierMask = [.command, .shift]
+        editMenu.addItem(redo)
+        editMenu.addItem(.separator())
+        editMenu.addItem(NSMenuItem(title: "Klip", action: #selector(NSText.cut(_:)), keyEquivalent: "x"))
+        editMenu.addItem(NSMenuItem(title: "Kopiér", action: #selector(NSText.copy(_:)), keyEquivalent: "c"))
+        editMenu.addItem(NSMenuItem(title: "Sæt ind", action: #selector(NSText.paste(_:)), keyEquivalent: "v"))
+        editMenu.addItem(NSMenuItem(title: "Markér alt", action: #selector(NSText.selectAll(_:)), keyEquivalent: "a"))
+        editItem.submenu = editMenu
+        main.addItem(editItem)
+
         let windowItem = NSMenuItem()
         let windowMenu = NSMenu(title: "Vindue")
         windowMenu.addItem(NSMenuItem(title: "Luk vindue", action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w"))

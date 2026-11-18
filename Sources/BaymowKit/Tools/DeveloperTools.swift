@@ -132,6 +132,23 @@ public enum DeveloperTools {
         spin(20) { second.last == "finished" }
         check("ny oplæsning erstatter den gamle uden flere events fra den gamle", events.count == oldCount && second == ["started", "finished"])
 
+        // Tempo-skift undervejs (AP-20): samme tekst, normal hastighed mod skift til dobbelt tempo efter start.
+        func timedRun(switchTo newRate: Double?) -> (seconds: Double, events: [String]) {
+            events = []
+            let begin = Date()
+            engine.speak(text, voice: voice, rate: 1.0, onEvent: record)
+            spin(5) { events.contains("started") }
+            if let newRate { _ = engine.setRate(newRate) }
+            spin(40) { events.last == "finished" || events.last == "failed" }
+            return (Date().timeIntervalSince(begin), events)
+        }
+        let normal = timedRun(switchTo: nil)
+        let faster = timedRun(switchTo: 2.0)
+        print(String(format: "  info normal %.1f s, skift til 2× efter start %.1f s", normal.seconds, faster.seconds))
+        check("tempo-skift undervejs: læser til ende uden at starte forfra",
+              faster.events == ["started", "progress", "progress", "finished"])
+        check("tempo-skift undervejs: tydeligt hurtigere (under 75 % af tiden)", faster.seconds < normal.seconds * 0.75)
+
         print(failures == 0 ? "Afspilleren bestod" : "Afspilleren fejlede i \(failures) punkt(er)")
         return failures == 0 ? 0 : 1
     }

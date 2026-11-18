@@ -42,6 +42,8 @@ public extension SynthesisBackend {
 @MainActor
 public protocol PCMOutput: AnyObject {
     var volume: Float { get set }
+    /// Afspilningstempo, 1.0 = normalt. Ændrer ikke tonehøjden og gælder straks, også for lyd i køen.
+    var rate: Double { get set }
     /// Sætter en bid i kø. `onPlayed` kaldes på hovedtråden, når bidden er afspillet til ende –
     /// men aldrig for bidder, der blev fjernet af `stop()`.
     /// - Returns: `false`, hvis lyden ikke kunne sættes i kø.
@@ -125,6 +127,8 @@ public final class BackendSpeechEngine: SpeechEngine {
             return
         }
         let job = Job(handler: onEvent, offsets: sentences.map(\.utf16Offset), maxSentencesAhead: Self.maxSentencesAhead)
+        // Lyden laves altid i normalt tempo; afspilleren sætter tempoet, så det kan ændres undervejs (AP-20).
+        output.rate = rate
         self.job = job
         isPaused = false
 
@@ -138,7 +142,7 @@ public final class BackendSpeechEngine: SpeechEngine {
                 if !lookahead.acquire() { return }
                 // Afbrudt? Så spild hverken tid eller (for cloud) penge på resten.
                 if cancellation.isCancelled { return }
-                let result = Result { try backend.synthesize(sentence.text, voice: voice, rate: rate) }
+                let result = Result { try backend.synthesize(sentence.text, voice: voice, rate: 1.0) }
                 if cancellation.isCancelled { return }
                 DispatchQueue.main.async {
                     MainActor.assumeIsolated {
@@ -148,6 +152,12 @@ public final class BackendSpeechEngine: SpeechEngine {
                 if case .failure = result { return }
             }
         }
+    }
+
+    /// Skifter tempo med det samme – også midt i en sætning – uden at starte forfra.
+    public func setRate(_ rate: Double) -> Bool {
+        output.rate = rate
+        return true
     }
 
     public func pause() {

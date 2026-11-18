@@ -79,3 +79,14 @@ for timevis af oplæsning og en stor tekst i hukommelsen. Sessionen ejer starten
 Kontrakt: Ny test `testVeryLongTextIsRefusedWithAFriendlyNotice` (udvider K1/K3: ingen session ved afvisning).
 Ingen eksisterende tests er ændret.
 Godkendt af: udfører efter planens AP-21, hvor grænsen er forudset.
+
+## 2026-11-18 · AP-20 · Hastighedsskift uden at starte forfra
+Hvad: `SpeechEngine` har fået `setRate(_:) -> Bool` med en standardudgave, der returnerer `false`.
+`ReadingSessionManager.setRate` spørger først motoren; kan den skifte undervejs, fortsætter oplæsningen uden
+afbrydelse. Ellers bruges den gamle vej (start igen fra det nåede ord), som Apple-stemmerne fortsat bruger.
+Hvorfor: Planens AP-20. Backend-stemmer (Piper) kender kun sætningspositioner, så et hastighedsskift læste
+den aktuelle sætning forfra. Kun motoren ved, om den kan skifte undervejs, så spørgsmålet må stilles i kernen.
+Kontrakt: K5 udvidet med `testLiveRateChangeContinuesWithoutRestarting` og
+`testRateChangeWhenStoppedIsJustRemembered`. Eksisterende K5-tests er uændrede og består (motorer uden
+`setRate` opfører sig som før).
+Godkendt af: udfører efter planens AP-20, hvor ændringen er forudset.

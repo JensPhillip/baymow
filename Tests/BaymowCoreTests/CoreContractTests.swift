@@ -21,6 +21,15 @@ final class FakeEngine: SpeechEngine {
     ]
     var extraVoices: [Voice] = []
     var overrides: [String: String] = [:]
+    /// Når sat, kan motoren skifte hastighed undervejs, og skiftene huskes her.
+    var supportsLiveRate = false
+    var liveRates: [Double] = []
+
+    func setRate(_ rate: Double) -> Bool {
+        guard supportsLiveRate else { return false }
+        liveRates.append(rate)
+        return true
+    }
 
     func pronunciationOverrides(for language: Language) -> [String: String] { language == .danish ? overrides : [:] }
 
@@ -210,6 +219,33 @@ final class CoreContractTests: XCTestCase {
         engine.handler?(.progress(utf16Offset: secondOffset))
         sessions.setRate(1.6)
         XCTAssertTrue(engine.spoken.last?.text.hasPrefix("vejret") == true)
+    }
+
+    func testLiveRateChangeContinuesWithoutRestarting() {
+        engine.supportsLiveRate = true
+        sessions.start(text: danish)
+        sessions.setRate(1.5)
+        XCTAssertEqual(engine.liveRates, [1.5])
+        XCTAssertEqual(engine.spoken.count, 1, "en motor, der kan skifte undervejs, må ikke starte forfra")
+        XCTAssertEqual(sessions.state, .speaking)
+
+        sessions.pause()
+        sessions.setRate(0.8)
+        XCTAssertEqual(engine.liveRates, [1.5, 0.8])
+        sessions.resume()
+        XCTAssertEqual(engine.spoken.count, 1, "heller ikke efter pause")
+        XCTAssertFalse(engine.isPaused)
+    }
+
+    func testRateChangeWhenStoppedIsJustRemembered() {
+        engine.supportsLiveRate = true
+        sessions.start(text: danish)
+        sessions.stop()
+        sessions.setRate(1.3)
+        XCTAssertEqual(settings.rate, 1.3)
+        XCTAssertTrue(engine.liveRates.isEmpty)
+        sessions.restart()
+        XCTAssertEqual(engine.spoken.last?.rate, 1.3)
     }
 
     func testRateChangeWhilePausedStaysPausedUntilResume() {

@@ -9,6 +9,7 @@ private final class FakeBackend: SynthesisBackend, @unchecked Sendable {
 
     private let lock = NSLock()
     private var _calls: [String] = []
+    private var _rates: [Double] = []
     /// Når sat, venter hver syntese på et signal, så testen styrer rækkefølgen.
     var gate: DispatchSemaphore?
     /// Sætninger (0-baseret), der skal fejle eller give tom lyd.
@@ -21,12 +22,18 @@ private final class FakeBackend: SynthesisBackend, @unchecked Sendable {
         return _calls
     }
 
+    var rates: [Double] {
+        lock.lock(); defer { lock.unlock() }
+        return _rates
+    }
+
     func installedVoices() -> [Voice] { [] }
 
     func synthesize(_ sentence: String, voice: Voice, rate: Double) throws -> PCMChunk {
         lock.lock()
         let index = _calls.count
         _calls.append(sentence)
+        _rates.append(rate)
         lock.unlock()
         gate?.wait()
         if index == failingIndex { throw NSError(domain: "fake", code: 1) }
@@ -41,6 +48,7 @@ private final class FakeBackend: SynthesisBackend, @unchecked Sendable {
 @MainActor
 private final class FakeOutput: PCMOutput {
     var volume: Float = 1
+    var rate: Double = 1
     var chunks: [PCMChunk] = []
     var callbacks: [() -> Void] = []
     var playCount = 0
@@ -220,6 +228,20 @@ final class BackendSpeechEngineTests: XCTestCase {
         engine.pause()
         XCTAssertEqual(output.playCount, 0)
         XCTAssertEqual(output.pauseCount, 0)
+    }
+
+    // MARK: Hastighed (AP-20)
+
+    func testRateIsAppliedByThePlayerAndCanChangeWithoutRestarting() async {
+        engine.speak(text, voice: voice, rate: 1.5) { self.record($0) }
+        XCTAssertEqual(output.rate, 1.5)
+        await waitUntil("tre bidder i kø") { output.chunks.count == 3 }
+        XCTAssertEqual(backend.rates, [1.0, 1.0, 1.0], "lyden laves i normalt tempo; afspilleren sætter tempoet")
+
+        XCTAssertTrue(engine.setRate(0.7))
+        XCTAssertEqual(output.rate, 0.7)
+        XCTAssertEqual(backend.calls.count, 3, "et tempo-skift må ikke lave lyden om")
+        XCTAssertEqual(output.stopCount, 1, "et tempo-skift må ikke stoppe afspilningen (kun stop fra speak)")
     }
 
     // MARK: Højst to sætninger forud (AP-21)

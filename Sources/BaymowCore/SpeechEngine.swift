@@ -25,8 +25,12 @@ public protocol SpeechEngine: AnyObject {
     func pause()
     func resume()
     func stop()
+    /// Skifter hastighed for den igangværende oplæsning uden at starte forfra. Returnerer `false`, hvis motoren
+    /// ikke kan det – så starter sessionen i stedet igen fra det ord, der var nået. Standard: `false`.
+    func setRate(_ rate: Double) -> Bool
 }
 
 public extension SpeechEngine {
     func pronunciationOverrides(for language: Language) -> [String: String] { [:] }
+    func setRate(_ rate: Double) -> Bool { false }
 }

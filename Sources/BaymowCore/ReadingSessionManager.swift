@@ -133,12 +133,16 @@ public final class ReadingSessionManager: ObservableObject {
         speakCurrentChunk()
     }
 
-    /// Ændrer hastigheden. Gælder straks: den aktuelle bid fortsætter fra det ord, der var nået.
+    /// Ændrer hastigheden. Gælder straks: kan motoren skifte undervejs, fortsætter oplæsningen uden afbrydelse;
+    /// ellers fortsætter den aktuelle bid fra det ord, der var nået.
     public func setRate(_ rate: Double) {
         let clamped = min(max(rate, SettingsStore.rateRange.lowerBound), SettingsStore.rateRange.upperBound)
         let rounded = (clamped * 10).rounded() / 10
         guard rounded != settings.rate else { return }
         settings.rate = rounded
+        if (state == .speaking || state == .paused) && !respeakOnResume, activeEngine?.setRate(rounded) == true {
+            return
+        }
         respeakFromCurrentPosition()
     }
 
