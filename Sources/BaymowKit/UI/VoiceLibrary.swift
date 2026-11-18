@@ -67,8 +67,8 @@ enum VoiceLibrary {
         return rows
     }
 
-    /// Åbner "Læs og tal" i Systemindstillinger. Der findes ikke et officielt link; det mest sandsynlige prøves
-    /// først, og ellers åbnes Tilgængelighed, hvor vejledningen viser resten af vejen.
+    /// Åbner "Læs og tal" i Systemindstillinger. Der findes ikke et officielt link; det første virker på macOS 26
+    /// (bekræftet af brugeren 2026-11-18). Ellers åbnes Tilgængelighed, hvor vejledningen viser resten af vejen.
     @MainActor
     static func openVoiceSettings() {
         let candidates = [

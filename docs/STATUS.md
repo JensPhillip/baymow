@@ -19,8 +19,8 @@ Sidst opdateret: 2026-11-17 af udfører (Claude Opus 5.5).
   (licens afventer bekræftelse), Speechify-idéer lagt i planens idékatalog (fase 6).
 - **AP-30 delvist:** brugeren har bekræftet, at genvejen virker i Chrome.
 - **AP-40 færdig:** stemmebiblioteket med Prøv/Vælg/Hent/Fjern, robust download og vejledning til Sara
-  (forbedret). Brugeren har set det og bekræftet, at det ser rigtigt ud. Hvor knappen til Systemindstillinger
-  lander, er ikke oplyst.
+  (forbedret). Brugeren har set det og bekræftet, at det ser rigtigt ud, og at knappen til Systemindstillinger
+  lander rigtigt.
 - **AP-21 færdig:** lange tekster bruger ikke længere hukommelse uden grænse (højst 2 sætninger lyd forud;
   Pipers motor lukkes ned efter 60 s uden brug); tekster over 200.000 tegn afvises med en venlig besked.
 - **Afventer bruger:** AP-03 (tal 1–5 i lytteskemaet mangler stadig for begge stemmer).
