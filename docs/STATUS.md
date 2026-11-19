@@ -52,7 +52,7 @@ Sidst opdateret: 2026-11-17 af udfører (Claude Opus 5.5).
 
 ## Senest kontrolleret (2026-11-17)
 
-- `./Scripts/check.sh`: ALT GRØNT, 80 tests.
+- `./Scripts/check.sh`: ALT GRØNT, 78 tests.
 - `Baymow --memory-selftest apple|piper`: begge bestået (efter luk inden for 10 MB af udgangspunktet).
 - `Baymow --player-selftest`: den rigtige afspiller bestod alle fem punkter, lydløst.
 - `./Scripts/test-voice.sh`: Piper 28 af 36 (1,4 %), Apple Sara 23 af 36 (2,8 %) efter AP-22.
