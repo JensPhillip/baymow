@@ -175,6 +175,8 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     @objc public func showOnboarding() { onboarding.show() }
 
+    @objc public func showAbout() { AboutBaymow.show() }
+
     private func buildStatusItem() {
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         item.button?.image = NSImage(systemSymbolName: "text.bubble", accessibilityDescription: "Baymow")
@@ -195,6 +197,9 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
         prefs.target = self
         menu.addItem(prefs)
         menu.addItem(.separator())
+        let aboutItem = NSMenuItem(title: "Om Baymow", action: #selector(showAbout), keyEquivalent: "")
+        aboutItem.target = self
+        menu.addItem(aboutItem)
         menu.addItem(NSMenuItem(title: "Afslut Baymow", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
         item.menu = menu
         statusItem = item
@@ -205,6 +210,10 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
         let main = NSMenu()
         let appItem = NSMenuItem()
         let appMenu = NSMenu()
+        let about = NSMenuItem(title: "Om Baymow", action: #selector(showAbout), keyEquivalent: "")
+        about.target = self
+        appMenu.addItem(about)
+        appMenu.addItem(.separator())
         let prefs = NSMenuItem(title: "Indstillinger…", action: #selector(showMainWindow), keyEquivalent: ",")
         prefs.target = self
         appMenu.addItem(prefs)

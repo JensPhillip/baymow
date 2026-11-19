@@ -102,3 +102,12 @@ Kontrakt: Ingen tests ændret. En almindelig test kan ikke fange fejlen (macOS a
 ikke et testprogram – afprøvet), så den fanges af selvtesten `--copykey-selftest`, som går ned uden rettelsen
 og består med den.
 Godkendt af: udfører; fejlrettelse.
+
+## 2026-11-19 · AP-30 · Test af gendannelse af udklipsholderen
+Hvad: `TextCaptureService.snapshot(of:)` og `restore(_:to:)` er ændret fra `private` til `internal`, så de kan testes.
+Ingen adfærd er ændret.
+Hvorfor: Planens AP-30 kræver, at udklipsholderens tidligere indhold er uændret, efter at teksten er hentet med
+kopiering – også med et billede. Det kan testes direkte på en separat udklipsholder.
+Kontrakt: Nye tests i `Tests/BaymowCoreTests/ClipboardRestoreTests.swift` (tekst, billede og RTF byte for byte,
+flere elementer, tom udklipsholder). Ingen eksisterende tests er ændret.
+Godkendt af: udfører efter planens AP-30.

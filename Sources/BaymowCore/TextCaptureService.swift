@@ -234,13 +234,13 @@ public final class TextCaptureService: Sendable {
         }
     }
 
-    private static func snapshot(of pasteboard: NSPasteboard) -> [[(NSPasteboard.PasteboardType, Data)]] {
+    static func snapshot(of pasteboard: NSPasteboard) -> [[(NSPasteboard.PasteboardType, Data)]] {
         (pasteboard.pasteboardItems ?? []).map { item in
             item.types.compactMap { type in item.data(forType: type).map { (type, $0) } }
         }
     }
 
-    private static func restore(_ snapshot: [[(NSPasteboard.PasteboardType, Data)]], to pasteboard: NSPasteboard) {
+    static func restore(_ snapshot: [[(NSPasteboard.PasteboardType, Data)]], to pasteboard: NSPasteboard) {
         pasteboard.clearContents()
         let items = snapshot.map { entries -> NSPasteboardItem in
             let item = NSPasteboardItem()

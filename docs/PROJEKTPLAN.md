@@ -348,7 +348,7 @@ Spørg ikke om navne, småstrukturer og andre valg, der er nemme at lave om.
 | B10 | Kernen (afsnit 3) ændres kun bevidst og med begrundelse; nye funktioner bygges uden om den og er slået fra som standard | Truffet af brugeren 16. november 2026 |
 | B6 | Cloud-stemmer laves **ikke nu**. De kan blive en senere forbedring; hvis de kommer, er de et udtrykkeligt tilvalg, aldrig standard eller stille fallback | Truffet af brugeren 17. november 2026. AP-13 og AP-14 er udskudt |
 | B7 | Baymows danske hovedstemme er **Apple Sara (Enhanced)** (`com.apple.voice.enhanced.da-DK.Sara`) | Truffet af brugeren 17. november 2026 efter lytning (AP-19). Engelsk: Apples bedste installerede stemme |
-| B8 | Baymow bliver **open source**, med mulighed for at tjene penge senere, og det er en fordel, at koden kan gennemskues udefra. Konkret licens: se "Licens og indtjening" nedenfor | Truffet af brugeren 17. november 2026. Valg af licens afventer brugerens bekræftelse (kræves først før udgivelse) |
+| B8 | Baymow er **open source under GPL-3.0-or-later**, med mulighed for at tjene penge senere; koden skal kunne gennemskues udefra | Truffet af brugeren 17.–18. november 2026. Licens bekræftet 18. november. Se `docs/LICENSER.md` |
 | B9 | Appen hedder **Baymow** | Truffet af brugeren 16. november 2026. Bundle-id `dk.baymow.app` er stadig en pladsholder og skal afgøres før AP-52 |
 
 ---
@@ -366,7 +366,7 @@ Arkitektens anbefaling, ikke juridisk rådgivning:
 - **Hold døren åben for dobbeltlicens.** Vil man senere kunne sælge en lukket udgave til en virksomhed,
   skal man eje ophavsretten til al koden. Tager projektet imod bidrag udefra, bør bidragydere derfor
   skrive under på en bidragsaftale (CLA), før deres kode flettes ind.
-- Licensfilen (`LICENSE`) og "Om"-siden laves i AP-50, når brugeren har bekræftet licensen.
+- Licensfilen (`LICENSE`), `docs/LICENSER.md` og "Om Baymow" er lavet i AP-50 (18. november 2026).
 
 ## 6. Arbejdspakker
 
@@ -397,12 +397,12 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 | AP-22 | Tekstforberedelse, runde 2 | 2 | Udfører | AP-02 | Færdig |
 | AP-23 | Kernen som eget kompileringsmål | 2 | Udfører | AP-10 | Færdig |
 | AP-24 | Engelske ord i dansk tekst | 2 | Arkitekt | – | Delvist: mekanismen er bygget, målet ikke nået (se afleveringen) |
-| AP-30 | Chrome | 3 | Udfører + bruger | AP-00 | Delvist: brugeren har bekræftet, at genvejen virker (via kopiering, 0,65 s) |
+| AP-30 | Chrome | 3 | Udfører + bruger | AP-00 | Delvist: genvejen virker (bruger); udklipsholderen gendannes (tests); tekstfelter og PDF i Chrome afventer bruger |
 | AP-31 | Word og Preview/PDF | 3 | Udfører + bruger | AP-00 | Ikke startet |
 | AP-32 | Google Docs og testmatrix | 3 | Udfører + bruger | AP-30 | Ikke startet |
 | AP-40 | Stemmebibliotek færdigt | 4 | Udfører | AP-19 | Færdig |
 | AP-41 | Førstegangsopsætning | 4 | Udfører + bruger | AP-40 | Afventer bruger (testperson) |
-| AP-50 | Licensoprydning | 5 | Arkitekt + udfører | AP-19, B8 | Ikke startet |
+| AP-50 | Licensoprydning | 5 | Arkitekt + udfører | AP-19, B8 | Færdig (licenstekster for MIT/BSD/Apache lægges i appen i AP-52) |
 | AP-51 | Stabilitet, hukommelse og privatlivskontrol | 5 | Udfører | AP-20 til AP-41 | Færdig |
 | AP-52 | Developer ID, notarisering og DMG | 5 | Udfører + bruger | AP-50, B9 | Ikke startet |
 
