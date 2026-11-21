@@ -38,6 +38,17 @@ MainActor.assumeIsolated {
     if let index = arguments.firstIndex(of: "--inplace-selftest") {
         exit(InPlaceSelfTest.run(target: arguments.count > index + 1 ? arguments[index + 1] : "textedit"))
     }
+    if arguments.contains("--rate-sweep") {
+        exit(RateTool.sweep())
+    }
+    if let index = arguments.firstIndex(of: "--rate-wavs"), arguments.count > index + 3 {
+        exit(RateTool.wavs(factor: Double(arguments[index + 1]) ?? 1, textFile: arguments[index + 2],
+                           outputDirectory: arguments[index + 3]))
+    }
+    if let index = arguments.firstIndex(of: "--rate-stretch"), arguments.count > index + 3 {
+        exit(RateTool.stretch(factor: Double(arguments[index + 1]) ?? 1, inputDirectory: arguments[index + 2],
+                              outputDirectory: arguments[index + 3]))
+    }
     if arguments.contains("--highlight-selftest") {
         exit(HighlightSelfTest.run())
     }

@@ -177,3 +177,12 @@ Hvorfor: Brugeren fandt, at fremhævning i teksten kun virkede i Noter. Målt me
 Kontrakt: Ingen tests ændret. Dækket af selvtesten `--inplace-selftest safari` (før: intet anker; efter: 14 af 14 felter
 oven på ord) og `--inplace-selftest textedit` (17 af 17).
 Godkendt af: udfører; fejlrettelse.
+
+## 2026-11-21 · I3 · Højere hastighed (op til 3×)
+Hvad: `SettingsStore.rateRange` er hævet fra 0,5…2,0 til 0,5…3,0. Kontrakt K5 i planen er rettet tilsvarende.
+Hvorfor: Brugeren bad 21. november 2026 om højere hastighed. Erfarne lyttere hører hurtigere, end de selv læser.
+Målt med `--rate-sweep`: Saras faktiske tempo følger nu tallet i afspilleren (2× = 2,05×, 3× = 2,98×; omregningen
+ligger uden for kernen i `AppleSpeechEngine.systemRate`). Talegenkendelsen kan ikke følge dansk over 2× (også lyd, der er
+speedet op uden om Sara, giver mange fejl), så om 2,5× og 3× er til at forstå, afgøres af brugerens lytning.
+Kontrakt: `testRateIsClamped` forventer nu 3,0 i stedet for 2,0 ved for høj hastighed. Ingen andre tests ændret.
+Godkendt af: brugeren (ønsket 2026-11-21).

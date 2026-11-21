@@ -34,7 +34,7 @@ public struct Shortcut: Equatable, Sendable {
 /// Lokalt gemte indstillinger (UserDefaults). Indeholder aldrig oplæst tekst.
 @MainActor
 public final class SettingsStore: ObservableObject {
-    public static let rateRange: ClosedRange<Double> = 0.5...2.0
+    public static let rateRange: ClosedRange<Double> = 0.5...3.0
 
     private let defaults: UserDefaults
 

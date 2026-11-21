@@ -264,7 +264,7 @@ final class CoreContractTests: XCTestCase {
     func testRateIsClamped() {
         sessions.start(text: danish)
         sessions.setRate(9)
-        XCTAssertEqual(settings.rate, 2.0)
+        XCTAssertEqual(settings.rate, 3.0)
         sessions.setRate(0)
         XCTAssertEqual(settings.rate, 0.5)
     }

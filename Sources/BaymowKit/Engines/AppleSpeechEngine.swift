@@ -96,7 +96,8 @@ public final class AppleSpeechEngine: NSObject, SpeechEngine {
     /// Omsætter hastighedsfaktoren til AVSpeechUtterance-skalaen (0…1, hvor 0,5 er normal).
     static func systemRate(for factor: Double) -> Float {
         let normal = Double(AVSpeechUtteranceDefaultSpeechRate)
-        let value = factor <= 1 ? normal * (0.5 + 0.5 * factor) : normal + (factor - 1) * 0.2
+        // Over normal: målt med `--rate-sweep` (I3), så 2× og 3× også reelt er dobbelt og tredobbelt tempo for Sara.
+        let value = factor <= 1 ? normal * (0.5 + 0.5 * factor) : normal + (factor - 1) * 0.17
         return Float(min(max(value, Double(AVSpeechUtteranceMinimumSpeechRate)), Double(AVSpeechUtteranceMaximumSpeechRate)))
     }
 
