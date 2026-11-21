@@ -49,6 +49,21 @@ final class LineBreakCleanupTests: XCTestCase {
                        "en lang linje uden punktum der fortsætter på næste linje.")
     }
 
+    func testParagraphsGluedTogetherGetASpace() {
+        // Sådan kom teksten fra Claude-appen 2026-11-21.
+        XCTAssertEqual(LineBreakCleanup.clean("Baymow husker størrelsen.Sig til, hvis noget skal ændres."),
+                       "Baymow husker størrelsen. Sig til, hvis noget skal ændres.")
+        XCTAssertEqual(LineBreakCleanup.clean("Er det klart?Ja!Godt."), "Er det klart? Ja! Godt.")
+        XCTAssertEqual(LineBreakCleanup.clean("Han sagde \"Hej.\"Så gik han."), "Han sagde \"Hej.\" Så gik han.")
+        XCTAssertEqual(LineBreakCleanup.clean("Sådan gør du:Markér teksten."), "Sådan gør du: Markér teksten.")
+    }
+
+    func testOrdinaryPunctuationIsLeftAlone() {
+        for text in ["Det koster 249,95 kr.", "Klokken er 14.30 nu.", "Se www.dr.dk for mere.", "iPhone og PowerPoint."] {
+            XCTAssertEqual(LineBreakCleanup.clean(text), text)
+        }
+    }
+
     func testPlainTextIsUnchanged() {
         let text = "Helt almindelig tekst. Uden linjeskift."
         XCTAssertEqual(LineBreakCleanup.clean(text), text)

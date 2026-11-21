@@ -66,6 +66,9 @@ public final class SettingsStore: ObservableObject {
     }
     /// Ordfremhævning (I1): vis teksten i et vindue, og fremhæv ordet, der læses. Slået fra som standard.
     @Published public var showReadingWindow: Bool { didSet { defaults.set(showReadingWindow, forKey: "showReadingWindow") } }
+    /// Fremhæv ordet direkte i teksten i kildeprogrammet (I1), hvor programmet oplyser, hvor teksten står.
+    /// Slået fra som standard.
+    @Published public var highlightInPlace: Bool { didSet { defaults.set(highlightInPlace, forKey: "highlightInPlace") } }
     public var hasCompletedOnboarding: Bool { didSet { defaults.set(hasCompletedOnboarding, forKey: "hasCompletedOnboarding") } }
 
     public init(defaults: UserDefaults = .standard) {
@@ -92,5 +95,6 @@ public final class SettingsStore: ObservableObject {
         }
         hasCompletedOnboarding = defaults.bool(forKey: "hasCompletedOnboarding")
         showReadingWindow = defaults.bool(forKey: "showReadingWindow")
+        highlightInPlace = defaults.bool(forKey: "highlightInPlace")
     }
 }

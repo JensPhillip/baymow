@@ -148,3 +148,22 @@ udtrykkelig metode. Teksten gemmes stadig ingen steder; den vises kun i et vindu
 Kontrakt: 6 nye kontrakt-tests (tekst kun under sessionen, ordet, tal i skriftform, sætning for sætnings-motorer,
 rydning ved stop/færdig/luk, standard slået fra) og 6 `WordAlignmentTests`. Ingen eksisterende tests er ændret.
 Godkendt af: brugeren (valgte I1, 2026-11-21).
+
+## 2026-11-21 · Rettelse · Afsnit uden mellemrum ("størrelsen.Sig")
+Hvad: `LineBreakCleanup.clean` indsætter et mellemrum, når et stort bogstav følger lige efter et sætningstegn
+(`.!?:;`, evt. efter et anførselstegn eller en slutparentes).
+Hvorfor: Fundet af brugeren under AP-60: tekst hentet med Tilgængelighed fra programmer, der viser websider (her
+Claude-appen), kan have afsnit klistret sammen uden mellemrum. Det så forkert ud i tekstvinduet og kan give forkert
+oplæsning.
+Kontrakt: 2 nye tests i `LineBreakCleanupTests`. Ingen eksisterende tests ændret.
+Godkendt af: udfører; fejlrettelse.
+
+## 2026-11-21 · I1 · Fremhævning direkte i teksten
+Hvad: Ny `SelectionAnchor` (reference til tekstfeltet og markeringens start – aldrig teksten) og
+`CapturedText.anchor`. `TextCaptureService` opretter ankeret, når markeringen hentes med Tilgængelighed og
+programmet oplyser markeringens start. `SettingsStore.highlightInPlace`, **slået fra som standard**.
+Hvorfor: Brugeren ønskede 21. november 2026 at kunne fremhæve ordet direkte i teksten, uden et separat vindue,
+som et valg ved siden af vinduet. Kun indfangningen ved, hvor markeringen sidder.
+Kontrakt: Ingen eksisterende tests ændret; standarden "slået fra" er dækket af den nye indstillings test i
+`testReadingWindowIsOffByDefaultAndRemembered` (udvidet) og af selvtesten `--inplace-selftest`.
+Godkendt af: brugeren (ønsket 2026-11-21).

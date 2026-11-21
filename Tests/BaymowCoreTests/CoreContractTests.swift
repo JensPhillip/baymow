@@ -383,6 +383,7 @@ final class CoreContractTests: XCTestCase {
 
     func testReadingWindowIsOffByDefaultAndRemembered() {
         XCTAssertFalse(settings.showReadingWindow, "ordfremhævning er slået fra, til brugeren slår den til")
+        XCTAssertFalse(settings.highlightInPlace, "fremhævning i teksten er slået fra, til brugeren slår den til")
         settings.showReadingWindow = true
         XCTAssertTrue(SettingsStore(defaults: defaults).showReadingWindow)
     }

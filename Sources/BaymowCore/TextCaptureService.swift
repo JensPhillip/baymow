@@ -8,6 +8,18 @@ public struct CapturedText: Sendable {
     public let sourceBundleID: String?
     public let sourceAppName: String?
     public let method: DiagnosticsService.CaptureMethod
+    /// Hvor markeringen sidder, så ord kan fremhæves direkte i teksten. `nil`, hvis programmet ikke oplyser det
+    /// (fx når teksten er hentet med kopiering).
+    public let anchor: SelectionAnchor?
+
+    init(text: String, sourceBundleID: String?, sourceAppName: String?, method: DiagnosticsService.CaptureMethod,
+         anchor: SelectionAnchor? = nil) {
+        self.text = text
+        self.sourceBundleID = sourceBundleID
+        self.sourceAppName = sourceAppName
+        self.method = method
+        self.anchor = anchor
+    }
 }
 
 public struct CaptureFailure: Error, Sendable {
@@ -56,7 +68,8 @@ public final class TextCaptureService: Sendable {
         let pid = app.processIdentifier
         let ax = await Task.detached(priority: .userInitiated) { Self.readSelectionViaAccessibility(pid: pid) }.value
         if let text = ax.text {
-            return .success(CapturedText(text: text, sourceBundleID: bundleID, sourceAppName: appName, method: ax.method))
+            return .success(CapturedText(text: text, sourceBundleID: bundleID, sourceAppName: appName, method: ax.method,
+                                         anchor: ax.anchor))
         }
 
         switch await readSelectionViaClipboard() {
@@ -81,6 +94,7 @@ public final class TextCaptureService: Sendable {
         var text: String?
         var method: DiagnosticsService.CaptureMethod = .accessibility
         var foundFocusedElement = false
+        var anchor: SelectionAnchor?
     }
 
     private static func readSelectionViaAccessibility(pid: pid_t) -> AXResult {
@@ -101,9 +115,10 @@ public final class TextCaptureService: Sendable {
         }
         if err == .success, let focusedRef, CFGetTypeID(focusedRef) == AXUIElementGetTypeID() {
             result.foundFocusedElement = true
-            if let hit = selection(in: focusedRef as! AXUIElement) {
+            if let hit = selection(in: focusedRef as! AXUIElement, pid: pid) {
                 result.text = hit.text
                 result.method = hit.method
+                result.anchor = hit.anchor
                 return result
             }
         }
@@ -115,9 +130,10 @@ public final class TextCaptureService: Sendable {
            let windowRef, CFGetTypeID(windowRef) == AXUIElementGetTypeID() {
             for area in webAreas(in: windowRef as! AXUIElement) {
                 result.foundFocusedElement = true
-                if let hit = selection(in: area) {
+                if let hit = selection(in: area, pid: pid) {
                     result.text = hit.text
                     result.method = hit.method
+                    result.anchor = hit.anchor
                     return result
                 }
             }
@@ -125,11 +141,13 @@ public final class TextCaptureService: Sendable {
         return result
     }
 
-    private static func selection(in element: AXUIElement) -> (text: String, method: DiagnosticsService.CaptureMethod)? {
+    private static func selection(in element: AXUIElement, pid: pid_t)
+        -> (text: String, method: DiagnosticsService.CaptureMethod, anchor: SelectionAnchor?)? {
         var value: CFTypeRef?
         if AXUIElementCopyAttributeValue(element, kAXSelectedTextAttribute as CFString, &value) == .success,
            let text = usable(value as? String) {
-            return (text, .accessibility)
+            return (text, .accessibility, SelectionAnchor.make(element: element, method: .accessibility, markerRange: nil,
+                                                               processIdentifier: pid))
         }
         var markerRange: CFTypeRef?
         if AXUIElementCopyAttributeValue(element, "AXSelectedTextMarkerRange" as CFString, &markerRange) == .success,
@@ -137,7 +155,8 @@ public final class TextCaptureService: Sendable {
             var string: CFTypeRef?
             if AXUIElementCopyParameterizedAttributeValue(element, "AXStringForTextMarkerRange" as CFString, markerRange, &string) == .success,
                let text = usable(string as? String) {
-                return (text, .webTextMarker)
+                return (text, .webTextMarker, SelectionAnchor.make(element: element, method: .webTextMarker,
+                                                                   markerRange: markerRange, processIdentifier: pid))
             }
         }
         return nil

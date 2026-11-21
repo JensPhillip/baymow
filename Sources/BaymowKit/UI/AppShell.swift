@@ -21,6 +21,8 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private lazy var notices = NoticePresenter(settings: settings)
     /// Ordfremhævning (I1). Gør intet, før brugeren slår den til.
     private lazy var readingWindow = ReadingWindowController(sessions: sessions, settings: settings)
+    /// Fremhævning direkte i teksten (I1). Gør intet, før brugeren slår den til.
+    private lazy var inPlaceHighlighter = InPlaceHighlighter(sessions: sessions, settings: settings)
     private lazy var windowModel = MainWindowModel(settings: settings, catalog: catalog, downloader: downloader,
                                                        sampleEngines: [AppleSpeechEngine(), BackendSpeechEngine(backend: piperBackend)])
 
@@ -58,6 +60,7 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
         }
 
         _ = readingWindow
+        _ = inPlaceHighlighter
 
         shortcuts.onTrigger = { [weak self] in self?.readSelection() }
         settings.$shortcut.removeDuplicates().sink { [weak self] shortcut in
@@ -121,6 +124,7 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
                 } else {
                     player.show()
                     onboarding.model.readingStarted()
+                    inPlaceHighlighter.begin(captured: captured.text, anchor: captured.anchor)
                 }
             case .failure(let failure):
                 switch failure.notice {

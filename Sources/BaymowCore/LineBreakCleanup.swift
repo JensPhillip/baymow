@@ -45,7 +45,16 @@ public enum LineBreakCleanup {
             }
             index += 1
         }
-        return lines.joined(separator: "\n")
+        return gluedSentencesSeparated(lines.joined(separator: "\n"))
+    }
+
+    /// Programmer, der viser tekst som websider (fx Claude og Mail), kan aflevere afsnit uden mellemrum imellem:
+    /// "størrelsen.Sig til". Et mellemrum indsættes, når et stort bogstav følger lige efter et sætningstegn
+    /// (evt. efter et anførselstegn eller en slutparentes). Fundet af brugeren 2026-11-21.
+    static func gluedSentencesSeparated(_ text: String) -> String {
+        guard let regex = try? NSRegularExpression(pattern: #"([.!?:;]["'”»)]?)(?=\p{Lu})"#) else { return text }
+        return regex.stringByReplacingMatches(in: text, range: NSRange(location: 0, length: (text as NSString).length),
+                                              withTemplate: "$1 ")
     }
 
     /// Punktopstilling eller nummereret liste: "- ", "• ", "* ", "1. ", "2) ".

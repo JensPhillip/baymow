@@ -31,6 +31,9 @@ MainActor.assumeIsolated {
         exit(SoakTest.run(minutes: Double(arguments[index + 1]) ?? 480, interval: Double(arguments[index + 2]) ?? 300,
                           outputDirectory: arguments[index + 3]))
     }
+    if arguments.contains("--inplace-selftest") {
+        exit(InPlaceSelfTest.run())
+    }
     if arguments.contains("--highlight-selftest") {
         exit(HighlightSelfTest.run())
     }
