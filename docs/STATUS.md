@@ -7,8 +7,8 @@ Sidst opdateret: 2026-11-21 af udfører (Claude Opus 5.5).
 
 - **I gang:** intet.
 - **Færdige pakker:** AP-00, AP-01, AP-02, AP-10, AP-11, AP-12, AP-19 (hovedstemme: Apple Sara (Enhanced)),
-  AP-21, AP-22, AP-23, AP-30, AP-40, AP-50, AP-51.
-- **Venter på brugeren:** AP-20 (testrunde på 10 punkter), AP-31 (PDF over flere linjer og indscannet side),
+  AP-21, AP-22, AP-23, AP-30, AP-31, AP-40, AP-50, AP-51.
+- **Venter på brugeren:** AP-20 (testrunde på 10 punkter),
   AP-41 (testperson – udskudt af brugeren 2026-11-18), AP-03 (tal 1–5 i lytteskemaet; ikke afgørende længere).
 - **Delvist:** AP-24 – udtalelister pr. motor er bygget, men gav kun lidt (Piper 14 → 18 af 30, Apple uændret).
 - **Parkeret eller udskudt:** AP-13/14 (cloud-stemmer, B6), AP-15/16 (Plapre, Røst – hovedstemmen er valgt).
@@ -25,7 +25,6 @@ Sidst opdateret: 2026-11-21 af udfører (Claude Opus 5.5).
 | Hør lyttepakkerne, og udfyld `docs/LYTTESKEMA.md` | Kun brugeren kan afgøre, om en stemme er til at forstå | AP-03, AP-12, AP-19 |
 | Gennemfør testrunden for afspilleren (10 punkter i AP-20-afleveringen) | Knapper og lyd kan kun prøves af brugeren | AP-20 |
 | Find en testperson til førstegangsopsætningen (udskudt af brugeren 2026-11-18) | Kun et nyt menneske kan vise, om den er til at forstå | AP-41 |
-| Markér et afsnit over flere linjer i en PDF i Preview, og prøv en indscannet side | Kræver brugerens ører | AP-31 |
 | Acceptér vilkår for `syvai/plapre-3` på Hugging Face | Originalmodellen kræver det | AP-15 |
 
 ## Senest kontrolleret (2026-11-17)
