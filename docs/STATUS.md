@@ -13,7 +13,7 @@ Sidst opdateret: 2026-11-21 af udfører (Claude Opus 5.5).
 - **Delvist:** AP-24 – udtalelister pr. motor er bygget, men gav kun lidt (Piper 14 → 18 af 30, Apple uændret).
 - **Parkeret eller udskudt:** AP-13/14 (cloud-stemmer, B6), AP-15/16 (Plapre, Røst – hovedstemmen er valgt).
 - **Beslutninger:** B6 cloud udskudt · B7 Sara (Enhanced) · B8 GPL-3.0-or-later · B9 Baymow, app-id
-  `dk.jpmag.baymow` (21. november).
+  `dk.jpmag.baymow` (21. november; Tilgængelighed givet igen og genvejen bekræftet af brugeren).
 - **Kodearkiv:** https://github.com/JensPhillip/baymow (offentligt). Push kun det, der er committet og grønt.
 - **AP-52 forberedt:** DMG (`Scripts/make-dmg.sh`) og README. Udgivelse afventer brugerens app-id, Developer ID og kodearkiv.
 - **Næste ledige pakker:** AP-32 (Google Docs og testmatrix – kræver brugeren). Herefter er MVP'en klar, og
@@ -27,7 +27,6 @@ Sidst opdateret: 2026-11-21 af udfører (Claude Opus 5.5).
 | Gennemfør testrunden for afspilleren (10 punkter i AP-20-afleveringen) | Knapper og lyd kan kun prøves af brugeren | AP-20 |
 | Find en testperson til førstegangsopsætningen (udskudt af brugeren 2026-11-18) | Kun et nyt menneske kan vise, om den er til at forstå | AP-41 |
 | Meld dig ind i Apple Developer Program (Developer ID og notarisering) | Udgivelse til andre kræver det | AP-52 |
-| Giv Baymow Tilgængelighed-adgang igen efter skiftet af app-id | macOS ser den som en ny app | Genvejen |
 | Acceptér vilkår for `syvai/plapre-3` på Hugging Face | Originalmodellen kræver det | AP-15 |
 
 ## Senest kontrolleret (2026-11-17)
