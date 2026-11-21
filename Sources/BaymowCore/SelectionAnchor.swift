@@ -14,6 +14,9 @@ public final class SelectionAnchor: @unchecked Sendable {
 
     let element: AXUIElement
     let kind: Kind
+    static let maximumHeight: CGFloat = 400
+    static let maximumWidth: CGFloat = 2400
+
     /// Kildeprogrammet. Markeringen vises kun, når det er forrest.
     public let processIdentifier: pid_t
 
@@ -43,6 +46,9 @@ public final class SelectionAnchor: @unchecked Sendable {
             rect = Self.rect(from: parameterized("AXBoundsForTextMarkerRange", markers))
         }
         guard let rect, rect.width > 0, rect.height > 0 else { return nil }
+        // Et ord eller en sætning fylder højst nogle få linjer. Svarer et program med et kæmpe felt (Claude-appen gav
+        // 1458×800 for fem tegn), er svaret ubrugeligt, og intet vises hellere end et gult felt over hele vinduet.
+        guard rect.height <= Self.maximumHeight, rect.width <= Self.maximumWidth else { return nil }
         return rect
     }
 
@@ -72,12 +78,12 @@ public final class SelectionAnchor: @unchecked Sendable {
             guard AXValueGetValue(value as! AXValue, .cfRange, &range) else { return nil }
             return SelectionAnchor(element: element, kind: .textRange(start: range.location), processIdentifier: processIdentifier)
         case .webTextMarker:
-            guard let markerRange else { return nil }
-            var startMarker: CFTypeRef?
+            // Markeringens start tages direkte fra markeringen (macOS' AXTextMarkerRangeCopyStartMarker). Safari og Mail
+            // forstår ikke spørgsmålet "AXStartTextMarkerForTextMarkerRange" (målt 2026-11-21).
+            guard let markerRange, CFGetTypeID(markerRange) == AXTextMarkerRangeGetTypeID() else { return nil }
+            let startMarker = AXTextMarkerRangeCopyStartMarker(markerRange as! AXTextMarkerRange)
             var index: CFTypeRef?
-            guard AXUIElementCopyParameterizedAttributeValue(element, "AXStartTextMarkerForTextMarkerRange" as CFString,
-                                                             markerRange, &startMarker) == .success, let startMarker,
-                  AXUIElementCopyParameterizedAttributeValue(element, "AXIndexForTextMarker" as CFString,
+            guard AXUIElementCopyParameterizedAttributeValue(element, "AXIndexForTextMarker" as CFString,
                                                              startMarker, &index) == .success,
                   let start = (index as? NSNumber)?.intValue else { return nil }
             return SelectionAnchor(element: element, kind: .webMarkers(start: start), processIdentifier: processIdentifier)

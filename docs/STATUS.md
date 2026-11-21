@@ -29,7 +29,7 @@ Sidst opdateret: 2026-11-21 af udfører (Claude Opus 5.5).
 | Hør lyttepakkerne, og udfyld `docs/LYTTESKEMA.md` | Kun brugeren kan afgøre, om en stemme er til at forstå | AP-03, AP-12, AP-19 |
 | Gennemfør testrunden for afspilleren (10 punkter i AP-20-afleveringen) | Knapper og lyd kan kun prøves af brugeren | AP-20 |
 | Find en testperson til førstegangsopsætningen (udskudt af brugeren 2026-11-18) | Kun et nyt menneske kan vise, om den er til at forstå | AP-41 |
-| Prøv "Fremhæv ordet direkte i teksten" i Noter, TextEdit, Safari, Mail og Claude (AP-60) | Kun brugeren kan se, om feltet sidder rigtigt | AP-60 |
+| Prøv "Fremhæv ordet direkte i teksten" i Safari og Mail igen (AP-60) | Rettet og selvtestet i Safari; Mail ikke prøvet | AP-60 |
 | Meld dig ind i Apple Developer Program (Developer ID og notarisering) | Udgivelse til andre kræver det | AP-52 |
 | Acceptér vilkår for `syvai/plapre-3` på Hugging Face | Originalmodellen kræver det | AP-15 |
 
@@ -53,6 +53,7 @@ Sidst opdateret: 2026-11-21 af udfører (Claude Opus 5.5).
 ## Kendte fælder
 
 - Kernen ligger i `Sources/BaymowCore/` (ikke længere `Sources/BaymowKit/Core/`). Ældre afleveringer bruger de gamle stier.
+- Selvtests, der skal køre som rigtig app, startes med `./Scripts/run-selftest.sh` (tidsgrænse, aldrig efter fejlet bygning).
 - Kald til macOS' tastaturfunktioner (TIS) skal ske på hovedtråden – ellers lukker macOS 26 appen. En almindelig
   test fanger det ikke; `--copykey-selftest` gør.
 - `check.sh` kræver siden 2026-11-21, at `swift test` afslutter uden fejl; før kunne en fejlende test give grønt.

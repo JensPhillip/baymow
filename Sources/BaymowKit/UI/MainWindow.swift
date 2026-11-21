@@ -137,7 +137,7 @@ struct MainView: View {
                 Text("Under oplæsningen viser et vindue teksten med stor skrift, og ordet, der læses lige nu, bliver gult. Med stemmer, der kun melder hele sætninger, fremhæves sætningen. Kan også slås til og fra med knappen i afspilleren.")
                     .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
                 Toggle("Fremhæv ordet direkte i teksten, der hvor den er markeret", isOn: $settings.highlightInPlace)
-                Text("Et gennemsigtigt gult felt følger ordet, der læses, i det program, du læser i. Virker i programmer som TextEdit, Noter, Safari og Mail. I Chrome og Word kan det ikke lade sig gøre – brug vinduet dér.")
+                Text("Et gennemsigtigt gult felt følger ordet, der læses, i det program, du læser i. Virker i fx Noter, TextEdit, Safari og Mail. I Chrome, Word og Claude-appen kan det ikke lade sig gøre – brug vinduet dér.")
                     .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
             }
 

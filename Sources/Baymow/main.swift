@@ -31,8 +31,12 @@ MainActor.assumeIsolated {
         exit(SoakTest.run(minutes: Double(arguments[index + 1]) ?? 480, interval: Double(arguments[index + 2]) ?? 300,
                           outputDirectory: arguments[index + 3]))
     }
-    if arguments.contains("--inplace-selftest") {
-        exit(InPlaceSelfTest.run())
+    if let index = arguments.firstIndex(of: "--ax-bounds"), arguments.count > index + 1 {
+        BoundsDiagnostics.run(bundleID: arguments[index + 1])
+        exit(0)
+    }
+    if let index = arguments.firstIndex(of: "--inplace-selftest") {
+        exit(InPlaceSelfTest.run(target: arguments.count > index + 1 ? arguments[index + 1] : "textedit"))
     }
     if arguments.contains("--highlight-selftest") {
         exit(HighlightSelfTest.run())

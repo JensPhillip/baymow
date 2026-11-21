@@ -5,8 +5,9 @@ import BaymowCore
 /// Fremhævning direkte i teksten (I1): et gennemsigtigt gult felt oven på ordet, der læses, der hvor teksten blev
 /// markeret. Slås til og fra med `SettingsStore.highlightInPlace` (slået fra som standard).
 ///
-/// Virker kun i programmer, der via Tilgængelighed oplyser, hvor teksten står (fx TextEdit, Noter, Safari, Mail). Hvor
-/// teksten hentes med kopiering (fx Chrome og Word), er det ikke muligt – dér kan tekstvinduet bruges.
+/// Virker kun i programmer, der via Tilgængelighed oplyser, hvor teksten står (målt 2026-11-21: Noter, TextEdit og
+/// Safari). Hvor teksten hentes med kopiering (Chrome, Word), eller programmet svarer med ubrugelige felter (Claude-appen),
+/// er det ikke muligt – dér kan tekstvinduet bruges.
 @MainActor
 final class InPlaceHighlighter {
     private let sessions: ReadingSessionManager

@@ -8,13 +8,15 @@ import BaymowCore
 /// bagefter. Resultat i ~/Library/Logs/Baymow/inplace-selftest.txt (kun tal og ja/nej – testteksten er vores egen).
 @MainActor
 public enum InPlaceSelfTest {
-    public static func run() -> Int32 {
+    /// - Parameter target: "textedit" (standard) eller "safari".
+    public static func run(target: String = "textedit") -> Int32 {
         var lines: [String] = []
         defer {
             let dir = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask)[0].appendingPathComponent("Logs/Baymow")
             try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
             try? lines.joined(separator: "\n").write(to: dir.appendingPathComponent("inplace-selftest.txt"), atomically: true, encoding: .utf8)
         }
+        if target == "safari" { return runSafari(&lines) }
         let bundleID = "com.apple.TextEdit"
         // Kører TextEdit allerede, åbnes testteksten i sit eget vindue, og kun det vindue lukkes bagefter.
         let wasRunning = !NSRunningApplication.runningApplications(withBundleIdentifier: bundleID).isEmpty
@@ -84,6 +86,17 @@ public enum InPlaceSelfTest {
         Task { captured = await TextCaptureService().capture() }
         spin(5) { captured != nil }
 
+        return checkHighlight(captured: captured, text: text, lines: &lines)
+    }
+
+
+    /// Fælles for alle målprogrammer: ankeret, ordenes placering og det gule felt under en lydløs oplæsning.
+    private static func checkHighlight(captured: Result<CapturedText, CaptureFailure>?, text: String,
+                                       lines: inout [String]) -> Int32 {
+        func spin(_ seconds: TimeInterval, until done: () -> Bool) {
+            let end = Date().addingTimeInterval(seconds)
+            while !done(), Date() < end { RunLoop.main.run(until: Date().addingTimeInterval(0.05)) }
+        }
         var failures = 0
         func check(_ name: String, _ ok: Bool) {
             lines.append("\(ok ? "ok  " : "FEJL") \(name)")
@@ -93,14 +106,20 @@ public enum InPlaceSelfTest {
             check("teksten blev hentet", false)
             return 1
         }
-        check("teksten blev hentet med Tilgængelighed", result.method == .accessibility)
-        check("den hentede tekst er testteksten", result.text == text)
+        check("teksten blev hentet direkte (ikke med kopiering)", result.method != .clipboard)
+        check("den hentede tekst er testteksten", result.text.trimmingCharacters(in: .whitespacesAndNewlines) == text)
         check("markeringens placering er kendt (anker)", result.anchor != nil)
         guard let anchor = result.anchor else { return 1 }
 
         let wordRegex = try! NSRegularExpression(pattern: #"[\p{L}\p{N}]+"#)
         let words = wordRegex.matches(in: text, range: NSRange(location: 0, length: (text as NSString).length)).map(\.range)
+        let timing = Date()
         let rects = words.map { anchor.screenRect(forSelectedRange: $0) }
+        lines.append(String(format: "info: et opslag af ordplacering tager i gennemsnit %.0f ms", Date().timeIntervalSince(timing) * 1000 / Double(max(words.count, 1))))
+        if result.text.trimmingCharacters(in: .whitespacesAndNewlines) != text {
+            // Testteksten er vores egen, så den må gerne skrives her.
+            lines.append("info: hentet tekst (\((result.text as NSString).length) tegn): \(result.text.debugDescription)")
+        }
         let found = rects.compactMap { $0 }
         lines.append("info: \(found.count) af \(words.count) ord har en skærmplacering")
         check("alle ord har en skærmplacering", found.count == words.count)
@@ -148,5 +167,78 @@ public enum InPlaceSelfTest {
 
         lines.append(failures == 0 ? "BESTÅET" : "IKKE BESTÅET")
         return failures == 0 ? 0 : 1
+    }
+
+    /// Safari: en testside i en ny fane; teksten markeres med tekstmarkører; kun fanen lukkes bagefter (⌘W).
+    private static func runSafari(_ lines: inout [String]) -> Int32 {
+        let app = NSApplication.shared
+        app.setActivationPolicy(.accessory)
+        app.finishLaunching()
+        let text = "Mødet er flyttet til torsdag kl. 14.30 i det store lokale. Husk at tage kaffe med til alle."
+        let title = "Baymow selvtest"
+        let file = FileManager.default.temporaryDirectory.appendingPathComponent("baymow-inplace-selftest.html")
+        try? "<!doctype html><html><head><meta charset=utf-8><title>\(title)</title></head><body style='font:18px -apple-system;margin:40px'><p>\(text)</p></body></html>"
+            .write(to: file, atomically: true, encoding: .utf8)
+        defer { try? FileManager.default.removeItem(at: file) }
+        guard let safari = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.apple.Safari") else {
+            lines.append("FEJL: Safari findes ikke"); return 1
+        }
+        let configuration = NSWorkspace.OpenConfiguration()
+        configuration.activates = true
+        var launched: NSRunningApplication?
+        NSWorkspace.shared.open([file], withApplicationAt: safari, configuration: configuration) { app, _ in launched = app }
+        func spin(_ seconds: TimeInterval, until done: () -> Bool) {
+            let end = Date().addingTimeInterval(seconds)
+            while !done(), Date() < end { RunLoop.main.run(until: Date().addingTimeInterval(0.05)) }
+        }
+        // Vent på, at vores side er forrest i Safari, og find dens webområde.
+        var area: AXUIElement?
+        spin(15) {
+            guard let pid = launched?.processIdentifier, NSWorkspace.shared.frontmostApplication?.processIdentifier == pid else { return false }
+            var window: CFTypeRef?
+            guard AXUIElementCopyAttributeValue(AXUIElementCreateApplication(pid), kAXFocusedWindowAttribute as CFString, &window) == .success,
+                  let window, CFGetTypeID(window) == AXUIElementGetTypeID() else { return false }
+            var windowTitle: CFTypeRef?
+            AXUIElementCopyAttributeValue(window as! AXUIElement, kAXTitleAttribute as CFString, &windowTitle)
+            guard (windowTitle as? String)?.contains(title) == true else { return false }
+            area = TextCaptureService.webAreas(in: window as! AXUIElement).first
+            return area != nil
+        }
+        defer {
+            // Luk kun vores fane: ⌘W til Safari, mens fanen er forrest.
+            if let pid = launched?.processIdentifier, NSWorkspace.shared.frontmostApplication?.processIdentifier == pid {
+                let source = CGEventSource(stateID: .privateState)
+                for down in [true, false] {
+                    let event = CGEvent(keyboardEventSource: source, virtualKey: 13, keyDown: down) // W
+                    event?.flags = .maskCommand
+                    event?.postToPid(pid)
+                }
+            }
+        }
+        guard let area else { lines.append("FEJL: testsiden i Safari blev ikke fundet"); return 1 }
+        lines.append("info: testsiden er åben i Safari – kun dens fane lukkes bagefter")
+
+        // Markér hele teksten med tekstmarkører.
+        func parameterized(_ name: String, _ parameter: CFTypeRef) -> CFTypeRef? {
+            var result: CFTypeRef?
+            return AXUIElementCopyParameterizedAttributeValue(area, name as CFString, parameter, &result) == .success ? result : nil
+        }
+        guard let first = parameterized("AXTextMarkerForIndex", NSNumber(value: 0)),
+              let last = parameterized("AXTextMarkerForIndex", NSNumber(value: (text as NSString).length)),
+              let range = parameterized("AXTextMarkerRangeForUnorderedTextMarkers", [first, last] as CFArray) else {
+            lines.append("FEJL: kunne ikke lave en markering i Safari"); return 1
+        }
+        // Som når brugeren klikker på siden: fokus flyttes fra adresselinjen ind på siden.
+        AXUIElementSetAttributeValue(area, kAXFocusedAttribute as CFString, kCFBooleanTrue)
+        spin(0.3) { false }
+        let setResult = AXUIElementSetAttributeValue(area, "AXSelectedTextMarkerRange" as CFString, range)
+        lines.append("info: markering sat: \(setResult == .success ? "ja" : "nej (\(setResult.rawValue))")")
+        spin(0.5) { false }
+
+        var captured: Result<CapturedText, CaptureFailure>?
+        Task { captured = await TextCaptureService().capture() }
+        spin(5) { captured != nil }
+        if case .success(let result)? = captured { lines.append("info: metode \(result.method.rawValue)") }
+        return checkHighlight(captured: captured, text: text, lines: &lines)
     }
 }

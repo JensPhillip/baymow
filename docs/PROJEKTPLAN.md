@@ -285,7 +285,8 @@ Nyttige værktøjer i den byggede app (`build/Baymow.app/Contents/MacOS/Baymow`)
 | `--capture-selftest` (via `open -n -W build/Baymow.app --args …`) | Markerer eksempelteksten i Baymows eget vindue og henter den som genvejen; resultat i `~/Library/Logs/Baymow/capture-selftest.txt` |
 | `--copykey-selftest` (via `open -n -W build/Baymow.app --args …`) | Aflæser ⌘C-tasten fra en baggrundsopgave i en kørende app, som genvejen gør; fejlede med nedbrud før rettelsen 2026-11-18 |
 | `./Scripts/make-dmg.sh` | Installationsfil i `build/`; notariseres med Developer ID og `NOTARY_PROFILE` |
-| `--inplace-selftest` (via `open -n -W build/Baymow.app --args …`) | Åbner en testtekst i TextEdit og kontrollerer, at hvert ord kan findes på skærmen; springer over, hvis TextEdit kører |
+| `./Scripts/run-selftest.sh <sek> --inplace-selftest [textedit\|safari]` | Fremhævning i teksten hele vejen i TextEdit eller Safari; bruger sit eget vindue/fane og lukker kun det |
+| `./Scripts/run-selftest.sh <sek> --ax-bounds <bundle-id>` | Hvordan et program oplyser tekstens placering (kun navne og rektangler) |
 | `--highlight-selftest` | Læser lydløst med Sara og kontrollerer, at fremhævningen følger ordene |
 | `--player-selftest` | Lydløs kontrol af den rigtige afspiller: events, pause, fortsæt, stop, erstatning |
 | `--memory-selftest <apple\|piper>` | Lydløs måling af hukommelse ved 20.000 tegn, tekstskift og luk, tre gange |
