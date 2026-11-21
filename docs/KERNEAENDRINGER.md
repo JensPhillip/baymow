@@ -167,3 +167,13 @@ som et valg ved siden af vinduet. Kun indfangningen ved, hvor markeringen sidder
 Kontrakt: Ingen eksisterende tests ændret; standarden "slået fra" er dækket af den nye indstillings test i
 `testReadingWindowIsOffByDefaultAndRemembered` (udvidet) og af selvtesten `--inplace-selftest`.
 Godkendt af: brugeren (ønsket 2026-11-21).
+
+## 2026-11-21 · I1 · Fremhævning i teksten: Safari og ubrugelige felter
+Hvad: `SelectionAnchor.make` tager markeringens start i web-indhold med macOS' `AXTextMarkerRangeCopyStartMarker` i stedet
+for spørgsmålet `AXStartTextMarkerForTextMarkerRange`. `screenRect` afviser felter over 400 × 2400 punkter.
+Hvorfor: Brugeren fandt, at fremhævning i teksten kun virkede i Noter. Målt med `--ax-bounds`: Safari forstår ikke
+`AXStartTextMarkerForTextMarkerRange`, så der blev aldrig lavet et anker; Claude-appen svarer med hele vinduet (1458×800 for
+5 tegn), hvilket ville give et gult felt over alt.
+Kontrakt: Ingen tests ændret. Dækket af selvtesten `--inplace-selftest safari` (før: intet anker; efter: 14 af 14 felter
+oven på ord) og `--inplace-selftest textedit` (17 af 17).
+Godkendt af: udfører; fejlrettelse.
