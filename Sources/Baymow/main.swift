@@ -49,6 +49,9 @@ MainActor.assumeIsolated {
         exit(RateTool.stretch(factor: Double(arguments[index + 1]) ?? 1, inputDirectory: arguments[index + 2],
                               outputDirectory: arguments[index + 3]))
     }
+    if let index = arguments.firstIndex(of: "--render-ui"), arguments.count > index + 1 {
+        exit(ScreenshotTool.run(outputDirectory: arguments[index + 1]))
+    }
     if arguments.contains("--highlight-selftest") {
         exit(HighlightSelfTest.run())
     }

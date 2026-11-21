@@ -58,7 +58,7 @@ MVP'en: genvej → markeret tekst → session → stemme.
 - Efter `stop()` eller et nyt `speak()` må en motor ikke sende flere events fra det forrige kald.
 - Al dansk tekst går gennem `DanishTextNormalizer`, før den når en stemmemotor.
 - Blokerende arbejde (Accessibility, syntese, download) må ikke køre på hovedtråden.
-- Brugerfladen er på dansk.
+- Brugerfladen er på dansk og følger designprincipperne i planens afsnit 3 (billede før ord, flag, "Hør"-knapper).
 - Ingen ny afhængighed, download eller konto uden brugerens ja.
 - Brugeren har valgt at arbejde direkte på `main` (16. november 2026). Send kun til GitHub med `./Scripts/push.sh`, der
   nægter, hvis noget ikke er committet, eller `check.sh` ikke er grøn. Kodearkivet er offentligt.

@@ -87,6 +87,28 @@ final class OnboardingModel: ObservableObject {
         sampleEngine.speak(DanishTextNormalizer.normalize(Language.danish.sampleText), voice: voice, rate: settings.rate) { _ in }
     }
 
+    /// Det, "Hør"-knappen læser op for det trin, brugeren er nået til.
+    func explanation(shortcut: Shortcut) -> String {
+        switch step {
+        case .permission:
+            return "Første trin. Baymow skal have lov til at se den tekst, du markerer. Tryk på knappen Giv lov. Find Baymow på listen, og slå kontakten til."
+        case .voice:
+            return "Andet trin. Hent den gode danske stemme, Sara forbedret. Den er gratis. Tryk på knappen, og følg de fire trin på skærmen."
+        case .tryIt:
+            return "Sidste trin. Markér teksten i feltet med musen. Tryk så på \(shortcut.spokenKeys) på samme tid."
+        case .done:
+            return "Det virkede. Nu kan du gøre det samme i alle andre programmer."
+        }
+    }
+
+    func speakExplanation() {
+        let voices = catalog.voices(for: .danish).filter { $0.engineID == sampleEngine.engineID }
+        guard let voice = voices.first(where: { $0.id == VoiceLibrary.mainDanishVoiceID }) ?? voices.first else { return }
+        sampleEngine.stop()
+        sampleEngine.speak(DanishTextNormalizer.normalize(explanation(shortcut: settings.shortcut)), voice: voice,
+                           rate: settings.rate) { _ in }
+    }
+
     func finish() {
         settings.hasCompletedOnboarding = true
     }
@@ -101,56 +123,71 @@ struct OnboardingView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Velkommen til Baymow").font(.largeTitle.weight(.semibold))
-                Text("Baymow læser tekst højt for dig. Tre små trin, så er du i gang.")
-                    .font(.title3).foregroundStyle(.secondary)
+            HStack(alignment: .center, spacing: 14) {
+                IconTile(symbol: "speaker.wave.2.fill", color: .blue, size: 52)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Velkommen til Baymow").font(.largeTitle.weight(.semibold))
+                    Text("Tre små trin, så læser Baymow for dig.")
+                        .font(.title3).foregroundStyle(.secondary)
+                }
+                Spacer()
+                ListenButton { model.speakExplanation() }
             }
 
-            StepCard(number: 1, title: "Giv Baymow lov til at læse det, du markerer",
+            StepCard(number: 1, symbol: "lock.open.fill", title: "Giv Baymow lov",
                      state: state(for: .permission)) {
-                Text("Baymow skal have lov til at se den tekst, du markerer. Teksten bliver på din Mac og gemmes ikke.")
-                Text("Tryk på knappen. Find Baymow på listen, og slå kontakten til. Måske skal du skrive din adgangskode.")
-                Button("Giv lov…") { model.requestPermission() }
+                Label("Teksten bliver på din Mac.", systemImage: "lock.shield.fill").foregroundStyle(.secondary)
+                GuideStep(number: 1, symbol: "hand.tap.fill", text: "Tryk på Giv lov.")
+                GuideStep(number: 2, symbol: "switch.2", text: "Find Baymow, og slå kontakten til.")
+                Button { model.requestPermission() } label: { Label("Giv lov", systemImage: "lock.open.fill") }
                     .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+                    .help("Måske skal du skrive din adgangskode.")
             }
 
-            StepCard(number: 2, title: "Hent den gode danske stemme",
+            StepCard(number: 2, symbol: "person.wave.2.fill", title: "Hent den danske stemme",
                      state: state(for: .voice)) {
                 if model.hasMainVoice {
-                    Text("Stemmen Sara (forbedret) er klar.")
-                    Button("Hør stemmen") { model.playVoiceSample() }
+                    Label("Sara (forbedret) er klar.", systemImage: "checkmark.circle.fill").foregroundStyle(.green)
+                    Button { model.playVoiceSample() } label: { Label("Hør stemmen", systemImage: "play.circle.fill") }
                 } else {
-                    Text("Baymow læser dansk bedst med stemmen Sara (forbedret). Den er gratis, men skal hentes én gang.")
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("1. Tryk på knappen nedenfor.")
-                        Text("2. Ud for Systemstemme: vælg Administrer stemmer… nederst i menuen.")
-                        Text("3. Find Dansk, og tryk på pilen ud for Sara (forbedret).")
-                        Text("4. Kom tilbage hertil. Baymow opdager selv, når stemmen er hentet.")
-                    }
+                    Text("Sara (forbedret) er gratis.").foregroundStyle(.secondary)
+                    GuideStep(number: 1, symbol: "gearshape.fill", text: "Tryk på Åbn Systemindstillinger.")
+                    GuideStep(number: 2, symbol: "list.bullet", text: "Vælg Administrer stemmer…")
+                    GuideStep(number: 3, symbol: "arrow.down.circle.fill", text: "Find Dansk → Sara (forbedret).")
+                    GuideStep(number: 4, symbol: "arrow.uturn.backward", text: "Kom tilbage hertil.")
                     HStack {
-                        Button("Åbn Systemindstillinger") { VoiceLibrary.openVoiceSettings() }
-                            .buttonStyle(.borderedProminent)
+                        Button { VoiceLibrary.openVoiceSettings() } label: {
+                            Label("Åbn Systemindstillinger", systemImage: "gearshape")
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .controlSize(.large)
                         Button("Spring over") { model.skippedVoice = true }
+                            .controlSize(.large)
                             .help("Baymow bruger så en enklere stemme. Du kan hente den gode stemme senere.")
                     }
                 }
             }
-
-            StepCard(number: 3, title: "Prøv det",
+            StepCard(number: 3, symbol: "hand.point.up.left.fill", title: "Prøv det",
                      state: state(for: .tryIt)) {
-                Text("Markér teksten i feltet med musen. Tryk så på \(settings.shortcut.displayString) – det vil sige \(spokenShortcut) på samme tid.")
+                HStack(spacing: 12) {
+                    Label("Markér teksten", systemImage: "character.cursor.ibeam")
+                    Image(systemName: "arrow.right").foregroundStyle(.tertiary)
+                    Text("Tryk")
+                    KeyCaps(shortcut: settings.shortcut, size: 26)
+                }
+                .font(.headline)
                 SelectableText(text: OnboardingModel.sampleText)
                     .frame(height: 70)
                     .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(.secondary.opacity(0.4)))
                 if model.hasRead {
-                    Label("Det virkede! Det samme gør du i alle andre programmer.", systemImage: "checkmark.circle.fill")
+                    Label("Det virkede! Gør det samme i alle programmer.", systemImage: "checkmark.circle.fill")
                         .foregroundStyle(.green)
                 }
             }
 
             HStack {
-                Text("Du kan altid finde Baymow i menulinjen øverst til højre.")
+                Label("Baymow ligger i menulinjen øverst til højre.", systemImage: "menubar.arrow.up.rectangle")
                     .font(.callout).foregroundStyle(.secondary)
                 Spacer()
                 Button(model.step == .done ? "Færdig" : "Luk") {
@@ -167,18 +204,6 @@ struct OnboardingView: View {
         .onDisappear { model.stopWatching() }
     }
 
-    /// Genvejen med ord: "Control, Option og S".
-    private var spokenShortcut: String {
-        let flags = NSEvent.ModifierFlags(rawValue: settings.shortcut.modifiers)
-        var keys: [String] = []
-        if flags.contains(.control) { keys.append("Control") }
-        if flags.contains(.option) { keys.append("Option") }
-        if flags.contains(.shift) { keys.append("Skift") }
-        if flags.contains(.command) { keys.append("Kommando") }
-        keys.append(settings.shortcut.keyLabel)
-        return keys.dropLast().joined(separator: ", ") + " og " + keys.last!
-    }
-
     private func state(for step: OnboardingStep) -> StepCard<EmptyView>.State {
         if step == .voice && model.skippedVoice && !model.hasMainVoice { return .skipped }
         if model.step > step { return .done }
@@ -190,12 +215,15 @@ private struct StepCard<Content: View>: View {
     enum State { case waiting, active, done, skipped }
 
     let number: Int
+    let symbol: String
     let title: String
     let state: StepCard<EmptyView>.State
     @ViewBuilder let content: () -> Content
 
-    init(number: Int, title: String, state: StepCard<EmptyView>.State, @ViewBuilder content: @escaping () -> Content) {
+    init(number: Int, symbol: String, title: String, state: StepCard<EmptyView>.State,
+         @ViewBuilder content: @escaping () -> Content) {
         self.number = number
+        self.symbol = symbol
         self.title = title
         self.state = state
         self.content = content
@@ -214,7 +242,7 @@ private struct StepCard<Content: View>: View {
             .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
-                    Text(title).font(.title3.weight(.semibold))
+                    Label(title, systemImage: symbol).font(.title3.weight(.semibold))
                     if state == .done { Text("Klaret").font(.callout).foregroundStyle(.green) }
                     if state == .skipped { Text("Sprunget over").font(.callout).foregroundStyle(.secondary) }
                 }

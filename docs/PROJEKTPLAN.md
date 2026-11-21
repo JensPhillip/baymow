@@ -204,6 +204,32 @@ Tre regler for enhver ny funktion:
 Regel 2 og 3 kontrolleres mekanisk af `Scripts/check.sh` (ingen udskrift eller logning i
 app-koden, ingen filskrivning i kernen, netværk kun i filer på `Scripts/network-allowlist.txt`).
 
+### Designprincipper for brugerfladen (indført i AP-62)
+
+Baymow er lavet til mennesker, der hverken er glade for eller gode til at læse og skrive. Brugerfladen må derfor
+ikke selv kræve, at man læser. Brugeren kan lide Apples design og udtryk; det er udgangspunktet. Gælder for alle
+vinduer, afspilleren og nye funktioner.
+
+1. **Billede før ord.** Hvert valg har et SF Symbol-ikon, der fortæller, hvad det gør. Teksten ved siden af er
+   kort (helst under fem ord). Uddybende forklaring står i hjælpeteksten (vises, når musen holdes over), eller kan
+   høres – ikke som afsnit på skærmen.
+2. **Sprog har flag.** Overalt, hvor et sprog vises eller vælges: 🇩🇰 Dansk, 🇬🇧 Engelsk. "Automatisk" har en
+   globus. Flaget kommer fra `Language.flag` i `BaymowKit` (ikke kernen).
+3. **Det kan læses op.** Hver side i hovedvinduet har en "Hør"-knap (højttaler-ikon), der læser sidens forklaring
+   op med den valgte stemme. Forklaringen er Baymows egen tekst, aldrig brugerens, og går gennem
+   `DanishTextNormalizer` som al anden dansk tekst.
+4. **Én ting pr. side.** Hovedvinduet har en sidebjælke med få sider (Start, Oplæsning, Visning, Stemmer, Genvej),
+   hver med farvet ikon som i Systemindstillinger. Ingen lange rullesider.
+5. **Vis, i stedet for at forklare.** Fx genvejen som tastetryk (⌃ ⌥ S) og "Markér → Tryk → Lyt" som tre billeder.
+6. **Farve betyder noget, men står aldrig alene.** Grøn = klar, orange = mangler noget. Altid sammen med et ikon.
+7. **Store mål.** Det, man trykker på oftest (afspil, hastighed), er stort og let at ramme.
+8. **Apples byggeklodser.** Systemets kontroller, materialer, SF Symbols og farver; virker i lyst og mørkt. Intet
+   eget farvetema.
+9. **Dansk, du-form, korte sætninger, ingen fagord.** Skriv "stemme", ikke "motor"; "hent", ikke "download".
+
+Skærmbilleder af vinduerne laves med `Baymow --render-ui <mappe>` (lyst og mørkt), så designet kan kontrolleres
+uden en skærm. Om brugeren forstår det, afgøres stadig af brugeren.
+
 ### Stemmearkitektur (indført i AP-10)
 
 Der skelnes mellem to slags motorer. Typerne ligger i `Engines/SynthesisBackend.swift` og `Engines/PCMPlayer.swift`:
@@ -410,6 +436,7 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 | AP-51 | Stabilitet, hukommelse og privatlivskontrol | 5 | Udfører | AP-20 til AP-41 | Færdig |
 | AP-60 | Ordfremhævning (idé I1): vindue og/eller direkte i teksten – hver sin kontakt, slået fra som standard | 6 | Udfører + bruger | MVP | Færdig |
 | AP-61 | Højere hastighed (idé I3): op til 3×, og tallet i afspilleren svarer til det reelle tempo | 6 | Udfører + bruger | MVP | Afventer bruger (lytning ved 2,5× og 3×) |
+| AP-62 | Nyt design efter designprincipperne: sidebjælke, ikoner, flag, "Hør"-knapper, nyt udseende af afspiller og velkomst | 6 | Udfører + bruger | MVP | Afventer bruger (prøv det nye design) |
 | AP-52 | Developer ID, notarisering og DMG | 5 | Udfører + bruger | AP-50, B9 | Forberedt: DMG og README; afventer certifikat, app-id og kodearkiv |
 
 ### Fase 0 – Grundlag

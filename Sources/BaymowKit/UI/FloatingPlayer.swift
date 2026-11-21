@@ -97,36 +97,49 @@ struct PlayerView: View {
 
             ProgressView(value: sessions.progress).progressViewStyle(.linear).controlSize(.small)
 
-            HStack(spacing: 14) {
+            HStack(spacing: 10) {
                 iconButton("backward.end.fill", label: "Start forfra") { sessions.restart() }
-                iconButton(sessions.state == .speaking ? "pause.fill" : "play.fill",
-                           label: sessions.state == .speaking ? "Pause" : "Afspil", size: 20) { sessions.togglePlayPause() }
-                    .keyboardShortcut(.space, modifiers: [])
+                Button { sessions.togglePlayPause() } label: {
+                    Image(systemName: sessions.state == .speaking ? "pause.circle.fill" : "play.circle.fill")
+                        .font(.system(size: 34))
+                        .foregroundStyle(Color.accentColor)
+                        .frame(width: 38, height: 38).contentShape(Circle())
+                }
+                .buttonStyle(.plain)
+                .keyboardShortcut(.space, modifiers: [])
+                .help(sessions.state == .speaking ? "Pause" : "Afspil")
+                .accessibilityLabel(sessions.state == .speaking ? "Pause" : "Afspil")
                 iconButton("stop.fill", label: "Stop") { sessions.stop() }
                     .disabled(sessions.state == .stopped)
 
-                Spacer(minLength: 6)
+                Spacer(minLength: 4)
 
-                HStack(spacing: 4) {
-                    iconButton("minus", label: "Langsommere", size: 11) { sessions.setRate(settings.rate - 0.1) }
+                HStack(spacing: 2) {
+                    iconButton("tortoise.fill", label: "Langsommere", size: 14) { sessions.setRate(settings.rate - 0.1) }
                         .disabled(settings.rate <= SettingsStore.rateRange.lowerBound)
-                    Text(String(format: "%.1f×", settings.rate))
-                        .font(.system(size: 12, weight: .medium).monospacedDigit())
-                        .frame(width: 34)
-                        .accessibilityLabel("Hastighed \(String(format: "%.1f", settings.rate))")
-                    iconButton("plus", label: "Hurtigere", size: 11) { sessions.setRate(settings.rate + 0.1) }
+                    Text(rateLabel(settings.rate))
+                        .font(.system(size: 13, weight: .semibold, design: .rounded).monospacedDigit())
+                        .frame(width: 36)
+                        .accessibilityLabel("Hastighed \(rateLabel(settings.rate))")
+                    iconButton("hare.fill", label: "Hurtigere", size: 14) { sessions.setRate(settings.rate + 0.1) }
                         .disabled(settings.rate >= SettingsStore.rateRange.upperBound)
                 }
+                .padding(.horizontal, 4)
+                .padding(.vertical, 2)
+                .background(.quaternary.opacity(0.6), in: Capsule())
 
                 Button {
                     settings.showReadingWindow.toggle()
                 } label: {
-                    Image(systemName: "text.viewfinder").font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(settings.showReadingWindow ? Color.accentColor : Color.secondary)
-                        .frame(width: 24, height: 24).contentShape(Rectangle())
+                    Image(systemName: "macwindow").font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(settings.showReadingWindow ? Color.white : Color.secondary)
+                        .frame(width: 28, height: 28)
+                        .background(settings.showReadingWindow ? AnyShapeStyle(Color.accentColor) : AnyShapeStyle(.clear),
+                                    in: RoundedRectangle(cornerRadius: 7, style: .continuous))
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-                .help(settings.showReadingWindow ? "Skjul teksten" : "Vis teksten, og fremhæv ordet, der læses")
+                .help(settings.showReadingWindow ? "Skjul vinduet med teksten" : "Vis teksten i et vindue, og fremhæv ordet, der læses")
                 .accessibilityLabel(settings.showReadingWindow ? "Skjul teksten" : "Vis teksten")
 
                 Menu {
@@ -134,27 +147,29 @@ struct PlayerView: View {
                         Button {
                             sessions.setLanguage(language)
                         } label: {
-                            if language == sessions.language { Label(language.displayName, systemImage: "checkmark") }
-                            else { Text(language.displayName) }
+                            if language == sessions.language { Label(language.flagAndName, systemImage: "checkmark") }
+                            else { Text(language.flagAndName) }
                         }
                     }
                 } label: {
-                    Text(sessions.language?.rawValue.uppercased() ?? "–").font(.system(size: 12, weight: .medium))
+                    Text(sessions.language?.flag ?? "🌐").font(.system(size: 20))
                 }
                 .menuStyle(.borderlessButton)
+                .menuIndicator(.hidden)
                 .fixedSize()
-                .help("Skift oplæsningssprog for denne tekst")
+                .help("Skift sprog for denne tekst")
+                .accessibilityLabel("Sprog: \(sessions.language?.displayName ?? "ukendt")")
             }
         }
         .padding(14)
-        .frame(width: 330)
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(.primary.opacity(0.12)))
+        .frame(width: 350)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).strokeBorder(.primary.opacity(0.12)))
     }
 
     private func iconButton(_ symbol: String, label: String, size: CGFloat = 15, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            Image(systemName: symbol).font(.system(size: size, weight: .semibold)).frame(width: 24, height: 24).contentShape(Rectangle())
+            Image(systemName: symbol).font(.system(size: size, weight: .semibold)).frame(width: 28, height: 28).contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .help(label)

@@ -156,15 +156,15 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
     @objc public func showMainWindow() {
         if mainWindow == nil {
             let window = NSWindow(
-                contentRect: NSRect(x: 0, y: 0, width: 560, height: 640),
-                styleMask: [.titled, .closable, .miniaturizable, .resizable],
+                contentRect: NSRect(x: 0, y: 0, width: 780, height: 600),
+                styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView],
                 backing: .buffered, defer: false
             )
             window.title = "Baymow"
             window.isReleasedWhenClosed = false
             window.delegate = self
             window.center()
-            window.setFrameAutosaveName("BaymowMainWindow")
+            window.setFrameAutosaveName("BaymowMainWindow2") // Nyt navn: det nye design er bredere (AP-62).
             mainWindow = window
             refreshMainWindowContent()
         }
