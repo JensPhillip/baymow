@@ -60,7 +60,8 @@ MVP'en: genvej → markeret tekst → session → stemme.
 - Blokerende arbejde (Accessibility, syntese, download) må ikke køre på hovedtråden.
 - Brugerfladen er på dansk.
 - Ingen ny afhængighed, download eller konto uden brugerens ja.
-- Arbejd på en gren `ap-xx-kort-titel`. Flet ikke selv til `main`, og push ikke.
+- Brugeren har valgt at arbejde direkte på `main` (16. november 2026). Send kun til GitHub med `./Scripts/push.sh`, der
+  nægter, hvis noget ikke er committet, eller `check.sh` ikke er grøn. Kodearkivet er offentligt.
 
 ## Færdig betyder målt
 
