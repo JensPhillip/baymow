@@ -5,6 +5,8 @@ import BaymowCore
 @MainActor
 public final class AppleSpeechEngine: NSObject, SpeechEngine {
     public let engineID = "apple"
+    /// Apple melder hvert ord, der siges (`willSpeakRangeOfSpeechString`).
+    public let reportsWordProgress = true
     /// 0…1. Sættes til 0 ved lydløse målinger.
     public var volume: Float = 1
 

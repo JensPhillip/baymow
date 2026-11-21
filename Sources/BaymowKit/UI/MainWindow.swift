@@ -132,6 +132,12 @@ struct MainView: View {
                 }
             }
 
+            Section("Visning") {
+                Toggle("Vis teksten, og fremhæv ordet, der læses", isOn: $settings.showReadingWindow)
+                Text("Under oplæsningen viser et vindue teksten med stor skrift, og ordet, der læses lige nu, bliver gult. Med stemmer, der kun melder hele sætninger, fremhæves sætningen. Kan også slås til og fra med knappen i afspilleren.")
+                    .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+            }
+
             Section("Sprog og hastighed") {
                 Picker("Oplæsningssprog", selection: $settings.forcedLanguage) {
                     Text("Automatisk").tag(Language?.none)

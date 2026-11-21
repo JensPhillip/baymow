@@ -118,6 +118,17 @@ struct PlayerView: View {
                         .disabled(settings.rate >= SettingsStore.rateRange.upperBound)
                 }
 
+                Button {
+                    settings.showReadingWindow.toggle()
+                } label: {
+                    Image(systemName: "text.viewfinder").font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(settings.showReadingWindow ? Color.accentColor : Color.secondary)
+                        .frame(width: 24, height: 24).contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .help(settings.showReadingWindow ? "Skjul teksten" : "Vis teksten, og fremhæv ordet, der læses")
+                .accessibilityLabel(settings.showReadingWindow ? "Skjul teksten" : "Vis teksten")
+
                 Menu {
                     ForEach(Language.allCases) { language in
                         Button {

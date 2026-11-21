@@ -28,9 +28,12 @@ public protocol SpeechEngine: AnyObject {
     /// Skifter hastighed for den igangværende oplæsning uden at starte forfra. Returnerer `false`, hvis motoren
     /// ikke kan det – så starter sessionen i stedet igen fra det ord, der var nået. Standard: `false`.
     func setRate(_ rate: Double) -> Bool
+    /// Melder motoren hvert ord (`true`) eller kun hver sætning (`false`) i `.progress`? Bruges til ordfremhævning.
+    var reportsWordProgress: Bool { get }
 }
 
 public extension SpeechEngine {
     func pronunciationOverrides(for language: Language) -> [String: String] { [:] }
     func setRate(_ rate: Double) -> Bool { false }
+    var reportsWordProgress: Bool { false }
 }

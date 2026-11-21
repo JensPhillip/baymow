@@ -285,6 +285,7 @@ Nyttige værktøjer i den byggede app (`build/Baymow.app/Contents/MacOS/Baymow`)
 | `--capture-selftest` (via `open -n -W build/Baymow.app --args …`) | Markerer eksempelteksten i Baymows eget vindue og henter den som genvejen; resultat i `~/Library/Logs/Baymow/capture-selftest.txt` |
 | `--copykey-selftest` (via `open -n -W build/Baymow.app --args …`) | Aflæser ⌘C-tasten fra en baggrundsopgave i en kørende app, som genvejen gør; fejlede med nedbrud før rettelsen 2026-11-18 |
 | `./Scripts/make-dmg.sh` | Installationsfil i `build/`; notariseres med Developer ID og `NOTARY_PROFILE` |
+| `--highlight-selftest` | Læser lydløst med Sara og kontrollerer, at fremhævningen følger ordene |
 | `--player-selftest` | Lydløs kontrol af den rigtige afspiller: events, pause, fortsæt, stop, erstatning |
 | `--memory-selftest <apple\|piper>` | Lydløs måling af hukommelse ved 20.000 tegn, tekstskift og luk, tre gange |
 | `--ax-diagnose <bundle-id>` | Skal startes med `open -n -W build/Baymow.app --args …`; skriver til `~/Library/Logs/Baymow/ax-diagnose.txt` |
@@ -405,6 +406,7 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 | AP-41 | Førstegangsopsætning | 4 | Udfører + bruger | AP-40 | Afventer bruger (testperson) |
 | AP-50 | Licensoprydning | 5 | Arkitekt + udfører | AP-19, B8 | Færdig (licenstekster for MIT/BSD/Apache lægges i appen i AP-52) |
 | AP-51 | Stabilitet, hukommelse og privatlivskontrol | 5 | Udfører | AP-20 til AP-41 | Færdig |
+| AP-60 | Ordfremhævning (idé I1) – valgfri, slået fra som standard | 6 | Udfører + bruger | MVP | Afventer bruger (se det på skærmen) |
 | AP-52 | Developer ID, notarisering og DMG | 5 | Udfører + bruger | AP-50, B9 | Forberedt: DMG og README; afventer certifikat, app-id og kodearkiv |
 
 ### Fase 0 – Grundlag
@@ -721,7 +723,7 @@ Rækkefølgen er arkitektens bud på nytten for en ordblind bruger.
 
 | # | Idé | Værdi for brugeren | Hvor den bygges | Rører kernen? |
 |---|---|---|---|---|
-| I1 | **Ordfremhævning:** et læsevindue, der viser teksten og fremhæver ordet, der læses | Følge med i teksten, mens den læses – Speechifys kernefunktion | `Features/Highlighting/`, observerer sessionens position. Apple giver ordposition; backends kun sætningsposition | Ja: sessionen skal kunne udlevere teksten til visning (ny, udtrykkelig metode). Kræver arkitektens ja |
+| I1 | **Ordfremhævning (bygget som AP-60, 21. november 2026):** et læsevindue, der viser teksten og fremhæver ordet, der læses | Følge med i teksten, mens den læses – Speechifys kernefunktion | `Features/Highlighting/`, observerer sessionens position. Apple giver ordposition; backends kun sætningsposition | Ja: sessionen skal kunne udlevere teksten til visning (ny, udtrykkelig metode). Kræver arkitektens ja |
 | I2 | **Spring en sætning frem eller tilbage** (knapper og genveje) | Høre en sætning igen uden at starte forfra | `ReadingSessionManager` (bidderne findes allerede) + knapper i afspilleren | Ja: udvider K2 |
 | I3 | **Højere hastighed**, op til 3–4× | Erfarne lyttere læser hurtigere end de læser selv; Speechify går til 4,5× | Grænsen i `SettingsStore`/sessionen; tjek, at stemmerne kan følge med | Ja: ændrer K5 (0,5–2,0) |
 | I4 | **Læs tekst fra skærmen** (OCR med Apples Vision, lokalt) | Billeder, indscannede PDF'er og programmer uden markerbar tekst | Ny strategi i `TextCaptureService`, eller egen genvej i `Features/ScreenText/` | Ja, hvis den lægges i `TextCaptureService` |

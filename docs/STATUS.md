@@ -16,6 +16,8 @@ Sidst opdateret: 2026-11-21 af udfører (Claude Opus 5.5).
   `dk.jpmag.baymow` (21. november; Tilgængelighed givet igen og genvejen bekræftet af brugeren).
 - **Kodearkiv:** https://github.com/JensPhillip/baymow (offentligt). Push kun det, der er committet og grønt.
 - **AP-52 forberedt:** DMG (`Scripts/make-dmg.sh`) og README. Udgivelse afventer brugerens app-id, Developer ID og kodearkiv.
+- **AP-60 bygget (idé I1, ordfremhævning):** valgfri i "Visning" og i afspilleren, slået fra som standard.
+  Afventer, at brugeren ser vinduet.
 - **Næste ledige pakker:** AP-32 (Google Docs og testmatrix – kræver brugeren). Herefter er MVP'en klar, og
   idékataloget (fase 6) venter på brugerens valg.
 
@@ -26,6 +28,7 @@ Sidst opdateret: 2026-11-21 af udfører (Claude Opus 5.5).
 | Hør lyttepakkerne, og udfyld `docs/LYTTESKEMA.md` | Kun brugeren kan afgøre, om en stemme er til at forstå | AP-03, AP-12, AP-19 |
 | Gennemfør testrunden for afspilleren (10 punkter i AP-20-afleveringen) | Knapper og lyd kan kun prøves af brugeren | AP-20 |
 | Find en testperson til førstegangsopsætningen (udskudt af brugeren 2026-11-18) | Kun et nyt menneske kan vise, om den er til at forstå | AP-41 |
+| Slå ordfremhævning til, og se vinduet under en oplæsning (AP-60-afleveringen) | Udseende og læselighed kan kun ses af brugeren | AP-60 |
 | Meld dig ind i Apple Developer Program (Developer ID og notarisering) | Udgivelse til andre kræver det | AP-52 |
 | Acceptér vilkår for `syvai/plapre-3` på Hugging Face | Originalmodellen kræver det | AP-15 |
 

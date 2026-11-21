@@ -19,6 +19,8 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private lazy var sessions = ReadingSessionManager(catalog: catalog, settings: settings, diagnostics: diagnostics)
     private lazy var player = FloatingPlayer(sessions: sessions, settings: settings)
     private lazy var notices = NoticePresenter(settings: settings)
+    /// Ordfremhævning (I1). Gør intet, før brugeren slår den til.
+    private lazy var readingWindow = ReadingWindowController(sessions: sessions, settings: settings)
     private lazy var windowModel = MainWindowModel(settings: settings, catalog: catalog, downloader: downloader,
                                                        sampleEngines: [AppleSpeechEngine(), BackendSpeechEngine(backend: piperBackend)])
 
@@ -54,6 +56,8 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
                                                object: nil, queue: .main) { [weak self] _ in
             MainActor.assumeIsolated { self?.catalog.refresh() }
         }
+
+        _ = readingWindow
 
         shortcuts.onTrigger = { [weak self] in self?.readSelection() }
         settings.$shortcut.removeDuplicates().sink { [weak self] shortcut in

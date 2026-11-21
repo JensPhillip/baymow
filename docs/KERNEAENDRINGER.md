@@ -136,3 +136,15 @@ giver noget.
 Kontrakt: Ny `testPdfLineBreaksAreJoinedBeforeSpeaking` (udvider K4) og `LineBreakCleanupTests` (7 tests).
 "Engelsk tekst ændres ikke" (K7) gælder fortsat for tal og ord; linjeskift samles for alle sprog.
 Godkendt af: udfører efter planens AP-31.
+
+## 2026-11-21 · I1 · Ordfremhævning: tekst til visning og ordposition
+Hvad: Ny `WordAlignment` kobler ord i den sagte (forberedte) tekst til ord i den viste tekst.
+`ReadingSessionManager` har fået `textForDisplay()` og `@Published highlightRange` (ordet – eller sætningen, hvis
+motoren kun melder sætninger – i den viste tekst). `SpeechEngine` har fået `reportsWordProgress` (standard `false`;
+Apple `true`). `SettingsStore` har fået `showReadingWindow`, **slået fra som standard**.
+Hvorfor: Idé I1 fra planens fase 6, valgt af brugeren 21. november 2026, med krav om, at den altid kan slås til og fra
+i indstillingerne. Kun sessionen ved, hvilket ord der læses, og planen kræver, at teksten kun udleveres gennem en ny,
+udtrykkelig metode. Teksten gemmes stadig ingen steder; den vises kun i et vindue, mens sessionen lever.
+Kontrakt: 6 nye kontrakt-tests (tekst kun under sessionen, ordet, tal i skriftform, sætning for sætnings-motorer,
+rydning ved stop/færdig/luk, standard slået fra) og 6 `WordAlignmentTests`. Ingen eksisterende tests er ændret.
+Godkendt af: brugeren (valgte I1, 2026-11-21).

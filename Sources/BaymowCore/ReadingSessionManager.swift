@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import NaturalLanguage
 
 /// Ejer den ene aktive oplæsningssession.
 ///
@@ -19,15 +20,23 @@ public final class ReadingSessionManager: ObservableObject {
     @Published public private(set) var language: Language?
     @Published public private(set) var progress: Double = 0
     @Published public private(set) var sourceAppName: String?
+    /// Det stykke af teksten (fra `textForDisplay()`), der læses lige nu: et ord, eller en sætning, hvis motoren kun
+    /// melder sætninger. `nil`, når der ikke læses. Bruges af ordfremhævningen (I1).
+    @Published public private(set) var highlightRange: NSRange?
 
     /// Længste tekst, der læses op: 200.000 tegn, ca. fire timers oplæsning (AP-21).
     public static let maxTextLength = 200_000
 
     public var hasSession: Bool { session != nil }
 
+    /// Teksten til visning i tekstvinduet (I1). Udleveres kun her, til visning; den gemmes ingen steder.
+    public func textForDisplay() -> String? { session?.displayText }
+
     private struct Session {
         let id = UUID()
         let chunks: [String]
+        /// Hele teksten, som den vises: bidderne sat sammen. Positioner i `highlightRange` gælder denne tekst.
+        let displayText: String
         let chunkStartOffsets: [Int]
         let totalLength: Int
         var chunkIndex = 0
@@ -81,7 +90,7 @@ public final class ReadingSessionManager: ObservableObject {
             offsets.append(total)
             total += chunk.utf16.count
         }
-        session = Session(chunks: chunks, chunkStartOffsets: offsets, totalLength: max(total, 1),
+        session = Session(chunks: chunks, displayText: chunks.joined(), chunkStartOffsets: offsets, totalLength: max(total, 1),
                           voice: voice, sourceBundleID: sourceBundleID, triggeredAt: triggeredAt)
         self.language = language
         self.sourceAppName = sourceAppName
@@ -123,6 +132,7 @@ public final class ReadingSessionManager: ObservableObject {
         session?.chunkIndex = 0
         session?.offsetInChunk = 0
         progress = 0
+        highlightRange = nil
         state = .stopped
     }
 
@@ -165,6 +175,7 @@ public final class ReadingSessionManager: ObservableObject {
         language = nil
         sourceAppName = nil
         progress = 0
+        highlightRange = nil
         state = .idle
     }
 
@@ -194,8 +205,18 @@ public final class ReadingSessionManager: ObservableObject {
         activeEngine = engine
         respeakOnResume = false
 
-        let chunk = spokenText(for: session.chunks[session.chunkIndex]) as NSString
+        let spoken = spokenText(for: session.chunks[session.chunkIndex])
+        let chunk = spoken as NSString
         let base = min(session.offsetInChunk, chunk.length)
+        // Kobling mellem det, der siges, og det, der vises – til fremhævningen.
+        let alignment = WordAlignment(original: session.chunks[session.chunkIndex], spoken: spoken)
+        let wordLevel = engine.reportsWordProgress
+        let chunkStart = session.chunkStartOffsets[session.chunkIndex]
+        let highlight: (Int) -> NSRange? = { spokenOffset in
+            let range = wordLevel ? alignment.originalRange(forSpokenOffset: spokenOffset)
+                : Self.sentenceRange(in: spoken, at: spokenOffset).flatMap { alignment.originalRange(forSpokenRange: $0) }
+            return range.map { NSRange(location: chunkStart + $0.location, length: $0.length) }
+        }
         let remaining = chunk.substring(from: base)
         let sessionID = session.id
         let chunkIndex = session.chunkIndex
@@ -205,6 +226,7 @@ public final class ReadingSessionManager: ObservableObject {
             guard let self, let current = self.session, current.id == sessionID, current.chunkIndex == chunkIndex else { return }
             switch event {
             case .started:
+                self.highlightRange = highlight(base)
                 if let triggeredAt = current.triggeredAt {
                     let ms = Int(Date().timeIntervalSince(triggeredAt) * 1000)
                     self.diagnostics.record(.speechStarted, sourceBundleID: current.sourceBundleID, milliseconds: ms,
@@ -213,6 +235,7 @@ public final class ReadingSessionManager: ObservableObject {
                 }
             case .progress(let offset):
                 self.session?.offsetInChunk = base + offset
+                self.highlightRange = highlight(base + offset) ?? self.highlightRange
                 // Positionen er i den forberedte tekst, som kan være længere end originalen; derfor loftet.
                 let chunkLength = current.chunks[chunkIndex].utf16.count
                 let within = min(base + offset, chunkLength)
@@ -235,6 +258,19 @@ public final class ReadingSessionManager: ObservableObject {
         return PronunciationOverrides.apply(engine.pronunciationOverrides(for: .danish), to: prepared)
     }
 
+    /// Sætningen i `text`, der indeholder `offset` (UTF-16).
+    static func sentenceRange(in text: String, at offset: Int) -> NSRange? {
+        var result: NSRange?
+        let tokenizer = NLTokenizer(unit: .sentence)
+        tokenizer.string = text
+        tokenizer.enumerateTokens(in: text.startIndex..<text.endIndex) { range, _ in
+            let ns = NSRange(range, in: text)
+            if NSMaxRange(ns) > offset { result = ns; return false }
+            return true
+        }
+        return result
+    }
+
     private func advance() {
         guard var session else { return }
         session.chunkIndex += 1
@@ -243,6 +279,7 @@ public final class ReadingSessionManager: ObservableObject {
             session.chunkIndex = 0
             self.session = session
             progress = 1
+            highlightRange = nil
             state = .finished
         } else {
             self.session = session

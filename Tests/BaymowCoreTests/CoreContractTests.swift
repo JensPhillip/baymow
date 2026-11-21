@@ -23,6 +23,8 @@ final class FakeEngine: SpeechEngine {
     var overrides: [String: String] = [:]
     /// Når sat, kan motoren skifte hastighed undervejs, og skiftene huskes her.
     var supportsLiveRate = false
+    /// Melder motoren ord (som Apple) eller kun sætninger (som Piper)?
+    var reportsWordProgress = true
     var liveRates: [Double] = []
 
     func setRate(_ rate: Double) -> Bool {
@@ -320,6 +322,69 @@ final class CoreContractTests: XCTestCase {
         XCTAssertTrue(spoken.contains("intelligens"))
         XCTAssertTrue(spoken.contains("hjernen afkoder"))
         XCTAssertFalse(spoken.contains("\n"))
+    }
+
+    // MARK: Ordfremhævning (I1)
+
+    private func highlighted() -> String? {
+        guard let text = sessions.textForDisplay(), let range = sessions.highlightRange else { return nil }
+        return (text as NSString).substring(with: range)
+    }
+
+    func testTextIsAvailableForDisplayOnlyDuringTheSession() {
+        XCTAssertNil(sessions.textForDisplay())
+        sessions.start(text: danish)
+        XCTAssertEqual(sessions.textForDisplay(), danish)
+        sessions.close()
+        XCTAssertNil(sessions.textForDisplay(), "teksten frigives ved luk")
+    }
+
+    func testTheWordBeingReadIsHighlighted() {
+        sessions.start(text: danish)
+        engine.handler?(.started)
+        XCTAssertEqual(highlighted(), "Dette")
+        let spoken = engine.spoken.last!.text as NSString
+        engine.handler?(.progress(utf16Offset: spoken.range(of: "vejret").location))
+        XCTAssertEqual(highlighted(), "vejret")
+    }
+
+    func testSpokenNumbersHighlightTheWrittenForm() {
+        sessions.start(text: "Mødet om budgettet og de nye planer for skolen er flyttet til torsdag kl. 14.30.")
+        let spoken = engine.spoken.last!.text as NSString
+        engine.handler?(.progress(utf16Offset: spoken.range(of: "fjorten").location))
+        XCTAssertEqual(highlighted(), "kl. 14.30")
+    }
+
+    func testEngineWithSentenceProgressHighlightsTheSentence() {
+        engine.reportsWordProgress = false
+        sessions.start(text: danish)
+        engine.handler?(.started)
+        XCTAssertEqual(highlighted(), "Dette er en almindelig dansk sætning om vejret i dag")
+        let spoken = engine.spoken.last!.text as NSString
+        engine.handler?(.progress(utf16Offset: spoken.range(of: "Den handler").location))
+        XCTAssertEqual(highlighted(), "Den handler også om, hvordan man læser en tekst højt")
+    }
+
+    func testHighlightIsClearedWhenStoppedFinishedOrClosed() {
+        sessions.start(text: danish)
+        engine.handler?(.started)
+        XCTAssertNotNil(sessions.highlightRange)
+        sessions.stop()
+        XCTAssertNil(sessions.highlightRange)
+        sessions.restart()
+        engine.handler?(.started)
+        engine.handler?(.finished)
+        XCTAssertNil(sessions.highlightRange)
+        sessions.restart()
+        engine.handler?(.started)
+        sessions.close()
+        XCTAssertNil(sessions.highlightRange)
+    }
+
+    func testReadingWindowIsOffByDefaultAndRemembered() {
+        XCTAssertFalse(settings.showReadingWindow, "ordfremhævning er slået fra, til brugeren slår den til")
+        settings.showReadingWindow = true
+        XCTAssertTrue(SettingsStore(defaults: defaults).showReadingWindow)
     }
 
     func testEnglishTextIsNotChanged() {
