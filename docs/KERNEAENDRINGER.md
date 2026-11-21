@@ -111,3 +111,14 @@ kopiering – også med et billede. Det kan testes direkte på en separat udklip
 Kontrakt: Nye tests i `Tests/BaymowCoreTests/ClipboardRestoreTests.swift` (tekst, billede og RTF byte for byte,
 flere elementer, tom udklipsholder). Ingen eksisterende tests er ændret.
 Godkendt af: udfører efter planens AP-30.
+
+## 2026-11-21 · Rettelse · Billedets adresse blev læst op i Chrome
+Hvad: Kopierings-reserveløsningen i `TextCaptureService` vurderer nu, hvad kopieringen gav (`classifyCopy`):
+er der et billede, og er den eneste tekst en webadresse, er det en billedkopi og ikke markeret tekst. Så får
+brugeren beskeden "Ingen tekst markeret" i stedet for at få adressen læst op. Tekst omkring et billede og en
+webadresse, brugeren selv har markeret, læses fortsat op.
+Hvorfor: Fundet af brugeren 2026-11-21 under AP-30: efter "Kopiér billede" i Chrome læste Baymow billedets
+adresse op. Den præcise rækkefølge i Chrome kunne ikke genskabes, men i alle forklaringer er indholdet på
+udklipsholderen et billede med dets adresse, og det er det, der nu afvises.
+Kontrakt: 6 nye tests i `ClipboardRestoreTests.swift`. Ingen eksisterende tests er ændret.
+Godkendt af: udfører; fejlrettelse.

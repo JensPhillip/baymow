@@ -1,6 +1,7 @@
 import AppKit
 import ApplicationServices
 import Carbon.HIToolbox
+import UniformTypeIdentifiers
 
 public struct CapturedText: Sendable {
     public let text: String
@@ -58,8 +59,14 @@ public final class TextCaptureService: Sendable {
             return .success(CapturedText(text: text, sourceBundleID: bundleID, sourceAppName: appName, method: ax.method))
         }
 
-        if let text = await readSelectionViaClipboard() {
+        switch await readSelectionViaClipboard() {
+        case .text(let text):
             return .success(CapturedText(text: text, sourceBundleID: bundleID, sourceAppName: appName, method: .clipboard))
+        case .notText:
+            // Kopieringen gav fx et billede med dets adresse – ikke tekst, brugeren har markeret.
+            return .failure(CaptureFailure(notice: .noSelection, sourceBundleID: bundleID))
+        case .nothing:
+            break
         }
 
         // Kunne vi finde et fokuseret element, men ingen tekst, er der sandsynligvis intet markeret.
@@ -167,7 +174,36 @@ public final class TextCaptureService: Sendable {
     // MARK: - Udklipsholder-fallback
 
     /// Simulerer ⌘C, læser resultatet og gendanner derefter udklipsholderens tidligere indhold.
-    private func readSelectionViaClipboard() async -> String? {
+    /// Resultatet af at hente markeringen med ⌘C.
+    enum ClipboardCopy: Equatable {
+        /// Markeret tekst.
+        case text(String)
+        /// Der blev kopieret noget, men ikke tekst (fx et billede, hvis eneste tekst er dets adresse).
+        case notText
+        /// Intet blev kopieret.
+        case nothing
+    }
+
+    /// Afgør, hvad en kopiering gav. Et billede, hvis eneste tekst er en webadresse, er en billedkopi – ikke en
+    /// tekstmarkering – og læses ikke op (fundet af brugeren 2026-11-21: Chrome læste billedets adresse op).
+    static func classifyCopy(on pasteboard: NSPasteboard) -> ClipboardCopy {
+        guard let text = usable(pasteboard.string(forType: .string)) else {
+            return (pasteboard.pasteboardItems ?? []).isEmpty ? .nothing : .notText
+        }
+        let hasImage = (pasteboard.pasteboardItems ?? []).contains { item in
+            item.types.contains { UTType($0.rawValue)?.conforms(to: .image) == true }
+        }
+        return hasImage && isBareAddress(text) ? .notText : .text(text)
+    }
+
+    /// Én webadresse uden anden tekst, fx "https://eksempel.dk/billede.jpg".
+    static func isBareAddress(_ text: String) -> Bool {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.contains(where: \.isWhitespace), let scheme = URL(string: trimmed)?.scheme?.lowercased() else { return false }
+        return ["http", "https", "file", "data", "blob", "ftp"].contains(scheme)
+    }
+
+    private func readSelectionViaClipboard() async -> ClipboardCopy {
         let pasteboard = NSPasteboard.general
         let snapshot = Self.snapshot(of: pasteboard)
         let countBefore = pasteboard.changeCount
@@ -177,11 +213,11 @@ public final class TextCaptureService: Sendable {
         // Tastaturlayoutet må kun aflæses på hovedtråden; ellers lukker macOS 26 appen (nedbrud 2026-11-18).
         await Self.postCopy()
 
-        var copied: String?
+        var copied = ClipboardCopy.nothing
         for _ in 0..<25 {
             try? await Task.sleep(nanoseconds: 20_000_000)
             if pasteboard.changeCount != countBefore {
-                copied = Self.usable(pasteboard.string(forType: .string))
+                copied = Self.classifyCopy(on: pasteboard)
                 break
             }
         }

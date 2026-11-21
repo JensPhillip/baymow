@@ -31,7 +31,9 @@ Sidst opdateret: 2026-11-17 af udfører (Claude Opus 5.5).
 - **Afventer bruger:** AP-20 (testrunde), AP-41 (testperson), AP-03 (tal 1–5 i lytteskemaet mangler stadig for begge stemmer).
 - **I gang:** intet.
 - **AP-50 færdig:** GPL-3.0-licens, `docs/LICENSER.md` og "Om Baymow".
-- **AP-30 delvist:** udklipsholderen gendannes rigtigt (tests). Tekstfelt og PDF i Chrome afventer brugeren.
+- **AP-30 næsten færdig:** tekstfelt, PDF i Chrome og udklipsholderen virker (bruger 2026-11-21). Fejlen, hvor et
+  kopieret billedes adresse blev læst op, er rettet; afventer brugerens gentest.
+- **AP-31 delvist:** Preview virker (loggen viser oplæsning via Tilgængelighed). Word er ikke afprøvet.
 - **AP-51 færdig:** 8,9 timers kørsel uden nedbrud, hukommelsen stabil (+0,8 MB), ingen netværk, ingen tekst
   i log eller filer.
 - **Næste ledige pakker:** AP-51 (stabilitet og privatlivskontrol – kan laves uden brugeren), AP-31 (Word og
@@ -47,12 +49,12 @@ Sidst opdateret: 2026-11-17 af udfører (Claude Opus 5.5).
 | Hør lyttepakkerne, og udfyld `docs/LYTTESKEMA.md` | Kun brugeren kan afgøre, om en stemme er til at forstå | AP-03, AP-12, AP-19 |
 | Gennemfør testrunden for afspilleren (10 punkter i AP-20-afleveringen) | Knapper og lyd kan kun prøves af brugeren | AP-20 |
 | Find en testperson til førstegangsopsætningen (udskudt af brugeren 2026-11-18) | Kun et nyt menneske kan vise, om den er til at forstå | AP-41 |
-| Prøv tekstfelt og PDF i Chrome, og et billede på udklipsholderen (AP-30-afleveringen) | Kræver Chrome og brugerens hænder | AP-30 |
+| Prøv billedtilfældet i Chrome igen, og markér tekst i et Word-dokument | Kræver brugerens hænder | AP-30, AP-31 |
 | Acceptér vilkår for `syvai/plapre-3` på Hugging Face | Originalmodellen kræver det | AP-15 |
 
 ## Senest kontrolleret (2026-11-17)
 
-- `./Scripts/check.sh`: ALT GRØNT, 78 tests.
+- `./Scripts/check.sh`: ALT GRØNT, 84 tests.
 - `Baymow --memory-selftest apple|piper`: begge bestået (efter luk inden for 10 MB af udgangspunktet).
 - `Baymow --player-selftest`: den rigtige afspiller bestod alle fem punkter, lydløst.
 - `./Scripts/test-voice.sh`: Piper 28 af 36 (1,4 %), Apple Sara 23 af 36 (2,8 %) efter AP-22.

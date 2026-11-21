@@ -70,6 +70,50 @@ final class ClipboardRestoreTests: XCTestCase {
         XCTAssertEqual(pasteboard.pasteboardItems?.compactMap { $0.string(forType: .string) }, ["første", "anden"])
     }
 
+    // MARK: Hvad en kopiering gav (fejl fundet af brugeren 2026-11-21)
+
+    func testImageWithItsAddressIsNotReadAloud() {
+        let item = NSPasteboardItem()
+        item.setData(pngData(), forType: .png)
+        item.setString("https://eksempel.dk/billeder/hund.jpg", forType: .string)
+        item.setString("<img src=\"https://eksempel.dk/billeder/hund.jpg\">", forType: .html)
+        pasteboard.writeObjects([item])
+        XCTAssertEqual(TextCaptureService.classifyCopy(on: pasteboard), .notText)
+    }
+
+    func testImageWithoutAnyTextIsNotReadAloud() {
+        let item = NSPasteboardItem()
+        item.setData(pngData(), forType: .png)
+        pasteboard.writeObjects([item])
+        XCTAssertEqual(TextCaptureService.classifyCopy(on: pasteboard), .notText)
+    }
+
+    func testTextAroundAnImageIsStillRead() {
+        let item = NSPasteboardItem()
+        item.setData(pngData(), forType: .png)
+        item.setString("Hunden løb over marken. Bagefter sov den.", forType: .string)
+        pasteboard.writeObjects([item])
+        XCTAssertEqual(TextCaptureService.classifyCopy(on: pasteboard), .text("Hunden løb over marken. Bagefter sov den."))
+    }
+
+    func testASelectedWebAddressIsStillRead() {
+        // Markerer brugeren selv en adresse i en tekst, skal den læses op.
+        pasteboard.setString("https://www.borger.dk", forType: .string)
+        XCTAssertEqual(TextCaptureService.classifyCopy(on: pasteboard), .text("https://www.borger.dk"))
+    }
+
+    func testPlainTextIsRead() {
+        pasteboard.setString("Almindelig markeret tekst.", forType: .string)
+        XCTAssertEqual(TextCaptureService.classifyCopy(on: pasteboard), .text("Almindelig markeret tekst."))
+    }
+
+    func testBareAddressRecognition() {
+        XCTAssertTrue(TextCaptureService.isBareAddress("https://eksempel.dk/a.jpg"))
+        XCTAssertTrue(TextCaptureService.isBareAddress("  data:image/png;base64,AAAA \n"))
+        XCTAssertFalse(TextCaptureService.isBareAddress("Se https://eksempel.dk for mere"))
+        XCTAssertFalse(TextCaptureService.isBareAddress("Hunden løb"))
+    }
+
     func testEmptyClipboardStaysEmpty() {
         let snapshot = TextCaptureService.snapshot(of: pasteboard)
         simulateCopy()
