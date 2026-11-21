@@ -19,10 +19,19 @@ rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS"
 cp "$(swift build -c release --arch arm64 --show-bin-path)/Baymow" "$APP/Contents/MacOS/Baymow"
 cp Resources/Info.plist "$APP/Contents/Info.plist"
+# Licensen følger med appen (GPL-3.0 kræver det), sammen med oversigten over de dele, Baymow bygger på.
+mkdir -p "$APP/Contents/Resources"
+cp LICENSE "$APP/Contents/Resources/LICENSE"
+cp docs/LICENSER.md "$APP/Contents/Resources/LICENSER.md"
 
-IDENTITY="${CODESIGN_IDENTITY:-$(security find-identity -v -p codesigning | awk -F'"' '/Apple Development|Developer ID Application/ {print $2; exit}')}"
+# Developer ID (til udgivelse) foretrækkes frem for Apple Development (kun til egen Mac).
+IDENTITY="${CODESIGN_IDENTITY:-$(security find-identity -v -p codesigning | awk -F'"' '/Developer ID Application/ {print $2; exit}')}"
+[ -n "$IDENTITY" ] || IDENTITY="$(security find-identity -v -p codesigning | awk -F'"' '/Apple Development/ {print $2; exit}')"
 if [ -n "$IDENTITY" ]; then
-  codesign --force --options runtime --sign "$IDENTITY" "$APP"
+  # Hardened runtime (--options runtime) altid. Tidsstempel kræves af Apples notarisering, men kræver internet,
+  # så det bruges kun med et Developer ID-certifikat (udgivelse) – ikke ved almindelige builds.
+  timestamp="--timestamp=none"; [[ "$IDENTITY" == Developer\ ID\ Application* ]] && timestamp="--timestamp"
+  codesign --force --options runtime "$timestamp" --sign "$IDENTITY" "$APP"
   echo "Signeret med: ${IDENTITY%% (*}"
 else
   codesign --force --sign - "$APP"

@@ -284,6 +284,7 @@ Nyttige værktøjer i den byggede app (`build/Baymow.app/Contents/MacOS/Baymow`)
 | `--install-voice <id>` | Henter en stemme med samme kode som knappen "Hent" |
 | `--capture-selftest` (via `open -n -W build/Baymow.app --args …`) | Markerer eksempelteksten i Baymows eget vindue og henter den som genvejen; resultat i `~/Library/Logs/Baymow/capture-selftest.txt` |
 | `--copykey-selftest` (via `open -n -W build/Baymow.app --args …`) | Aflæser ⌘C-tasten fra en baggrundsopgave i en kørende app, som genvejen gør; fejlede med nedbrud før rettelsen 2026-11-18 |
+| `./Scripts/make-dmg.sh` | Installationsfil i `build/`; notariseres med Developer ID og `NOTARY_PROFILE` |
 | `--player-selftest` | Lydløs kontrol af den rigtige afspiller: events, pause, fortsæt, stop, erstatning |
 | `--memory-selftest <apple\|piper>` | Lydløs måling af hukommelse ved 20.000 tegn, tekstskift og luk, tre gange |
 | `--ax-diagnose <bundle-id>` | Skal startes med `open -n -W build/Baymow.app --args …`; skriver til `~/Library/Logs/Baymow/ax-diagnose.txt` |
@@ -404,7 +405,7 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 | AP-41 | Førstegangsopsætning | 4 | Udfører + bruger | AP-40 | Afventer bruger (testperson) |
 | AP-50 | Licensoprydning | 5 | Arkitekt + udfører | AP-19, B8 | Færdig (licenstekster for MIT/BSD/Apache lægges i appen i AP-52) |
 | AP-51 | Stabilitet, hukommelse og privatlivskontrol | 5 | Udfører | AP-20 til AP-41 | Færdig |
-| AP-52 | Developer ID, notarisering og DMG | 5 | Udfører + bruger | AP-50, B9 | Ikke startet |
+| AP-52 | Developer ID, notarisering og DMG | 5 | Udfører + bruger | AP-50, B9 | Forberedt: DMG og README; afventer certifikat, app-id og kodearkiv |
 
 ### Fase 0 – Grundlag
 
