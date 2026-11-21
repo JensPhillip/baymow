@@ -7,7 +7,7 @@ Sidst opdateret: 2026-11-21 af udfører (Claude Opus 5.5).
 
 - **I gang:** intet.
 - **Færdige pakker:** AP-00, AP-01, AP-02, AP-10, AP-11, AP-12, AP-19 (hovedstemme: Apple Sara (Enhanced)),
-  AP-21, AP-22, AP-23, AP-30, AP-31, AP-40, AP-50, AP-51.
+  AP-21, AP-22, AP-23, AP-30, AP-31, AP-40, AP-50, AP-51, AP-60.
 - **Venter på brugeren:** AP-20 (testrunde på 10 punkter),
   AP-41 (testperson – udskudt af brugeren 2026-11-18), AP-03 (tal 1–5 i lytteskemaet; ikke afgørende længere).
 - **Delvist:** AP-24 – udtalelister pr. motor er bygget, men gav kun lidt (Piper 14 → 18 af 30, Apple uændret).
@@ -16,9 +16,8 @@ Sidst opdateret: 2026-11-21 af udfører (Claude Opus 5.5).
   `dk.jpmag.baymow` (21. november; Tilgængelighed givet igen og genvejen bekræftet af brugeren).
 - **Kodearkiv:** https://github.com/JensPhillip/baymow (offentligt). Push kun det, der er committet og grønt.
 - **AP-52 forberedt:** DMG (`Scripts/make-dmg.sh`) og README. Udgivelse afventer brugerens app-id, Developer ID og kodearkiv.
-- **AP-60 (idé I1, ordfremhævning), runde 2:** tekstvindue og/eller fremhævning direkte i teksten – hver sin kontakt
-  i "Visning", slået fra som standard. Mellemrumsfejlen ("størrelsen.Sig") er rettet. Afventer brugerens test af
-  fremhævning i teksten.
+- **AP-60 færdig (idé I1, ordfremhævning):** tekstvindue og/eller gult felt direkte i teksten, hver sin kontakt i
+  "Visning", slået fra som standard. I teksten virker i Noter, TextEdit, Safari og Mail; ikke i Chrome, Word og Claude.
 - **Næste ledige pakker:** AP-32 (Google Docs og testmatrix – kræver brugeren). Herefter er MVP'en klar, og
   idékataloget (fase 6) venter på brugerens valg.
 
@@ -29,7 +28,6 @@ Sidst opdateret: 2026-11-21 af udfører (Claude Opus 5.5).
 | Hør lyttepakkerne, og udfyld `docs/LYTTESKEMA.md` | Kun brugeren kan afgøre, om en stemme er til at forstå | AP-03, AP-12, AP-19 |
 | Gennemfør testrunden for afspilleren (10 punkter i AP-20-afleveringen) | Knapper og lyd kan kun prøves af brugeren | AP-20 |
 | Find en testperson til førstegangsopsætningen (udskudt af brugeren 2026-11-18) | Kun et nyt menneske kan vise, om den er til at forstå | AP-41 |
-| Prøv "Fremhæv ordet direkte i teksten" i Safari og Mail igen (AP-60) | Rettet og selvtestet i Safari; Mail ikke prøvet | AP-60 |
 | Meld dig ind i Apple Developer Program (Developer ID og notarisering) | Udgivelse til andre kræver det | AP-52 |
 | Acceptér vilkår for `syvai/plapre-3` på Hugging Face | Originalmodellen kræver det | AP-15 |
 
