@@ -54,6 +54,28 @@ final class WordAlignmentTests: XCTestCase {
         XCTAssertEqual(shown(original, spoken, "G"), "ChatGPT")
     }
 
+    func testExtraSpokenWordBetweenNeighbouringWords() {
+        // Fejlen 21. november 2026: et ekstra sagt ord mellem to ord, der står lige efter hinanden i teksten,
+        // fik appen til at gå ned ved genvejen.
+        let original = "Vi ses i morgen."
+        let spoken = "Vi ses så i morgen."
+        XCTAssertEqual(shown(original, spoken, "så"), "ses")
+        XCTAssertEqual(shown(original, spoken, "morgen"), "morgen")
+    }
+
+    func testNeverCrashesOnRandomWordLists() {
+        // Mange tilfældige kombinationer af få ord: koblingen må aldrig gå ned og skal give et svar pr. sagt ord.
+        var generator = SystemRandomNumberGenerator()
+        let words = ["a", "b", "c", "d"]
+        for _ in 0..<3000 {
+            let a = (0..<Int.random(in: 0...6, using: &generator)).map { _ in words.randomElement(using: &generator)! }
+            let b = (0..<Int.random(in: 0...8, using: &generator)).map { _ in words.randomElement(using: &generator)! }
+            let mapping = WordAlignment.align(original: a, spoken: b)
+            XCTAssertEqual(mapping.count, b.count)
+            for range in mapping.compactMap({ $0 }) { XCTAssertTrue(range.lowerBound >= 0 && range.upperBound < a.count) }
+        }
+    }
+
     func testEmptyTexts() {
         XCTAssertNil(WordAlignment(original: "", spoken: "Hej").originalRange(forSpokenOffset: 0))
         XCTAssertNil(WordAlignment(original: "Hej", spoken: "").originalRange(forSpokenOffset: 0))

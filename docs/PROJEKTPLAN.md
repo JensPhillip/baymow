@@ -222,7 +222,8 @@ vinduer, afspilleren og nye funktioner.
    hver med farvet ikon som i Systemindstillinger. Ingen lange rullesider.
 5. **Vis, i stedet for at forklare.** Fx genvejen som tastetryk (⌃ ⌥ S) og "Markér → Tryk → Lyt" som tre billeder.
 6. **Farve betyder noget, men står aldrig alene.** Grøn = klar, orange = mangler noget. Altid sammen med et ikon.
-7. **Store mål.** Det, man trykker på oftest (afspil, hastighed), er stort og let at ramme.
+7. **Afspilleren er lille og stille.** Brugeren valgte 21. november 2026 den enkle afspiller: én række små knapper og en
+   tynd fremdriftslinje, så den ikke tager fokus fra teksten. Gør den ikke større. Store mål hører til i hovedvinduet.
 8. **Apples byggeklodser.** Systemets kontroller, materialer, SF Symbols og farver; virker i lyst og mørkt. Intet
    eget farvetema.
 9. **Dansk, du-form, korte sætninger, ingen fagord.** Skriv "stemme", ikke "motor"; "hent", ikke "download".

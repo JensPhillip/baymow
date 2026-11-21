@@ -186,3 +186,12 @@ ligger uden for kernen i `AppleSpeechEngine.systemRate`). Talegenkendelsen kan i
 speedet op uden om Sara, giver mange fejl), så om 2,5× og 3× er til at forstå, afgøres af brugerens lytning.
 Kontrakt: `testRateIsClamped` forventer nu 3,0 i stedet for 2,0 ved for høj hastighed. Ingen andre tests ændret.
 Godkendt af: brugeren (ønsket 2026-11-21).
+
+## 2026-11-21 · Rettelse · Nedbrud ved genvejen (ordkobling)
+Hvad: `WordAlignment.align` bruger et halvåbent område for de viste ord mellem to fælles ord.
+Hvorfor: Brugeren meldte, at Baymow lukkede ved ⌃⌥S. Nedbrudsrapporterne (to ens) viste "Range requires lowerBound <=
+upperBound" i `WordAlignment.align`: når stemmen siger et ekstra ord mellem to ord, der står lige efter hinanden i
+teksten, blev der lavet et lukket område med nedre grænse over øvre, og appen gik ned. Fejlen har været der siden AP-60.
+Kontrakt: 2 nye tests i `WordAlignmentTests` (et konkret tilfælde og 3000 tilfældige ordlister). Uden rettelsen går
+testen ned med samme fejl som i rapporten. Ingen eksisterende tests ændret.
+Godkendt af: udfører; fejlrettelse.

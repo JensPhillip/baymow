@@ -79,67 +79,41 @@ struct PlayerView: View {
     @ObservedObject var settings: SettingsStore
     let onClose: () -> Void
 
+    /// Så lille og stille som muligt (brugerens ønske 21. november 2026): én række små knapper og en tynd
+    /// linje, der viser, hvor langt oplæsningen er nået. Tager ikke fokus fra teksten.
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack(spacing: 8) {
-                Circle().fill(statusColor).frame(width: 9, height: 9)
-                Text(statusText).font(.system(size: 13, weight: .semibold))
-                if let source = sessions.sourceAppName {
-                    Text(source).font(.system(size: 12)).foregroundStyle(.secondary).lineLimit(1)
-                }
-                Spacer(minLength: 8)
-                Button(action: onClose) { Image(systemName: "xmark") }
-                    .buttonStyle(.plain)
-                    .foregroundStyle(.secondary)
-                    .help("Luk afspilleren")
-                    .accessibilityLabel("Luk afspilleren")
-            }
-
-            ProgressView(value: sessions.progress).progressViewStyle(.linear).controlSize(.small)
-
-            HStack(spacing: 10) {
-                iconButton("backward.end.fill", label: "Start forfra") { sessions.restart() }
-                Button { sessions.togglePlayPause() } label: {
-                    Image(systemName: sessions.state == .speaking ? "pause.circle.fill" : "play.circle.fill")
-                        .font(.system(size: 34))
-                        .foregroundStyle(Color.accentColor)
-                        .frame(width: 38, height: 38).contentShape(Circle())
-                }
-                .buttonStyle(.plain)
-                .keyboardShortcut(.space, modifiers: [])
-                .help(sessions.state == .speaking ? "Pause" : "Afspil")
-                .accessibilityLabel(sessions.state == .speaking ? "Pause" : "Afspil")
-                iconButton("stop.fill", label: "Stop") { sessions.stop() }
+        VStack(spacing: 6) {
+            HStack(spacing: 6) {
+                iconButton(sessions.state == .speaking ? "pause.fill" : "play.fill",
+                           label: sessions.state == .speaking ? "Pause" : "Afspil", size: 15) { sessions.togglePlayPause() }
+                    .keyboardShortcut(.space, modifiers: [])
+                iconButton("backward.end.fill", label: "Start forfra", size: 11) { sessions.restart() }
+                iconButton("stop.fill", label: "Stop", size: 11) { sessions.stop() }
                     .disabled(sessions.state == .stopped)
 
-                Spacer(minLength: 4)
+                Divider().frame(height: 14)
 
-                HStack(spacing: 2) {
-                    iconButton("tortoise.fill", label: "Langsommere", size: 14) { sessions.setRate(settings.rate - 0.1) }
-                        .disabled(settings.rate <= SettingsStore.rateRange.lowerBound)
-                    Text(rateLabel(settings.rate))
-                        .font(.system(size: 13, weight: .semibold, design: .rounded).monospacedDigit())
-                        .frame(width: 36)
-                        .accessibilityLabel("Hastighed \(rateLabel(settings.rate))")
-                    iconButton("hare.fill", label: "Hurtigere", size: 14) { sessions.setRate(settings.rate + 0.1) }
-                        .disabled(settings.rate >= SettingsStore.rateRange.upperBound)
-                }
-                .padding(.horizontal, 4)
-                .padding(.vertical, 2)
-                .background(.quaternary.opacity(0.6), in: Capsule())
+                iconButton("minus", label: "Langsommere", size: 10) { sessions.setRate(settings.rate - 0.1) }
+                    .disabled(settings.rate <= SettingsStore.rateRange.lowerBound)
+                Text(rateLabel(settings.rate))
+                    .font(.system(size: 11, weight: .medium).monospacedDigit())
+                    .foregroundStyle(.secondary)
+                    .frame(width: 30)
+                    .accessibilityLabel("Hastighed \(rateLabel(settings.rate))")
+                iconButton("plus", label: "Hurtigere", size: 10) { sessions.setRate(settings.rate + 0.1) }
+                    .disabled(settings.rate >= SettingsStore.rateRange.upperBound)
+
+                Divider().frame(height: 14)
 
                 Button {
                     settings.showReadingWindow.toggle()
                 } label: {
-                    Image(systemName: "macwindow").font(.system(size: 15, weight: .semibold))
-                        .foregroundStyle(settings.showReadingWindow ? Color.white : Color.secondary)
-                        .frame(width: 28, height: 28)
-                        .background(settings.showReadingWindow ? AnyShapeStyle(Color.accentColor) : AnyShapeStyle(.clear),
-                                    in: RoundedRectangle(cornerRadius: 7, style: .continuous))
-                        .contentShape(Rectangle())
+                    Image(systemName: "text.viewfinder").font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(settings.showReadingWindow ? Color.accentColor : Color.secondary)
+                        .frame(width: 22, height: 22).contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-                .help(settings.showReadingWindow ? "Skjul vinduet med teksten" : "Vis teksten i et vindue, og fremhæv ordet, der læses")
+                .help(settings.showReadingWindow ? "Skjul teksten" : "Vis teksten, og fremhæv ordet, der læses")
                 .accessibilityLabel(settings.showReadingWindow ? "Skjul teksten" : "Vis teksten")
 
                 Menu {
@@ -152,24 +126,39 @@ struct PlayerView: View {
                         }
                     }
                 } label: {
-                    Text(sessions.language?.flag ?? "🌐").font(.system(size: 20))
+                    Text(sessions.language?.flag ?? "🌐").font(.system(size: 13))
                 }
                 .menuStyle(.borderlessButton)
                 .menuIndicator(.hidden)
                 .fixedSize()
                 .help("Skift sprog for denne tekst")
                 .accessibilityLabel("Sprog: \(sessions.language?.displayName ?? "ukendt")")
+
+                Button(action: onClose) { Image(systemName: "xmark").font(.system(size: 10, weight: .semibold)) }
+                    .buttonStyle(.plain)
+                    .foregroundStyle(.secondary)
+                    .frame(width: 20, height: 22)
+                    .help("Luk afspilleren")
+                    .accessibilityLabel("Luk afspilleren")
             }
+
+            ProgressView(value: sessions.progress)
+                .progressViewStyle(.linear)
+                .controlSize(.mini)
+                .tint(sessions.state == .speaking ? .accentColor : .secondary)
+                .accessibilityLabel(statusText)
         }
-        .padding(14)
-        .frame(width: 350)
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).strokeBorder(.primary.opacity(0.12)))
+        .padding(.horizontal, 10)
+        .padding(.top, 6)
+        .padding(.bottom, 8)
+        .fixedSize()
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).strokeBorder(.primary.opacity(0.1)))
     }
 
     private func iconButton(_ symbol: String, label: String, size: CGFloat = 15, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            Image(systemName: symbol).font(.system(size: size, weight: .semibold)).frame(width: 28, height: 28).contentShape(Rectangle())
+            Image(systemName: symbol).font(.system(size: size, weight: .semibold)).frame(width: 22, height: 22).contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .help(label)
@@ -183,14 +172,6 @@ struct PlayerView: View {
         case .stopped: return "Stoppet"
         case .finished: return "Færdig"
         case .idle: return "Klar"
-        }
-    }
-
-    private var statusColor: Color {
-        switch sessions.state {
-        case .speaking: return .green
-        case .paused: return .orange
-        case .stopped, .finished, .idle: return .secondary
         }
     }
 }

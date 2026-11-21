@@ -71,10 +71,12 @@ public struct WordAlignment: Sendable {
         // Huller: sagte ord mellem to fælles ord kobles til de viste ord i samme hul.
         let anchors = [(original: -1, spoken: -1)] + matched + [(original: n, spoken: m)]
         for (left, right) in zip(anchors, anchors.dropFirst()) where right.spoken - left.spoken > 1 {
-            let originalGap = (left.original + 1)...(right.original - 1)
+            // Halvåbent område: kan være tomt, når de to fælles ord står lige efter hinanden i den viste tekst.
+            // (Et lukket område `a...b` med a > b får appen til at gå ned – det skete i 2026-11-21.)
+            let originalGap = (left.original + 1)..<right.original
             let target: ClosedRange<Int>?
             if !originalGap.isEmpty {
-                target = originalGap
+                target = originalGap.lowerBound...(originalGap.upperBound - 1)
             } else {
                 // Ingen viste ord i hullet (et ekstra ord i den sagte tekst): brug nabo-ordet.
                 let neighbour = left.original >= 0 ? left.original : (right.original < n ? right.original : nil)

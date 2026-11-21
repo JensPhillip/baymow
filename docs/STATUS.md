@@ -21,7 +21,8 @@ Sidst opdateret: 2026-11-21 af udfører (Claude Opus 5.5).
 - **AP-61 (idé I3, højere hastighed):** grænsen er 3× (var 2×). Saras tempo følger tallet (målt: 2× = 2,05×,
   3× = 2,98×). Talegenkendelse: 1× 1,7 %, 1,5× 3,5 %, 2× 7,2 % tegnfejl; over 2× kan den ikke følge med, så øret afgør.
 - **AP-62 (nyt design):** designprincipper i planens afsnit 3. Hovedvinduet har sidebjælke med fem sider, ikoner,
-  flag og "Hør"-knapper; afspiller og velkomst er tegnet om. Skærmbilleder: `Baymow --render-ui <mappe>`.
+  flag og "Hør"-knapper; velkomsten er tegnet om. Afspilleren er igen lille (én række), efter brugerens ønske.
+  Nedbrud ved genvejen (ordkoblingen, fra AP-60) rettet 21. november. Skærmbilleder: `Baymow --render-ui <mappe>`.
 - **Næste ledige pakker:** AP-32 (Google Docs og testmatrix – kræver brugeren). Herefter er MVP'en klar, og
   idékataloget (fase 6) venter på brugerens valg.
 
