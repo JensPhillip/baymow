@@ -122,3 +122,17 @@ adresse op. Den præcise rækkefølge i Chrome kunne ikke genskabes, men i alle 
 udklipsholderen et billede med dets adresse, og det er det, der nu afvises.
 Kontrakt: 6 nye tests i `ClipboardRestoreTests.swift`. Ingen eksisterende tests er ændret.
 Godkendt af: udfører; fejlrettelse.
+
+## 2026-11-21 · AP-31 · Linjeskift fra PDF'er og tydeligere beskeder
+Hvad: Ny `LineBreakCleanup.clean` samler sætninger, der er brudt over flere linjer, og ord delt med bindestreg
+over to linjer; fjerner bløde bindestreger. Afsnit, korte overskrifter og lister bevares. Kaldes i
+`ReadingSessionManager.start` for alle sprog, før sproggenkendelse og sætningsopdeling.
+Beskederne `noSelection` og `unsupported` er omskrevet: `noSelection` nævner billeder og indscannede sider;
+`unsupported` siger ikke længere, at programmet "muligvis ikke understøttes", som første forklaring.
+Hvorfor: Planens AP-31. Tekst fra PDF'er har linjeskift midt i sætninger og delte ord. Og loggen 2026-11-21
+viste, at Chrome uden markering gav beskeden "understøttes muligvis ikke", selv om Chrome virker – fordi Baymow
+ikke kan skelne "intet markeret" fra "kan ikke læse programmet", når hverken Tilgængelighed eller kopiering
+giver noget.
+Kontrakt: Ny `testPdfLineBreaksAreJoinedBeforeSpeaking` (udvider K4) og `LineBreakCleanupTests` (7 tests).
+"Engelsk tekst ændres ikke" (K7) gælder fortsat for tal og ord; linjeskift samles for alle sprog.
+Godkendt af: udfører efter planens AP-31.

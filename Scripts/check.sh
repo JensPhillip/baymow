@@ -19,9 +19,13 @@ fail() { echo "  FEJL  $1"; failed=1; }
 
 echo "1. Byg og test"
 if swift build 2>&1 | tail -1 | grep -q "Build complete"; then ok "swift build"; else fail "swift build"; fi
-test_output=$(swift test 2>&1)
-if echo "$test_output" | grep -q "with 0 failures"; then
-  ok "swift test ($(echo "$test_output" | grep -oE 'Executed [0-9]+ tests' | sort -t' ' -k2 -n | tail -1))"
+# Testene skal både afslutte uden fejl og have 0 fejl i den samlede linje til sidst. (Før 2026-11-21 så scriptet
+# kun efter "with 0 failures" et vilkårligt sted, og det står også ved delgrupper, der bestod – så en fejlende
+# test kunne give grønt.)
+test_output=$(swift test 2>&1); test_status=$?
+total_line=$(echo "$test_output" | grep -E "Executed [0-9]+ tests?, with [0-9]+ failures?" | tail -1)
+if [ "$test_status" -eq 0 ] && echo "$total_line" | grep -qE "with 0 failures" && ! echo "$test_output" | grep -qE "error: -\[|failed \("; then
+  ok "swift test ($(echo "$total_line" | grep -oE 'Executed [0-9]+ tests?'))"
 else
   fail "swift test"; echo "$test_output" | grep -E "error:|failed" | head -20
 fi

@@ -62,6 +62,8 @@ public final class ReadingSessionManager: ObservableObject {
             diagnostics.record(.textTooLong, sourceBundleID: sourceBundleID)
             return .tooLong
         }
+        // Linjeskift og orddeling fra PDF'er må ikke give pauser midt i sætninger (AP-31).
+        let text = LineBreakCleanup.clean(text)
         let language = settings.forcedLanguage
             ?? languageDetection.dominantLanguage(of: text, fallback: settings.preferredLanguage)
         guard let voice = catalog.voice(for: language) else {

@@ -89,11 +89,11 @@ public enum Notice: Equatable, Sendable {
     public var message: String {
         switch self {
         case .noSelection:
-            return "Ingen tekst markeret. Markér den tekst, du vil have læst op, og prøv igen."
+            return "Ingen tekst markeret. Markér den tekst, du vil have læst op, og prøv igen. Er det et billede eller en indscannet side, kan teksten ikke markeres – så kan Baymow ikke læse den op endnu."
         case .noPermission:
             return "Baymow mangler tilladelse til at læse markeret tekst. Giv adgang under Tilgængelighed i Systemindstillinger."
         case .unsupported:
-            return "Teksten kunne ikke hentes. Programmet eller tekstfeltet understøttes muligvis ikke."
+            return "Baymow fandt ingen markeret tekst. Markér teksten, og prøv igen. Virker det stadig ikke, kan Baymow måske ikke læse tekst i dette program."
         case .noVoice(let language):
             return "Der er ingen stemme installeret til \(language.displayName.lowercased()). Åbn Baymow for at vælge en stemme."
         case .tooLong:

@@ -314,6 +314,14 @@ final class CoreContractTests: XCTestCase {
         XCTAssertTrue(engine.spoken.last?.text.contains("Chrome") == true)
     }
 
+    func testPdfLineBreaksAreJoinedBeforeSpeaking() {
+        sessions.start(text: "Ordblindhed handler ikke om intel-\nligens, men om hvordan hjernen\nafkoder skrevne ord.")
+        let spoken = engine.spoken.map(\.text).joined()
+        XCTAssertTrue(spoken.contains("intelligens"))
+        XCTAssertTrue(spoken.contains("hjernen afkoder"))
+        XCTAssertFalse(spoken.contains("\n"))
+    }
+
     func testEnglishTextIsNotChanged() {
         let text = "The meeting about the budget has been moved to Thursday at 14.30, said the teacher."
         sessions.start(text: text)
