@@ -397,7 +397,7 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 | AP-22 | Tekstforberedelse, runde 2 | 2 | Udfører | AP-02 | Færdig |
 | AP-23 | Kernen som eget kompileringsmål | 2 | Udfører | AP-10 | Færdig |
 | AP-24 | Engelske ord i dansk tekst | 2 | Arkitekt | – | Delvist: mekanismen er bygget, målet ikke nået (se afleveringen) |
-| AP-30 | Chrome | 3 | Udfører + bruger | AP-00 | Næsten færdig: alt virker (bruger 2026-11-21); rettelse af billedadresse afventer gentest |
+| AP-30 | Chrome | 3 | Udfører + bruger | AP-00 | Færdig |
 | AP-31 | Word og Preview/PDF | 3 | Udfører + bruger | AP-00 | Ikke startet |
 | AP-32 | Google Docs og testmatrix | 3 | Udfører + bruger | AP-30 | Ikke startet |
 | AP-40 | Stemmebibliotek færdigt | 4 | Udfører | AP-19 | Færdig |
