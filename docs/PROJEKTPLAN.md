@@ -436,8 +436,8 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 | AP-50 | Licensoprydning | 5 | Arkitekt + udfører | AP-19, B8 | Færdig (licenstekster for MIT/BSD/Apache lægges i appen i AP-52) |
 | AP-51 | Stabilitet, hukommelse og privatlivskontrol | 5 | Udfører | AP-20 til AP-41 | Færdig |
 | AP-60 | Ordfremhævning (idé I1): vindue og/eller direkte i teksten – hver sin kontakt, slået fra som standard | 6 | Udfører + bruger | MVP | Færdig |
-| AP-61 | Højere hastighed (idé I3): op til 3×, og tallet i afspilleren svarer til det reelle tempo | 6 | Udfører + bruger | MVP | Afventer bruger (lytning ved 2,5× og 3×) |
-| AP-62 | Nyt design efter designprincipperne: sidebjælke, ikoner, flag, "Hør"-knapper, nyt udseende af afspiller og velkomst | 6 | Udfører + bruger | MVP | Afventer bruger (prøv det nye design) |
+| AP-61 | Højere hastighed (idé I3): op til 3×, og tallet i afspilleren svarer til det reelle tempo | 6 | Udfører + bruger | MVP | Færdig (brugeren godkendte 2,5× og 3×, 21. november 2026) |
+| AP-62 | Nyt design efter designprincipperne: sidebjælke, ikoner, flag, "Hør"-knapper, nyt udseende af afspiller og velkomst | 6 | Udfører + bruger | MVP | Færdig (brugeren godkendte runde 2, 21. november 2026) |
 | AP-52 | Developer ID, notarisering og DMG | 5 | Udfører + bruger | AP-50, B9 | Forberedt: DMG og README; afventer certifikat, app-id og kodearkiv |
 
 ### Fase 0 – Grundlag
