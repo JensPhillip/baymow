@@ -28,6 +28,8 @@ Sidst opdateret: 2026-11-21 af udfører (Claude Opus 5.5).
 
 ## Venter på brugeren
 
+Brugerens samlede tjekliste i almindeligt sprog: `docs/TJEKLISTE.md` (opdatér den, når noget bliver afklaret).
+
 | Hvad | Hvorfor | Blokerer |
 |---|---|---|
 | Hør lyttepakkerne, og udfyld `docs/LYTTESKEMA.md` | Kun brugeren kan afgøre, om en stemme er til at forstå | AP-03, AP-12, AP-19 |
