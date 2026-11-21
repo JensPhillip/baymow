@@ -29,9 +29,15 @@ final class InPlaceHighlighter {
             .receive(on: RunLoop.main)
             .sink { [weak self] range in self?.show(range) }
             .store(in: &cancellables)
+        // @Published melder før værdien er sat, og her leveres meldingen først på næste tur i løkken. En ny oplæsning
+        // lukker den gamle (tilstand "idle") og starter straks den nye – så når "idle" når frem, kører den nye måske
+        // allerede. Kig derfor på den aktuelle tilstand, ikke den meldte (fejl fundet af brugeren 2026-11-21).
         sessions.$state
             .receive(on: RunLoop.main)
-            .sink { [weak self] state in if state == .idle { self?.end() } }
+            .sink { [weak self] _ in
+                guard let self, self.sessions.state == .idle else { return }
+                self.end()
+            }
             .store(in: &cancellables)
         settings.$highlightInPlace
             .receive(on: RunLoop.main)
@@ -47,6 +53,9 @@ final class InPlaceHighlighter {
         // Den viste tekst er renset for linjeskift o.l.; koblingen finder de samme ord i den markerede tekst.
         alignment = WordAlignment(original: captured, spoken: display)
     }
+
+    /// Det gule felts placering lige nu, eller nil (bruges af selvtesten).
+    var overlayFrame: CGRect? { overlay.visibleFrame }
 
     func end() {
         generation += 1
@@ -103,6 +112,9 @@ final class HighlightOverlay {
     func hide() {
         panel?.orderOut(nil)
     }
+
+    /// Feltets placering, når det vises (bruges af selvtesten).
+    var visibleFrame: CGRect? { panel?.isVisible == true ? panel?.frame : nil }
 
     private func makePanel() -> NSPanel {
         let panel = NSPanel(contentRect: .zero, styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false)
