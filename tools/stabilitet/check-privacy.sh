@@ -5,9 +5,10 @@
 set -uo pipefail
 words=(zebrafinkeflokken kartoffelsalatsfestivalen Hvedebrødsdagenes solsikkemarken
        Ordblindhed Kommunen bibliotek Fotosyntese værkstedet)
-places=("$HOME/Library/Application Support/Baymow" "$HOME/Library/Caches/dk.baymow.app"
-        "$HOME/Library/Logs/Baymow" "$HOME/Library/Preferences/dk.baymow.app.plist"
-        "$HOME/Library/Saved Application State/dk.baymow.app.savedState")
+places=("$HOME/Library/Application Support/Baymow" "$HOME/Library/Logs/Baymow")
+for id in dk.jpmag.baymow dk.baymow.app; do  # nuværende og tidligere app-id
+  places+=("$HOME/Library/Caches/$id" "$HOME/Library/Preferences/$id.plist" "$HOME/Library/Saved Application State/$id.savedState")
+done
 [ -n "${1:-}" ] && places+=("$1/log")
 found=0
 for place in "${places[@]}"; do

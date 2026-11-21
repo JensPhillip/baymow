@@ -52,6 +52,9 @@ MainActor.assumeIsolated {
         exit(0)
     }
 
+    // Appens id skiftede 2026-11-21 (B9): flyt indstillingerne med, før de læses.
+    SettingsMigration.migrateIfNeeded()
+
     let app = NSApplication.shared
     let shell = AppShell()
     app.delegate = shell

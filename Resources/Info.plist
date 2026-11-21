@@ -7,7 +7,7 @@
     <key>CFBundleExecutable</key>
     <string>Baymow</string>
     <key>CFBundleIdentifier</key>
-    <string>dk.baymow.app</string>
+    <string>dk.jpmag.baymow</string>
     <key>CFBundleName</key>
     <string>Baymow</string>
     <key>CFBundleDisplayName</key>

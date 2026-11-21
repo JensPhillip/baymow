@@ -350,7 +350,7 @@ Spørg ikke om navne, småstrukturer og andre valg, der er nemme at lave om.
 | B6 | Cloud-stemmer laves **ikke nu**. De kan blive en senere forbedring; hvis de kommer, er de et udtrykkeligt tilvalg, aldrig standard eller stille fallback | Truffet af brugeren 17. november 2026. AP-13 og AP-14 er udskudt |
 | B7 | Baymows danske hovedstemme er **Apple Sara (Enhanced)** (`com.apple.voice.enhanced.da-DK.Sara`) | Truffet af brugeren 17. november 2026 efter lytning (AP-19). Engelsk: Apples bedste installerede stemme |
 | B8 | Baymow er **open source under GPL-3.0-or-later**, med mulighed for at tjene penge senere; koden skal kunne gennemskues udefra | Truffet af brugeren 17.–18. november 2026. Licens bekræftet 18. november. Se `docs/LICENSER.md` |
-| B9 | Appen hedder **Baymow** | Truffet af brugeren 16. november 2026. Bundle-id `dk.baymow.app` er stadig en pladsholder og skal afgøres før AP-52 |
+| B9 | Appen hedder **Baymow**. App-id: **`dk.jpmag.baymow`** (underdomænet baymow.jpmag.dk, som brugeren ejer) – til afprøvning, mens produktet modnes; kan skiftes til et eget domæne senere | Navn truffet 16. november; app-id truffet af brugeren 21. november 2026. Indstillinger flyttes automatisk fra `dk.baymow.app` |
 
 ---
 

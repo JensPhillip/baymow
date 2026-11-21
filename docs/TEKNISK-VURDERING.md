@@ -1,6 +1,6 @@
 # Baymow – teknisk vurdering og udviklingsplan
 
-Appen hedder **Baymow** (tidligere arbejdstitel: Oplæser). Bundle-id `dk.baymow.app` er en pladsholder.
+Appen hedder **Baymow** (tidligere arbejdstitel: Oplæser). App-id `dk.jpmag.baymow` (fra 21. november 2026; før `dk.baymow.app`).
 
 Dette dokument er projektets logbog over målinger og fund. Den gældende plan står i `PROJEKTPLAN.md`;
 udviklingsplanen i afsnit 4 her er historisk.
