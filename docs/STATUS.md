@@ -1,17 +1,17 @@
 # Status
 
 Opdateres af den, der sidst har arbejdet på projektet. Kort og faktuelt.
-Sidst opdateret: 2026-11-21 af udfører (Claude Opus 5.5).
+Sidst opdateret: 2026-11-22 af udfører (Claude Opus 5.5).
 
 ## Lige nu
 
 - **I gang:** intet.
 - **Færdige pakker:** AP-00, AP-01, AP-02, AP-10, AP-11, AP-12, AP-19 (hovedstemme: Apple Sara (Enhanced)),
-  AP-21, AP-22, AP-23, AP-30, AP-31, AP-40, AP-50, AP-51, AP-60, AP-61, AP-62.
-- **Venter på brugeren:** AP-20 (testrunde på 10 punkter),
-  AP-41 (testperson – udskudt af brugeren 2026-11-18), AP-03 (tal 1–5 i lytteskemaet; ikke afgørende længere).
+  AP-20, AP-21, AP-22, AP-23, AP-30, AP-31, AP-32, AP-40, AP-50, AP-51, AP-60, AP-61, AP-62.
+- **Lukket/droppet af brugeren 22. november:** AP-03 (lytteskemaet), AP-15 (Plapre).
+- **Venter på brugeren:** valg af næste idé (I9 eller I12 stavehjælp), AP-41 (testperson – udskudt af brugeren 2026-11-18).
 - **Delvist:** AP-24 – udtalelister pr. motor er bygget, men gav kun lidt (Piper 14 → 18 af 30, Apple uændret).
-- **Parkeret eller udskudt:** AP-13/14 (cloud-stemmer, B6), AP-15/16 (Plapre, Røst – hovedstemmen er valgt).
+- **Parkeret eller udskudt:** AP-13/14 (cloud-stemmer, B6), AP-16 (Røst – hovedstemmen er valgt).
 - **Beslutninger:** B6 cloud udskudt · B7 Sara (Enhanced) · B8 GPL-3.0-or-later · B9 Baymow, app-id
   `dk.jpmag.baymow` (21. november; Tilgængelighed givet igen og genvejen bekræftet af brugeren).
 - **Kodearkiv:** https://github.com/JensPhillip/baymow (offentligt). Push kun det, der er committet og grønt.
@@ -23,8 +23,10 @@ Sidst opdateret: 2026-11-21 af udfører (Claude Opus 5.5).
 - **AP-62 (nyt design):** designprincipper i planens afsnit 3. Hovedvinduet har sidebjælke med fem sider, ikoner,
   flag og "Hør"-knapper; velkomsten er tegnet om. Afspilleren er igen lille (én række), efter brugerens ønske.
   Nedbrud ved genvejen (ordkoblingen, fra AP-60) rettet 21. november. Godkendt af brugeren. Skærmbilleder: `Baymow --render-ui <mappe>`.
-- **Næste ledige pakker:** AP-32 (Google Docs og testmatrix – kræver brugeren). Herefter er MVP'en klar, og
-  idékataloget (fase 6) venter på brugerens valg.
+- **MVP'en er færdig og afprøvet af brugeren** (22. november: afspilleren, Google Docs i Safari/Chrome, Outlook,
+  PDF og tekstfelter i Chrome, udklipsholderen, "Hør"-knapperne). Slack er ikke prøvet.
+- **Næste:** brugeren vælger idé. Brugeren foreslog stavehjælp (I12); Apples indbyggede sprogmodel er målt på
+  dansk (se TEKNISK-VURDERING "Stavehjælp"): hurtig og lokal, men ændrer af og til meningen.
 
 ## Venter på brugeren
 
@@ -32,11 +34,9 @@ Brugerens samlede tjekliste i almindeligt sprog: `docs/TJEKLISTE.md` (opdatér d
 
 | Hvad | Hvorfor | Blokerer |
 |---|---|---|
-| Hør lyttepakkerne, og udfyld `docs/LYTTESKEMA.md` | Kun brugeren kan afgøre, om en stemme er til at forstå | AP-03, AP-12, AP-19 |
-| Gennemfør testrunden for afspilleren (10 punkter i AP-20-afleveringen) | Knapper og lyd kan kun prøves af brugeren | AP-20 |
+| Vælg næste idé (I9 engelske ord eller I12 stavehjælp) | Idéer bygges først, når brugeren har valgt | Fase 6 |
 | Find en testperson til førstegangsopsætningen (udskudt af brugeren 2026-11-18) | Kun et nyt menneske kan vise, om den er til at forstå | AP-41 |
 | Meld dig ind i Apple Developer Program (Developer ID og notarisering) | Udgivelse til andre kræver det | AP-52 |
-| Acceptér vilkår for `syvai/plapre-3` på Hugging Face | Originalmodellen kræver det | AP-15 |
 
 ## Senest kontrolleret (2026-11-17)
 
@@ -52,8 +52,7 @@ Brugerens samlede tjekliste i almindeligt sprog: `docs/TJEKLISTE.md` (opdatér d
 
 - Baymows vindue, menulinje og afspiller er ikke set på skærmen efter omdøbningen.
 - Oplæsning via genvejen efter omdøbningen.
-- Word, Google Docs, Preview. (Chrome: genvejen virker ifølge brugeren; tekstfelter, PDF i Chrome og
-  gendannelse af udklipsholderen er ikke afprøvet.)
+- Slack (brugeren: antages at virke).
 
 ## Kendte fælder
 

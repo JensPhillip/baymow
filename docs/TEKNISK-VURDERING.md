@@ -365,6 +365,44 @@ Kilder: [ElevenLabs-priser (modelslab)](https://modelslab.com/elevenlabs-api-pri
 [OpenAI gpt-4o-mini-tts](https://developers.openai.com/api/docs/models/gpt-4o-mini-tts),
 [Amazon Polly-omkostninger](https://costbench.com/software/voice-apis/amazon-polly-api/hidden-costs/).
 
+### Stavehjælp: lokal sprogmodel eller cloud? (idé I12, 22. november 2026)
+
+Brugerens idé: en lille lokal model, der kun retter stavefejl, eller en tilkoblet AI-konto (ChatGPT, Claude).
+Målt på brugerens Mac (M3 Pro, 18 GB, macOS 26) med egne testsætninger – ingen brugertekst, intet netværk.
+
+**Tre muligheder:**
+
+| | Macens stavekontrol (`NSSpellChecker`) | Apples indbyggede sprogmodel (Foundation Models) | Cloud (Claude, ChatGPT) |
+|---|---|---|---|
+| Findes på Macen | Ja, dansk indbygget | Ja: tilgængelig og understøtter dansk (målt) | Nej, kræver konto |
+| Download / afhængighed | Ingen | Ingen (kræver Apple Intelligence slået til og en M-chip) | API-nøgle; netværk |
+| Pris | Gratis | Gratis | Betaling pr. brug. Et ChatGPT- eller Claude-abonnement kan ikke bruges af andre apps; det kræver en særskilt API-konto |
+| Privatliv | Lokalt | Lokalt | Teksten forlader Macen – kun som tydeligt tilvalg (som B6) |
+| Fanger | Ord, der ikke findes ("mårgen") | Også rigtige ord i forkert sammenhæng ("tit" → "tid"), bøjning og kommaer | Forventeligt bedst; ikke målt |
+| Tid | Med det samme | 0,3–1,9 s pr. sætning (snit 0,5 s) | Netværk + svar, typisk 1–3 s |
+
+**Målt med Apples sprogmodel (9 sætninger med typiske ordblindefejl):**
+- Rettet rigtigt: "tit/mårgen/mødde/vigtig" → "tid/morgen/møde/vigtige" og komma; "hussk" → "huske";
+  "arbejte" → "arbejde"; kommaer sat korrekt; en fejlfri sætning blev ikke ændret.
+- **Farlige fejl** (3 af 9): "mælg" → "mel" (skulle være "mælk" – betydningen ændret); "Jeg vil gerne have at du
+  sender mig rabbordet indenn fredag" → "Jeg sender dig rabatten inden fredag" (omskrevet, betydning ændret);
+  et spørgsmål blev *besvaret* i stedet for rettet.
+- Macens stavekontrol fandt kun "mårgen" og "mødde" og gav forslag i en tilfældig rækkefølge ("margen" før "morgen").
+
+**Vurdering:** Apples model er det rigtige første trin – gratis, lokal, hurtig og allerede på Macen. Men den
+må aldrig rette i stilhed. Samme princip som for stemmerne: en rettelse, der lyder rigtig, men ændrer meningen,
+er en fejl. Derfor:
+1. Brugeren ser og hører ændringerne og vælger selv "Brug rettelsen". Intet erstattes automatisk.
+2. Vagt: sammenlign ord for ord. Er der tilføjet eller fjernet ord, eller er et ord ændret mere end et par bogstaver
+   uden at være Macens stavekontrols forslag, afvises rettelsen af det ord, og Baymow viser kun stavekontrollens
+   forslag.
+3. En stavetest som stemmetesten (ca. 40 sætninger med kendte ordblindefejl og facit) måler, hvor ofte rettelsen
+   er rigtig, og hvor ofte meningen ændres. Den skal bestås, før funktionen kan slås til.
+4. En egen lokal model (fx via MLX) kræver en download på 1–4 GB og en ny afhængighed; kun hvis Apples model ikke
+   består stavetesten.
+5. Cloud er et senere tilvalg bag samme protokol, med brugerens egen API-nøgle, mærket tydeligt og aldrig stille
+   fallback. Kræver brugerens ja (B6-princippet) og en plads på netværkslisten.
+
 ## 4. Udviklingsplan og godkendelse
 
 | Milepæl | Indhold | Godkendes ved |

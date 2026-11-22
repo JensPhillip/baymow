@@ -414,23 +414,23 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 | AP-00 | Permanent mappe og versionsstyring | 0 | Arkitekt | – | Færdig |
 | AP-01 | Apple som standard igen | 0 | Arkitekt | – | Færdig |
 | AP-02 | Reproducerbar stemmetest | 0 | Arkitekt | AP-00 | Færdig |
-| AP-03 | Lyttepakke til brugeren | 0 | Arkitekt | AP-02 | Afventer bruger |
+| AP-03 | Lyttepakke til brugeren | 0 | Arkitekt | AP-02 | Lukket af brugeren 22. november 2026 (Sara er valgt; skemaet er ikke nødvendigt) |
 | AP-10 | Fælles lydafspiller og `SynthesisBackend` | 1 | Arkitekt | AP-00 | Færdig |
 | AP-11 | Apples bedre danske stemmer | 1 | Bruger + udfører | AP-03 | Færdig |
 | AP-12 | Hvorfor er Piper uforståelig? | 1 | Arkitekt | AP-03 | Færdig |
 | AP-13 | Cloud-stemme: Azure | 1 | Udfører + bruger | AP-10, B6 | Udskudt (B6) |
 | AP-14 | Cloud-stemme: ElevenLabs | 1 | Udfører + bruger | AP-13 | Udskudt (B6) |
-| AP-15 | Plapre: afprøv originalmodellen | 1 | Udfører + bruger | AP-02 | Parkeret (B7 er afgjort) |
+| AP-15 | Plapre: afprøv originalmodellen | 1 | Udfører + bruger | AP-02 | Droppet af brugeren 22. november 2026 |
 | AP-16 | Røst 500m: kan den gøres hurtig nok? | 1 | Arkitekt eller stærk udfører | AP-02 | Parkeret (B7 er afgjort) |
 | AP-19 | Stemmeport: vælg hovedstemme | 1 | Bruger + udfører | AP-11 | Færdig – Sara (Enhanced) |
-| AP-20 | Afspilleren: afprøvning og rettelser | 2 | Udfører + bruger | AP-10 | Afventer bruger (testrunde) |
+| AP-20 | Afspilleren: afprøvning og rettelser | 2 | Udfører + bruger | AP-10 | Færdig (brugeren godkendte alle 10 punkter, 22. november 2026) |
 | AP-21 | Lange tekster og programskift | 2 | Udfører | AP-10 | Færdig |
 | AP-22 | Tekstforberedelse, runde 2 | 2 | Udfører | AP-02 | Færdig |
 | AP-23 | Kernen som eget kompileringsmål | 2 | Udfører | AP-10 | Færdig |
 | AP-24 | Engelske ord i dansk tekst | 2 | Arkitekt | – | Delvist: mekanismen er bygget, målet ikke nået (se afleveringen) |
 | AP-30 | Chrome | 3 | Udfører + bruger | AP-00 | Færdig |
 | AP-31 | Word og Preview/PDF | 3 | Udfører + bruger | AP-30 | Færdig (indscannet side ikke prøvet) |
-| AP-32 | Google Docs og testmatrix | 3 | Udfører + bruger | AP-30 | Ikke startet |
+| AP-32 | Google Docs og testmatrix | 3 | Udfører + bruger | AP-30 | Færdig (brugeren: Google Docs i Safari og Chrome, Outlook, PDF og tekstfelt i Chrome, udklipsholderen virker; Slack ikke prøvet – antages at virke, 22. november 2026) |
 | AP-40 | Stemmebibliotek færdigt | 4 | Udfører | AP-19 | Færdig |
 | AP-41 | Førstegangsopsætning | 4 | Udfører + bruger | AP-40 | Afventer bruger (testperson) |
 | AP-50 | Licensoprydning | 5 | Arkitekt + udfører | AP-19, B8 | Færdig (licenstekster for MIT/BSD/Apache lægges i appen i AP-52) |
@@ -766,6 +766,7 @@ Rækkefølgen er arkitektens bud på nytten for en ordblind bruger.
 | I9 | **Sprogskift undervejs:** engelske ord og sætninger i dansk tekst læses med en engelsk stemme | Engelske ord er den største kilde til fejl (AP-24); stod allerede i den oprindelige specifikation som en valgfri indstilling | Kernen (sessionen deler teksten i sprogstykker) + `LanguageDetectionService` | Ja – kræver arkitektens ja |
 | I10 | **Egne udtaleord:** brugeren retter et ord, der læses forkert, og Baymow husker det | Brugeren kan selv rette det, Baymow siger forkert | Liste i indstillingerne, bruges af `PronunciationOverrides` | Lille (ny indstilling) |
 | I11 | **Skrivehjælp: læs det, jeg lige har skrevet** (egen genvej: sætningen før markøren) | Ordblinde opdager stavefejl, når de hører teksten | `Features/WritingHelp/`, henter teksten før markøren via Tilgængelighed | Ja, hvis det lægges i `TextCaptureService` |
+| I12 | **Stavehjælp: ret min tekst** (brugerens idé 22. november 2026). Markér egen tekst, tryk en genvej: Baymow foreslår en rettet udgave, viser ændringerne og læser den op; brugeren vælger "Brug rettelsen". Trin 1 lokalt med Apples indbyggede sprogmodel; trin 2 eventuelt cloud (Claude/ChatGPT) som tilvalg. Se TEKNISK-VURDERING "Stavehjælp" | Ordblinde kan skrive uden frygt for stavefejl – kombineret med I11 | `Features/Spelling/`; motor bag en protokol (`SpellingCorrector`), så Apple, egen model og cloud kan skiftes | Nej, hvis den læser markeringen via den eksisterende indfangning; ellers som I11 |
 
 Fælles for alle: slået fra som standard eller uden virkning, før brugeren tager dem i brug; de må ikke gøre
 genvejen langsommere; og kernekontrakten skal bestå uændret, medmindre idéen udtrykkeligt ændrer den.
