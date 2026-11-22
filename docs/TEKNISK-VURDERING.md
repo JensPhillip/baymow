@@ -403,6 +403,11 @@ er en fejl. Derfor:
 5. Cloud er et senere tilvalg bag samme protokol, med brugerens egen API-nøgle, mærket tydeligt og aldrig stille
    fallback. Kræver brugerens ja (B6-princippet) og en plads på netværkslisten.
 
+**Bygget i AP-63 (22. november 2026).** Vagten blev udvidet: når stavekontrollen har bud, der ligner det skrevne mere
+end modellens rettelse, vælger modellen blandt dem ud fra sætningen (svaret kan kun være et af ordene) – det rettede
+"mælg" → "mælk", "tenge" → "tegne". Målt på et kontrolsæt, skrevet efter vagten var indstillet: modellen alene 11
+forkerte rettelser, med vagten 0; 13 af 14 fejl rettet eller markeret. Detaljer i `docs/afleveringer/AP-63.md`.
+
 ## 4. Udviklingsplan og godkendelse
 
 | Milepæl | Indhold | Godkendes ved |

@@ -438,6 +438,7 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 | AP-60 | Ordfremhævning (idé I1): vindue og/eller direkte i teksten – hver sin kontakt, slået fra som standard | 6 | Udfører + bruger | MVP | Færdig |
 | AP-61 | Højere hastighed (idé I3): op til 3×, og tallet i afspilleren svarer til det reelle tempo | 6 | Udfører + bruger | MVP | Færdig (brugeren godkendte 2,5× og 3×, 21. november 2026) |
 | AP-62 | Nyt design efter designprincipperne: sidebjælke, ikoner, flag, "Hør"-knapper, nyt udseende af afspiller og velkomst | 6 | Udfører + bruger | MVP | Færdig (brugeren godkendte runde 2, 21. november 2026) |
+| AP-63 | Stavehjælp (idé I12): ret egen tekst med Macens indbyggede sprogmodel, vist og læst op, aldrig rettet i stilhed | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
 | AP-52 | Developer ID, notarisering og DMG | 5 | Udfører + bruger | AP-50, B9 | Forberedt: DMG og README; afventer certifikat, app-id og kodearkiv |
 
 ### Fase 0 – Grundlag
@@ -770,6 +771,24 @@ Rækkefølgen er arkitektens bud på nytten for en ordblind bruger.
 
 Fælles for alle: slået fra som standard eller uden virkning, før brugeren tager dem i brug; de må ikke gøre
 genvejen langsommere; og kernekontrakten skal bestå uændret, medmindre idéen udtrykkeligt ændrer den.
+
+#### AP-63 Stavehjælp (idé I12)
+
+**Hvorfor:** Brugeren valgte 22. november 2026 stavehjælp som næste idé. Ordblinde kan skrive uden frygt for
+stavefejl, når de kan se og høre rettelsen, før den bruges.
+**Gør:**
+1. Stavetest i `tools/stavetest/` som stemmetesten: ca. 50 egne sætninger med typiske ordblindefejl og facit,
+   heraf mindst 15 uden fejl (også spørgsmål og ordrer, som modellen ikke må besvare). Kør den med
+   `Baymow --spell-test`, og gem resultatet.
+2. `Features/Spelling/`: en protokol `SpellingCorrector` (Apples model nu; egen model eller cloud senere),
+   og en vagt, der sammenligner ord for ord og kun lader små, plausible rettelser igennem. Andet bliver
+   markeret "tjek selv" med forslag. Uden Apple Intelligence: kun Macens stavekontrol.
+3. Egen genvej (⌃⌥R), et lille vindue med den rettede tekst, rettelserne fremhævet, "Hør" og
+   "Brug rettelsen" (erstatter markeringen). Slået fra som standard; slås til på en ny side "Stavehjælp".
+**Acceptkriterier:** Stavetesten efter vagten: ingen rettelser, der ændrer meningen; ingen ændringer i
+fejlfri sætninger; mindst 70 % af fejlene rettet eller markeret. Tests af vagten med en falsk model.
+Brugeren har prøvet genvejen i et par programmer og godkendt vinduet.
+**Netværk:** Intet. Apples model kører på Macen.
 
 ## 7. Stemmeporten
 

@@ -7,17 +7,36 @@ Opdateret 22. november 2026.
 - ✅ Google Docs (Safari og Chrome), Outlook, PDF og tekstfelter i Chrome, udklipsholderen. Slack ikke prøvet.
 - ✅ "Hør"-knapperne og afspil ved stemmerne.
 - ✅ Lytteskemaet (AP-03) er lukket. Plapre (AP-15) er droppet.
+- ✅ Næste idé: stavehjælp (I12). Den er bygget og klar til at blive prøvet.
 
-## Beslut nu
-- [ ] **Hvad skal vi bygge næst?**
-  - **I12 Stavehjælp (din idé):** markér din egen tekst, tryk en genvej. Baymow viser en rettet udgave,
-    markerer det, der er ændret, og læser den op. Du vælger selv "Brug rettelsen". Første udgave bruger den
-    sprogmodel, der allerede er indbygget i din Mac: gratis, intet sendes væk, intet skal hentes.
-  - **I9 Engelske ord i dansk tekst** læses med engelsk udtale.
-  - Resten af listen (I10, I11, I4, I5, I6) venter.
-- [ ] **Hvis stavehjælp:** Skal en AI-konto (Claude eller ChatGPT) med senere, som et tilvalg? Det kræver en
+## Test nu: Stavehjælp (ca. 10 min)
+Slå den til først: Åbn Baymow fra menulinjen → siden **Stavning** → slå **Stavehjælp** til.
+
+Skriv fx dette i Noter eller en ny mail (fejlene er med vilje):
+> Jeg har ikke tit til at skrive i dag. Kan du huske at købe mælg på vej jem?
+
+- [ ] 1. Markér teksten, og tryk ⌃⌥R. Et vindue viser teksten med rettede ord på **grøn** baggrund.
+- [ ] 2. Under teksten er der én række pr. ord. Tryk på et ord: det bliver valgt, og du hører det.
+- [ ] 3. Tryk på dit eget ord (med blyanten ✎). Rettelsen bliver fortrudt.
+- [ ] 4. Tryk "Hør" øverst. Den rettede tekst bliver læst op.
+- [ ] 5. Tryk "Brug rettelsen". Din tekst bliver skiftet ud med den rettede, og vinduet lukker.
+- [ ] 6. Prøv det samme i **Google Docs** og i **Word** (hvis du har det). Bliver teksten skiftet ud det rigtige sted?
+- [ ] 7. Kopiér noget andet først (⌘C), og brug så "Brug rettelsen". Ligger det, du kopierede, stadig på
+      udklipsholderen bagefter (prøv ⌘V)?
+- [ ] 8. Markér en tekst uden fejl, og tryk ⌃⌥R. Der står "Ingen fejl fundet".
+- [ ] 9. ⌃⌥S læser stadig op som før (og starter ikke stavehjælpen).
+- [ ] 10. Prøv med noget, du selv har skrevet for nylig. Ændrer Baymow noget, så det betyder noget andet? Skriv ordet til mig.
+
+Er du i tvivl om noget i vinduet, så skriv, hvad du så, eller tag et skærmbillede (⌘⇧4).
+
+## Beslut, når du har prøvet den
+- [ ] **Kommaer:** Baymow sætter kommaer, hvor modellen mener, de skal være (fx "Jeg tror, at …"). Vil du have det,
+      eller skal den kun rette stavning?
+- [ ] **AI-konto senere?** Skal en AI-konto (Claude eller ChatGPT) kunne slås til senere, som et tilvalg? Det kræver en
       særskilt betalt API-konto (dit almindelige abonnement kan ikke bruges), og din tekst sendes ud af Macen.
 
 ## Senere (ikke nu)
 - [ ] **En testperson**, der aldrig har set Baymow, prøver velkomstvinduet uden hjælp (AP-41).
 - [ ] **Apple Developer Program** (koster et årligt gebyr), når du vil dele Baymow med andre (AP-52).
+- Idéer, der venter: I9 engelske ord i dansk tekst, I10 ret selv et ord, I11 skrivehjælp, I4 tekst fra skærmen,
+  I5 hele filer, I6 gem som lydfil.

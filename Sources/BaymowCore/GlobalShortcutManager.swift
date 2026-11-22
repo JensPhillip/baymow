@@ -9,8 +9,14 @@ public final class GlobalShortcutManager {
 
     private var hotKeyRef: EventHotKeyRef?
     private var handlerRef: EventHandlerRef?
+    /// Hver genvej har sit eget nummer, så flere genveje (fx stavehjælpen, AP-63) ikke udløser hinanden.
+    private let hotKeyNumber: UInt32
+    private static var nextNumber: UInt32 = 1
 
-    public init() {}
+    public init() {
+        hotKeyNumber = Self.nextNumber
+        Self.nextNumber += 1
+    }
 
     /// Returnerer `false`, hvis genvejen ikke kunne registreres (fx optaget af et andet program).
     @discardableResult
@@ -25,7 +31,7 @@ public final class GlobalShortcutManager {
         if flags.contains(.control) { carbon |= UInt32(controlKey) }
         if flags.contains(.shift) { carbon |= UInt32(shiftKey) }
 
-        let id = EventHotKeyID(signature: OSType(0x4F504C53) /* 'OPLS' */, id: 1)
+        let id = EventHotKeyID(signature: OSType(0x4F504C53) /* 'OPLS' */, id: hotKeyNumber)
         var ref: EventHotKeyRef?
         let status = RegisterEventHotKey(shortcut.keyCode, carbon, id, GetApplicationEventTarget(), 0, &ref)
         guard status == noErr, let ref else { return false }
@@ -43,9 +49,14 @@ public final class GlobalShortcutManager {
         var spec = EventTypeSpec(eventClass: OSType(kEventClassKeyboard), eventKind: UInt32(kEventHotKeyPressed))
         InstallEventHandler(
             GetApplicationEventTarget(),
-            { _, _, userData in
-                guard let userData else { return noErr }
+            { _, event, userData in
+                guard let userData, let event else { return OSStatus(eventNotHandledErr) }
+                var pressed = EventHotKeyID()
+                GetEventParameter(event, EventParamName(kEventParamDirectObject), EventParamType(typeEventHotKeyID), nil,
+                                  MemoryLayout<EventHotKeyID>.size, nil, &pressed)
                 let manager = Unmanaged<GlobalShortcutManager>.fromOpaque(userData).takeUnretainedValue()
+                // En anden genvej: lad den næste lytter få den.
+                guard pressed.id == manager.hotKeyNumber else { return OSStatus(eventNotHandledErr) }
                 // Carbon leverer hotkey-events på hovedtråden.
                 MainActor.assumeIsolated { manager.onTrigger?() }
                 return noErr

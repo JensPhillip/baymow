@@ -93,7 +93,7 @@ final class MainWindowModel: ObservableObject {
 
 /// Siderne i hovedvinduet: én ting pr. side, hver med sit ikon (designprincip 4).
 enum MainPage: String, CaseIterable, Identifiable {
-    case start, reading, display, voices, shortcut
+    case start, reading, display, voices, spelling, shortcut
     var id: String { rawValue }
 
     var title: String {
@@ -102,6 +102,7 @@ enum MainPage: String, CaseIterable, Identifiable {
         case .reading: return "Oplæsning"
         case .display: return "Visning"
         case .voices: return "Stemmer"
+        case .spelling: return "Stavning"
         case .shortcut: return "Genvej"
         }
     }
@@ -112,6 +113,7 @@ enum MainPage: String, CaseIterable, Identifiable {
         case .reading: return "speaker.wave.2.fill"
         case .display: return "eye.fill"
         case .voices: return "person.wave.2.fill"
+        case .spelling: return "textformat.abc.dottedunderline"
         case .shortcut: return "keyboard.fill"
         }
     }
@@ -122,6 +124,7 @@ enum MainPage: String, CaseIterable, Identifiable {
         case .reading: return .orange
         case .display: return .purple
         case .voices: return .green
+        case .spelling: return .teal
         case .shortcut: return .gray
         }
     }
@@ -133,6 +136,7 @@ enum MainPage: String, CaseIterable, Identifiable {
         case .reading: return "Hvor hurtigt og på hvilket sprog."
         case .display: return "Se ordet, der bliver læst."
         case .voices: return "Vælg, hvem der læser for dig."
+        case .spelling: return "Få rettet det, du selv skriver."
         case .shortcut: return "Tasterne, der starter oplæsningen."
         }
     }
@@ -148,6 +152,8 @@ enum MainPage: String, CaseIterable, Identifiable {
             return "Baymow kan vise dig, hvilket ord der bliver læst lige nu. Enten i et vindue med stor skrift, eller med et gult felt direkte i teksten. Du kan slå dem til og fra hver for sig."
         case .voices:
             return "Her vælger du en stemme til hvert sprog. Tryk på afspil for at høre en stemme. Tryk på vælg for at bruge den."
+        case .spelling:
+            return "Stavehjælpen retter den tekst, du selv har skrevet. Markér teksten, og tryk på \(SpellingSettings.shortcut.spokenKeys) på samme tid. Baymow viser rettelserne med farver. Grøn er rettet. Orange skal du selv tjekke. Tryk på et ord for at vælge det og høre det. Tryk til sidst på Brug rettelsen. Din tekst bliver på din Mac."
         case .shortcut:
             return "Genvejen er de taster, du trykker på samtidig for at få den markerede tekst læst op. Du kan skifte til andre taster, hvis du vil."
         }
@@ -159,6 +165,7 @@ struct MainView: View {
     @ObservedObject var settings: SettingsStore
     @ObservedObject var catalog: VoiceCatalog
     @ObservedObject var downloader: ModelDownloader
+    @ObservedObject var spelling: SpellingSettings
     /// Sat af AppShell, hvis den valgte genvej ikke kunne registreres.
     let shortcutRegistrationFailed: Bool
 
@@ -186,6 +193,7 @@ struct MainView: View {
         case .start: return !model.hasPermission
         case .voices: return VoiceLibrary.needsMainVoiceGuide(installed: catalog.voices)
         case .shortcut: return shortcutRegistrationFailed
+        case .spelling: return spelling.isEnabled && spelling.shortcutFailed
         case .reading, .display: return false
         }
     }
@@ -196,6 +204,7 @@ struct MainView: View {
         case .reading: readingPage
         case .display: displayPage
         case .voices: voicesPage
+        case .spelling: SpellingSettingsPage(settings: spelling, speak: model.speakHelp)
         case .shortcut: shortcutPage
         }
     }
@@ -497,7 +506,7 @@ private struct HowToStep<Picture: View>: View {
 }
 
 /// En valgmulighed med billede, kort titel og kontakt. Den lange forklaring står i hjælpeteksten.
-private struct OptionRow: View {
+struct OptionRow: View {
     let symbol: String
     let color: Color
     let title: String

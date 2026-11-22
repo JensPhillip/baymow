@@ -7,6 +7,8 @@ import BaymowCore
 /// og der læses ingen brugertekst.
 @MainActor
 public enum ScreenshotTool {
+    static let spellingDemo = "Jeg har ikke tit til at skrive i dag. Kan du huske at købe mælg på vej jem? Jeg glemte at sende rabborten."
+
     /// Lydløs motor, der låner en rigtig motors navn og stemmer.
     private final class SilentEngine: SpeechEngine {
         let engineID: String
@@ -63,7 +65,8 @@ public enum ScreenshotTool {
         for page in MainPage.allCases {
             model.page = page
             shoot("hovedvindue-\(page.rawValue)", size: NSSize(width: 780, height: 600),
-                  MainView(model: model, settings: settings, catalog: catalog, downloader: downloader, shortcutRegistrationFailed: false))
+                  MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
+                           spelling: SpellingSettings(defaults: defaults), shortcutRegistrationFailed: false))
         }
         model.page = .start
         shoot("sidebjaelke", size: NSSize(width: 220, height: 300), MainSidebar(model: model, needsAttention: { $0 == .voices }))
@@ -73,6 +76,13 @@ public enum ScreenshotTool {
         sessions.togglePlayPause()
         shoot("afspiller-pause", size: nil, PlayerView(sessions: sessions, settings: settings) {})
         sessions.close()
+
+        // Stavehjælpen (AP-63) med egne eksempelsætninger og den rigtige vagt; Macens model, hvis den er klar.
+        let spellingModel = SpellingPanelModel(sourceBundleID: nil) { _, _ in }
+        shoot("stavehjaelp-arbejder", size: nil, SpellingPanelView(model: spellingModel, onApply: {}, onCopy: {}, onClose: {}))
+        let assistant = SpellingAssistant(corrector: AppleSpellingModel.makeCorrector(), checker: SystemWordChecker())
+        spellingModel.load(SpellTest.runBlocking { await assistant.check(spellingDemo) })
+        shoot("stavehjaelp", size: nil, SpellingPanelView(model: spellingModel, onApply: {}, onCopy: {}, onClose: {}))
         return failures == 0 ? 0 : 1
     }
 

@@ -195,3 +195,12 @@ teksten, blev der lavet et lukket område med nedre grænse over øvre, og appen
 Kontrakt: 2 nye tests i `WordAlignmentTests` (et konkret tilfælde og 3000 tilfældige ordlister). Uden rettelsen går
 testen ned med samme fejl som i rapporten. Ingen eksisterende tests ændret.
 Godkendt af: udfører; fejlrettelse.
+
+## 2026-11-22 · I12 · Flere genveje på én gang (stavehjælp)
+Hvad: `GlobalShortcutManager` giver hver forekomst sit eget genvejsnummer og reagerer kun på sit eget. Andre genveje sendes
+videre til den næste lytter.
+Hvorfor: Stavehjælpen (AP-63) har sin egen genvej (⌃⌥R) ved siden af ⌃⌥S. Før fik alle lyttere hver genvej, og den først
+installerede tog dem alle – så ⌃⌥R ville have startet oplæsningen.
+Kontrakt: Ingen tests ændret. Dækket af selvtesten `--hotkey-selftest` (trykker ⌃⌥S, ⌃⌥R, ⌃⌥S): før ændringen "R R R"
+(stavehjælpen tog også ⌃⌥S), efter "S R S".
+Godkendt af: brugeren (valgte stavehjælpen 2026-11-22).

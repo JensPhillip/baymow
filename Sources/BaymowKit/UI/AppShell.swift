@@ -26,6 +26,17 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private lazy var windowModel = MainWindowModel(settings: settings, catalog: catalog, downloader: downloader,
                                                        sampleEngines: [AppleSpeechEngine(), BackendSpeechEngine(backend: piperBackend)])
 
+    /// Stavehjælp (I12, AP-63). Gør intet, før brugeren slår den til.
+    private let spellingSettings = SpellingSettings()
+    private let spellingShortcut = GlobalShortcutManager()
+    private lazy var spellingVoices: [SpeechEngine] = [AppleSpeechEngine(), BackendSpeechEngine(backend: piperBackend)]
+    private lazy var spelling = SpellingController(
+        capture: capture, settings: spellingSettings,
+        speak: { [weak self] text, language in self?.speakSpelling(text, language: language) },
+        stopSpeaking: { [weak self] in self?.spellingVoices.forEach { $0.stop() } },
+        onFailure: { [weak self] notice in self?.present(notice) })
+    private var spellingMenuItem: NSMenuItem?
+
     private lazy var onboarding = OnboardingWindowController(
         model: OnboardingModel(settings: settings, catalog: catalog, sampleEngine: AppleSpeechEngine()))
 
@@ -65,6 +76,11 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
         shortcuts.onTrigger = { [weak self] in self?.readSelection() }
         settings.$shortcut.removeDuplicates().sink { [weak self] shortcut in
             self?.registerShortcut(shortcut)
+        }.store(in: &cancellables)
+
+        spellingShortcut.onTrigger = { [weak self] in self?.spelling.run() }
+        spellingSettings.$isEnabled.removeDuplicates().sink { [weak self] enabled in
+            self?.setSpellingEnabled(enabled)
         }.store(in: &cancellables)
 
         // Første opstart: velkomstvinduet. Senere, hvis adgangen mangler: hovedvinduet, der forklarer det.
@@ -137,6 +153,31 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
         }
     }
 
+    /// Stavehjælpens genvej er kun registreret, når brugeren har slået den til.
+    private func setSpellingEnabled(_ enabled: Bool) {
+        spellingMenuItem?.isHidden = !enabled
+        guard enabled else {
+            spellingShortcut.unregister()
+            spellingSettings.shortcutFailed = false
+            spelling.close()
+            return
+        }
+        let ok = spellingShortcut.register(SpellingSettings.shortcut)
+        if !ok { diagnostics.record(.hotkeyRegistrationFailed) }
+        spellingSettings.shortcutFailed = !ok
+    }
+
+    /// Læser et ord eller den rettede tekst op med den valgte stemme for sproget.
+    private func speakSpelling(_ text: String, language: Language) {
+        spellingVoices.forEach { $0.stop() }
+        guard let voice = catalog.voice(for: language),
+              let engine = spellingVoices.first(where: { $0.engineID == voice.engineID }) else { return }
+        let prepared = language == .danish ? DanishTextNormalizer.normalize(text) : text
+        engine.speak(prepared, voice: voice, rate: settings.rate) { _ in }
+    }
+
+    @objc private func spellCheckFromMenu() { spelling.run() }
+
     private func present(_ notice: Notice) {
         notices.show(notice, below: player.frame) { [weak self] in self?.showMainWindow() }
     }
@@ -175,7 +216,7 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private func refreshMainWindowContent() {
         mainWindow?.contentView = NSHostingView(rootView: MainView(
             model: windowModel, settings: settings, catalog: catalog, downloader: downloader,
-            shortcutRegistrationFailed: shortcutRegistrationFailed
+            spelling: spellingSettings, shortcutRegistrationFailed: shortcutRegistrationFailed
         ))
     }
 
@@ -194,6 +235,12 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
         read.target = self
         menu.addItem(read)
         readMenuItem = read
+        let spell = NSMenuItem(title: "Ret stavning (\(SpellingSettings.shortcut.displayString))",
+                               action: #selector(spellCheckFromMenu), keyEquivalent: "")
+        spell.target = self
+        spell.isHidden = !spellingSettings.isEnabled
+        menu.addItem(spell)
+        spellingMenuItem = spell
         menu.addItem(.separator())
         let open = NSMenuItem(title: "Åbn Baymow", action: #selector(showMainWindow), keyEquivalent: "")
         open.target = self

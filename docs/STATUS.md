@@ -5,11 +5,11 @@ Sidst opdateret: 2026-11-22 af udfører (Claude Opus 5.5).
 
 ## Lige nu
 
-- **I gang:** intet.
+- **I gang:** AP-63 stavehjælp (I12) – bygget og målt, afventer brugerens afprøvning.
 - **Færdige pakker:** AP-00, AP-01, AP-02, AP-10, AP-11, AP-12, AP-19 (hovedstemme: Apple Sara (Enhanced)),
   AP-20, AP-21, AP-22, AP-23, AP-30, AP-31, AP-32, AP-40, AP-50, AP-51, AP-60, AP-61, AP-62.
 - **Lukket/droppet af brugeren 22. november:** AP-03 (lytteskemaet), AP-15 (Plapre).
-- **Venter på brugeren:** valg af næste idé (I9 eller I12 stavehjælp), AP-41 (testperson – udskudt af brugeren 2026-11-18).
+- **Venter på brugeren:** afprøvning af stavehjælpen (AP-63), AP-41 (testperson – udskudt af brugeren 2026-11-18).
 - **Delvist:** AP-24 – udtalelister pr. motor er bygget, men gav kun lidt (Piper 14 → 18 af 30, Apple uændret).
 - **Parkeret eller udskudt:** AP-13/14 (cloud-stemmer, B6), AP-16 (Røst – hovedstemmen er valgt).
 - **Beslutninger:** B6 cloud udskudt · B7 Sara (Enhanced) · B8 GPL-3.0-or-later · B9 Baymow, app-id
@@ -25,8 +25,10 @@ Sidst opdateret: 2026-11-22 af udfører (Claude Opus 5.5).
   Nedbrud ved genvejen (ordkoblingen, fra AP-60) rettet 21. november. Godkendt af brugeren. Skærmbilleder: `Baymow --render-ui <mappe>`.
 - **MVP'en er færdig og afprøvet af brugeren** (22. november: afspilleren, Google Docs i Safari/Chrome, Outlook,
   PDF og tekstfelter i Chrome, udklipsholderen, "Hør"-knapperne). Slack er ikke prøvet.
-- **Næste:** brugeren vælger idé. Brugeren foreslog stavehjælp (I12); Apples indbyggede sprogmodel er målt på
-  dansk (se TEKNISK-VURDERING "Stavehjælp"): hurtig og lokal, men ændrer af og til meningen.
+- **AP-63 (idé I12, stavehjælp):** ⌃⌥R på egen markeret tekst. Macens indbyggede sprogmodel + en vagt, der kun lader
+  små rettelser igennem; usikre ord markeres "tjek selv". Slået fra som standard (siden "Stavning"). Stavetest
+  (`tools/stavetest/`): kontrolsæt 0 forkerte rettelser, 13 af 14 fejl rettet eller markeret, 0,5 s pr. sætning.
+  Kernen: `GlobalShortcutManager` kan nu have flere genveje (`--hotkey-selftest`).
 
 ## Venter på brugeren
 
@@ -34,7 +36,7 @@ Brugerens samlede tjekliste i almindeligt sprog: `docs/TJEKLISTE.md` (opdatér d
 
 | Hvad | Hvorfor | Blokerer |
 |---|---|---|
-| Vælg næste idé (I9 engelske ord eller I12 stavehjælp) | Idéer bygges først, når brugeren har valgt | Fase 6 |
+| Prøv stavehjælpen (⌃⌥R) i et par programmer, og godkend vinduet | Udseende, lyd og indsætning kan kun prøves af brugeren | AP-63 |
 | Find en testperson til førstegangsopsætningen (udskudt af brugeren 2026-11-18) | Kun et nyt menneske kan vise, om den er til at forstå | AP-41 |
 | Meld dig ind i Apple Developer Program (Developer ID og notarisering) | Udgivelse til andre kræver det | AP-52 |
 
