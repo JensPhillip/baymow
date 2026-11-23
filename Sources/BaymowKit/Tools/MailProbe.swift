@@ -110,6 +110,41 @@ public enum MailProbe {
             lines.append("markørens position (tegn før markøren): \((before as? String)?.count.description ?? "kan ikke læses")")
         }
 
+        // 7. Kan Baymow markere kun brugerens del (fra starten til citat-overskriften) via tekstmarkører?
+        var settableMarker: DarwinBoolean = false
+        AXUIElementIsAttributeSettable(focused, "AXSelectedTextMarkerRange" as CFString, &settableMarker)
+        lines.append("tekstmarkør-markering kan sættes: \(settableMarker.boolValue)")
+        if let start = copy(focused, "AXStartTextMarker"), let end = copy(focused, "AXEndTextMarker") {
+            var wholeRange: CFTypeRef?
+            AXUIElementCopyParameterizedAttributeValue(focused, "AXTextMarkerRangeForUnorderedTextMarkers" as CFString,
+                                                       [start, end] as CFArray, &wholeRange)
+            var whole: CFTypeRef?
+            if let wholeRange { AXUIElementCopyParameterizedAttributeValue(focused, "AXStringForTextMarkerRange" as CFString, wholeRange, &whole) }
+            if let text = whole as? String, let header = text.components(separatedBy: .newlines).firstIndex(where: {
+                $0.contains("skrev:") || $0.contains("wrote:") || $0.hasPrefix("Fra:") || $0.hasPrefix("From:") }) {
+                let target = text.components(separatedBy: .newlines)[..<header].joined(separator: "\n").utf16.count
+                var marker: CFTypeRef?
+                let markerErr = AXUIElementCopyParameterizedAttributeValue(focused, "AXTextMarkerForIndex" as CFString,
+                                                                          target as CFNumber, &marker)
+                lines.append("tekstmarkør for position \(target): \(markerErr == .success ? "ja" : "fejl \(markerErr.rawValue)")")
+                if let marker {
+                    var part: CFTypeRef?
+                    AXUIElementCopyParameterizedAttributeValue(focused, "AXTextMarkerRangeForUnorderedTextMarkers" as CFString,
+                                                               [start, marker] as CFArray, &part)
+                    if let part {
+                        let setErr = AXUIElementSetAttributeValue(focused, "AXSelectedTextMarkerRange" as CFString, part)
+                        Thread.sleep(forTimeInterval: 0.3)
+                        var selectedText: CFTypeRef?
+                        if let selected = copy(focused, "AXSelectedTextMarkerRange") {
+                            AXUIElementCopyParameterizedAttributeValue(focused, "AXStringForTextMarkerRange" as CFString, selected, &selectedText)
+                        }
+                        let got = (selectedText as? String)?.utf16.count
+                        lines.append("markér kun dine ord: sæt=\(setErr.rawValue), markeret \(got.map(String.init) ?? "?") af \(target) tegn\(got == target ? " ✓" : "")")
+                    }
+                }
+            }
+        }
+
         // 6. "Markér alt + Kopiér" i feltet. Markøren sættes øverst bagefter, og udklipsholderen lægges tilbage.
         let pasteboard = NSPasteboard.general
         let saved = (pasteboard.pasteboardItems ?? []).map { item in
