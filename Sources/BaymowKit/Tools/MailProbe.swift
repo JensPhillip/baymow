@@ -175,6 +175,55 @@ public enum MailProbe {
             }
         }
 
+        // 10. ⇧⌘↑ fra markøren: markerer brugerens stikord (alt over markøren). Kopiér, og mål længden; → fjerner
+        // markeringen igen, så markøren står, hvor den stod.
+        do {
+            let pasteboard = NSPasteboard.general
+            let saved = (pasteboard.pasteboardItems ?? []).map { item in
+                item.types.compactMap { type in item.data(forType: type).map { (type, $0) } }
+            }
+            // Markørens position først (via skærmplacering → tekstmarkør → indeks).
+            if let selection = copy(focused, "AXSelectedTextMarkerRange") {
+                var bounds: CFTypeRef?
+                AXUIElementCopyParameterizedAttributeValue(focused, "AXBoundsForTextMarkerRange" as CFString, selection, &bounds)
+                var rect = CGRect.zero
+                if let bounds, CFGetTypeID(bounds) == AXValueGetTypeID() { AXValueGetValue(bounds as! AXValue, .cgRect, &rect) }
+                var point = CGPoint(x: rect.minX + 1, y: rect.midY)
+                var marker: CFTypeRef?
+                if let pointValue = AXValueCreate(.cgPoint, &point) {
+                    AXUIElementCopyParameterizedAttributeValue(focused, "AXTextMarkerForPosition" as CFString, pointValue, &marker)
+                }
+                var index: CFTypeRef?
+                if let marker { AXUIElementCopyParameterizedAttributeValue(focused, "AXIndexForTextMarker" as CFString, marker, &index) }
+                lines.append("markør via skærmplacering: \(rect == .zero ? "ingen placering" : "indeks \((index as? Int).map(String.init) ?? "?")")")
+            }
+            let before = pasteboard.changeCount
+            let source = CGEventSource(stateID: .privateState)
+            for (key, flags) in [(CGKeyCode(0x7E), CGEventFlags([.maskCommand, .maskShift]))] {
+                let down = CGEvent(keyboardEventSource: source, virtualKey: key, keyDown: true)
+                let up = CGEvent(keyboardEventSource: source, virtualKey: key, keyDown: false)
+                down?.flags = flags; up?.flags = flags
+                down?.post(tap: .cgSessionEventTap); up?.post(tap: .cgSessionEventTap)
+            }
+            Thread.sleep(forTimeInterval: 0.2)
+            press(SelectionReplacer.keyCode(for: "c"))
+            var waited = 0.0
+            while pasteboard.changeCount == before, waited < 1.0 { Thread.sleep(forTimeInterval: 0.05); waited += 0.05 }
+            let stikord = pasteboard.changeCount != before ? pasteboard.string(forType: .string) : nil
+            lines.append("⇧⌘↑ + kopiér: \(stikord.map { "\($0.count) tegn, \($0.components(separatedBy: .newlines).count) linjer, citat-overskrift med: \($0.contains("skrev:") || $0.contains("wrote:") ? "ja (for meget)" : "nej")" } ?? "intet kopieret")")
+            // → fjerner markeringen; markøren ender i slutningen af markeringen (der, hvor den stod).
+            let right = CGEvent(keyboardEventSource: source, virtualKey: 0x7C, keyDown: true)
+            let rightUp = CGEvent(keyboardEventSource: source, virtualKey: 0x7C, keyDown: false)
+            right?.post(tap: .cgSessionEventTap); rightUp?.post(tap: .cgSessionEventTap)
+            Thread.sleep(forTimeInterval: 0.2)
+            pasteboard.clearContents()
+            pasteboard.writeObjects(saved.map { entries -> NSPasteboardItem in
+                let item = NSPasteboardItem()
+                for (type, data) in entries { item.setData(data, forType: type) }
+                return item
+            })
+        }
+
         // 6. "Markér alt + Kopiér" i feltet. Markøren sættes øverst bagefter, og udklipsholderen lægges tilbage.
         let pasteboard = NSPasteboard.general
         let saved = (pasteboard.pasteboardItems ?? []).map { item in
