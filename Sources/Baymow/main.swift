@@ -10,6 +10,11 @@ MainActor.assumeIsolated {
         exit(0)
     }
 
+    if CommandLine.arguments.contains("--mail-probe") {
+        MainActor.assumeIsolated { MailProbe.run() }
+        exit(0)
+    }
+
     if let index = CommandLine.arguments.firstIndex(of: "--ax-diagnose"), CommandLine.arguments.count > index + 1 {
         AccessibilityDiagnostics.run(bundleID: CommandLine.arguments[index + 1])
         exit(0)
