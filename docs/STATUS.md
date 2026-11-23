@@ -6,7 +6,9 @@ Sidst opdateret: 2026-11-23 af udfører (Claude Opus 5.5).
 ## Lige nu
 
 - **I gang:** AP-72 (mail-svar bedre, siden "AI og nøgler") og AP-73 (sidebjælken) – bygget, afventer brugerens afprøvning. AP-71 er afprøvet af brugeren.
-- **Til drøftelse:** login på mailkontoen (proaktiv hjælp, sparring) – brugerens idé 23. november.
+- **Mail – plan aftalt 23. november:** 1) sparring på den åbne mail, 2) Outlook og Gmail, 3) senere: proaktiv hjælp med
+  app på telefonen, brugerens kontekst og opklarende spørgsmål (I16), og login på kontoen. Proaktiv del venter, til
+  mail-svar og sparring virker godt.
 - **Mail-svar (I15):** Brugerens svar 23. november: hele tråden som kontekst, udkast/stikord/intet, direkte ind i mailprogrammet, defineret menneskelig og formel tone, alle programmer (først Apple Mail). AP-64 (internet-hjælpen) er godkendt.
 - **Færdige pakker:** AP-00, AP-01, AP-02, AP-10, AP-11, AP-12, AP-19 (hovedstemme: Apple Sara (Enhanced)),
   AP-20, AP-21, AP-22, AP-23, AP-30, AP-31, AP-32, AP-40, AP-50, AP-51, AP-60, AP-61, AP-62.

@@ -310,7 +310,8 @@ struct UsageChart: View {
                 if let selectedDay {
                     RuleMark(x: .value("Dag", selectedDay, unit: .day))
                         .foregroundStyle(.secondary.opacity(0.35))
-                        .annotation(position: .top, overflowResolution: .init(x: .fit(to: .chart), y: .disabled)) {
+                        // Feltet holdes inde i grafen og lægges oven på søjlerne, så det altid kan ses helt.
+                        .annotation(position: .top, overflowResolution: .init(x: .fit(to: .chart), y: .fit(to: .chart))) {
                             tooltip(for: selectedDay, points: points)
                         }
                 }
@@ -350,7 +351,7 @@ struct UsageChart: View {
                 }
             }
             .frame(height: 200)
-            .padding(.top, 84) // plads til hele feltet med dagens tal (dato + én linje pr. funktion)
+            .padding(.top, 34)
 
             if points.allSatisfy({ $0.entry.checks == 0 && $0.entry.inputTokens == 0 }) {
                 Text("Intet forbrug de seneste 30 dage endnu.").foregroundStyle(.secondary)
@@ -387,8 +388,9 @@ struct UsageChart: View {
             }
         }
         .padding(8)
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8))
-        .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(.primary.opacity(0.1)))
+        .background(.thickMaterial, in: RoundedRectangle(cornerRadius: 8))
+        .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(.primary.opacity(0.15)))
+        .shadow(color: .black.opacity(0.15), radius: 6, y: 2)
         .frame(minWidth: 220)
     }
 }
