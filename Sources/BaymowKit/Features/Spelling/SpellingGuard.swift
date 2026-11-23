@@ -64,9 +64,26 @@ struct SpellingGuard {
     /// rettelser, og Macens stavekontrol godkender selv forkerte ord som "ernagien" (målt 23. november 2026).
     /// Omskrivninger, tilføjede ord og svar på teksten bliver stadig ikke brugt.
     var trusted = false
+    /// Hvor meget der må rettes. "Klarere sætninger" kræver `trusted` (internet-hjælpen).
+    var level: SpellingLevel = .standard
 
     /// Hvor stor en del af ordene, der skal gå igen i modellens svar, før svaret overhovedet bruges.
     static let minimumSharedWords = 0.6
+    /// Ved "klarere sætninger" må mere ændres; et svar på teksten deler stadig næsten ingen ord med den.
+    static let minimumSharedWordsWhenClarifying = 0.4
+
+    private var clarifying: Bool { trusted && level == .clarity }
+
+    /// Tegnene mellem to ord: modellens (fx et nyt komma), hvis tegnsætning må rettes, og de kun er tegnsætning og
+    /// mellemrum; ellers brugerens.
+    func separator(_ original: String, _ model: String) -> String {
+        guard level.fixesPunctuation, model != original else { return original }
+        let allowed = CharacterSet(charactersIn: ",.;:!?…-–—\"'«»„“”‘’()").union(.whitespaces)
+        guard model.unicodeScalars.allSatisfy(allowed.contains),
+              model.contains("\n") == original.contains("\n"),
+              model.count <= original.count + 3 else { return original }
+        return model
+    }
 
     enum Decision: Equatable {
         case keep
@@ -92,7 +109,7 @@ struct SpellingGuard {
                 add(original.separators[i + 1], original.separators[i + 1])
             case .fix(let fixed):
                 add(written, fixed, fixed == written ? .same : .corrected)
-                add(original.separators[i + 1], separatorAfter) // fx et komma, modellen har sat
+                add(original.separators[i + 1], separator(original.separators[i + 1], separatorAfter)) // fx et komma
             case .choose(let candidates, let apply):
                 out.append(SpellingSegment(id: out.count, original: written, text: written, kind: .uncertain,
                                            suggestions: Array(candidates.prefix(3)), candidates: candidates,
@@ -104,7 +121,8 @@ struct SpellingGuard {
         let proposed = proposal.map(Tokens.init)
         let pairs = proposed.map { Self.matchingWords(original.words.map { $0.lowercased() }, $0.words.map { $0.lowercased() }) } ?? []
         let longest = max(original.words.count, proposed?.words.count ?? 0)
-        guard let proposed, longest > 0, Double(pairs.count) / Double(longest) >= Self.minimumSharedWords else {
+        let minimum = clarifying ? Self.minimumSharedWordsWhenClarifying : Self.minimumSharedWords
+        guard let proposed, longest > 0, Double(pairs.count) / Double(longest) >= minimum else {
             // Ingen model, eller modellen har svaret på teksten i stedet for at rette den: kun stavekontrollen.
             add(original.separators[0], original.separators[0])
             for i in original.words.indices { word(i, proposal: nil, separatorAfter: original.separators[i + 1]) }
@@ -113,7 +131,7 @@ struct SpellingGuard {
 
         // Starten (fx anførselstegn) fra modellen, hvis første ord er fælles; ellers brugerens.
         let leading = pairs.first.map { $0 == (0, 0) } == true ? proposed.separators[0] : original.separators[0]
-        add(original.separators[0], leading)
+        add(original.separators[0], separator(original.separators[0], leading))
 
         var o = 0, p = 0
         for (matchO, matchP) in pairs + [(original.words.count, proposed.words.count)] {
@@ -127,22 +145,45 @@ struct SpellingGuard {
                 } else if let joined = joinedFix(oldWords, newWords, original: original, proposed: proposed, language: language) {
                     // Ord, der er skrevet i to dele ("til bage" → "tilbage") eller omvendt.
                     add(joined.original, joined.fixed, .corrected)
-                    add(original.separators[oldWords.last! + 1], proposed.separators[newWords.last! + 1])
+                    add(original.separators[oldWords.last! + 1],
+                        separator(original.separators[oldWords.last! + 1], proposed.separators[newWords.last! + 1]))
+                } else if clarifying {
+                    // "Klarere sætninger": hele stykket skiftes ud, og brugeren kan vælge sit eget igen.
+                    let after = original.separators[oldWords.last! + 1]
+                    add(phrase(oldWords, in: original), phrase(newWords, in: proposed), .corrected)
+                    add(after, newWords.isEmpty ? "" : separator(after, proposed.separators[newWords.last! + 1]))
                 } else {
                     // En omskrivning: brugerens ord bliver stående (stavekontrollen ser stadig på dem).
                     for i in oldWords { word(i, proposal: nil, separatorAfter: original.separators[i + 1]) }
                 }
             }
-            // Tilføjede ord fra modellen (oldWords tom) bruges ikke.
+            // Tilføjede ord fra modellen (oldWords tom) bruges ikke – undtagen ved "klarere sætninger", hvor de hæftes
+            // på ordet før, så brugeren kan fravælge dem sammen med det.
+            if oldWords.isEmpty, !newWords.isEmpty, clarifying, out.count >= 3 {
+                let wordIndex = out.count - 2, separatorIndex = out.count - 1
+                out[wordIndex].text += out[separatorIndex].text + phrase(newWords, in: proposed)
+                out[wordIndex].kind = .corrected
+                out[separatorIndex].text = separator(out[separatorIndex].original, proposed.separators[newWords.last! + 1])
+            }
             if matchO < original.words.count {
                 word(matchO, proposal: proposed.words[matchP], separatorAfter: proposed.separators[matchP + 1])
             }
             o = matchO + 1
             p = matchP + 1
         }
-        // Sætningens slutning (fx "." eller "?") er altid brugerens: modellen fortsætter af og til sætningen.
-        out[out.count - 1].text = out[out.count - 1].original
+        // Sætningens slutning (fx "." eller "?"): modellens, hvis tegnsætning må rettes, og dens sidste ord også er
+        // brugerens sidste ord. Ellers brugerens: modellen fortsætter af og til sætningen ("Vi ses kl." → "… kl. 10.").
+        let endsTogether = pairs.last.map { $0 == (original.words.count - 1, proposed.words.count - 1) } ?? false
+        // Ved "klarere sætninger" kan ordene flytte rundt; modellens slutning følger så med dens sidste ord.
+        if !(clarifying || (endsTogether && level.fixesPunctuation)) {
+            out[out.count - 1].text = out[out.count - 1].original
+        }
         return out
+    }
+
+    /// Ordene med tegnene imellem, som de står i teksten.
+    private func phrase(_ indices: [Int], in tokens: Tokens) -> String {
+        indices.enumerated().map { k, i in tokens.words[i] + (k < indices.count - 1 ? tokens.separators[i + 1] : "") }.joined()
     }
 
     /// Hvad der skal ske med ét ord, brugeren har skrevet.
@@ -151,6 +192,13 @@ struct SpellingGuard {
         let lower = written.lowercased()
         let proposalDistance = proposal.map { Self.distance(lower, $0.lowercased()) }
         let proposalIsWord = proposal.map { !checker.isMisspelled($0, language: language) } ?? false
+
+        // Store bogstaver ("jeg" → "Jeg" først i sætningen) hører til tegnsætningen.
+        if let proposal, proposal != written, proposal.lowercased() == lower {
+            return level.fixesPunctuation ? .fix(proposal) : .keep
+        }
+        // "Klarere sætninger": internet-modellen må også skifte et ord ud med et andet.
+        if clarifying, let proposal, let proposalDistance, proposalDistance > 0 { return .fix(proposal) }
 
         if trusted, let proposal, let proposalDistance, proposalDistance > 0 {
             // Internet-modellen: dens rettelse bruges, hvis den ligner det skrevne. Ingen grænse på ét bogstav for

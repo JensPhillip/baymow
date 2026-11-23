@@ -130,6 +130,14 @@ public enum ScreenshotTool {
         let cloudModel = SpellingPanelModel(sourceBundleID: nil) { _, _, _ in }
         cloudModel.load(cloudResult)
         shoot("stavehjaelp-internet", size: nil, SpellingPanelView(model: cloudModel, onApply: {}, onCopy: {}, onClose: {}))
+        // "Klarere sætninger" (AP-68) med et fast forslag fra stavetesten, så billedet ikke kræver internet.
+        var claritySegments = SpellingGuard(checker: SystemWordChecker(), trusted: true, level: .clarity).review(
+            "Jeg tænkte på om det måske kunne være en mulighed at vi eventuelt kunne mødes en dag i næste uge hvis det passer.",
+            proposal: "Jeg tænkte på, om vi kunne mødes en dag i næste uge, hvis det passer.", language: .danish)
+        for i in claritySegments.indices { claritySegments[i].id = i }
+        let clarityModel = SpellingPanelModel(sourceBundleID: nil) { _, _, _ in }
+        clarityModel.load(SpellingResult(segments: claritySegments, source: .cloud(.openai), language: .danish))
+        shoot("stavehjaelp-klarere", size: nil, SpellingPanelView(model: clarityModel, onApply: {}, onCopy: {}, onClose: {}))
         var offlineResult = demoResult
         offlineResult.cloudProblem = .offline
         let offlineModel = SpellingPanelModel(sourceBundleID: nil) { _, _, _ in }

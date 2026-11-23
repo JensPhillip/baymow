@@ -42,7 +42,10 @@ final class SpellingPanelModel: ObservableObject {
         cloudProblem = result.cloudProblem
         language = result.language
         for segment in result.changes {
-            options[segment.id] = SpellingGuard.unique([segment.original, segment.text] + segment.suggestions, excluding: "")
+            // Brugerens eget, Baymows rettelse (også en tom: "slet ordene") og andre forslag – hver kun én gang.
+            var choices = [segment.original]
+            for word in [segment.text] + segment.suggestions where !choices.contains(word) { choices.append(word) }
+            options[segment.id] = choices
         }
         state = .ready
     }
@@ -58,7 +61,7 @@ final class SpellingPanelModel: ObservableObject {
         copied = false
         listenToken += 1
         isListening = false
-        speak(word, language) {}
+        if !word.isEmpty { speak(word, language) {} }
     }
 
     /// "Hør": læser den rettede tekst op. Et tryk mere stopper.
@@ -232,22 +235,29 @@ private struct ChangeRow: View {
 
     var body: some View {
         let current = current
-        HStack(spacing: 8) {
+        let options = model.options[segment.id] ?? []
+        // Hele sætningsdele ("klarere sætninger") står under hinanden; enkelte ord på én linje.
+        let layout = options.contains { $0.count > 24 }
+            ? AnyLayout(VStackLayout(alignment: .leading, spacing: 6)) : AnyLayout(HStackLayout(spacing: 8))
+        HStack(alignment: .top, spacing: 8) {
             Image(systemName: current.isChanged ? "checkmark.circle.fill" : "questionmark.circle.fill")
                 .foregroundStyle(current.isChanged ? SpellingPanelView.corrected : SpellingPanelView.uncertain)
                 .font(.system(size: 18))
                 .frame(width: 22)
                 .accessibilityHidden(true)
-            ForEach(model.options[segment.id] ?? [], id: \.self) { word in
+            layout {
+            ForEach(options, id: \.self) { word in
                 Button { model.choose(word, for: segment.id) } label: {
                     HStack(spacing: 4) {
                         if word == current.original { Image(systemName: "pencil").font(.system(size: 10)) }
-                        Text(word).strikethrough(word == current.original && current.isChanged)
+                        Text(word.isEmpty ? "(slet)" : word).strikethrough(word == current.original && current.isChanged)
+                            .multilineTextAlignment(.leading).fixedSize(horizontal: false, vertical: true)
                     }
                 }
                 .buttonStyle(ChipStyle(chosen: current.text == word))
                 .help(word == current.original ? "Det, du skrev. Tryk for at beholde det og høre det."
-                                               : "Tryk for at vælge \"\(word)\" og høre det.")
+                                               : word.isEmpty ? "Tryk for at fjerne ordene." : "Tryk for at vælge \"\(word)\" og høre det.")
+            }
             }
             Spacer(minLength: 0)
         }

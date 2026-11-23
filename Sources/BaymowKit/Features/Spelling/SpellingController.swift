@@ -26,6 +26,11 @@ final class SpellingSettings: ObservableObject {
     @Published var shortcutFailed = false
     @Published var modelStatus: SpellingModelStatus = AppleSpellingModel.status()
 
+    /// Hvor meget Baymow må rette (AP-68). Standard: stavning og tegnsætning.
+    @Published var level: SpellingLevel { didSet { defaults.set(level.rawValue, forKey: "spellingLevel") } }
+    /// Det niveau, der faktisk bruges: "klarere sætninger" kræver hjælp via internet.
+    var effectiveLevel: SpellingLevel { level == .clarity && !cloudEnabled ? .punctuation : level }
+
     /// Bedre hjælp via internet (AP-64). Slået fra som standard; kræver brugerens egen nøgle.
     @Published var cloudEnabled: Bool { didSet { defaults.set(cloudEnabled, forKey: "spellingCloudEnabled") } }
     @Published var cloudProvider: CloudProvider {
@@ -48,6 +53,7 @@ final class SpellingSettings: ObservableObject {
             shortcut = Self.standardShortcut
         }
         cloudEnabled = defaults.bool(forKey: "spellingCloudEnabled")
+        level = SpellingLevel(rawValue: defaults.string(forKey: "spellingLevel") ?? "") ?? .standard
         cloudProvider = CloudProvider(rawValue: defaults.string(forKey: "spellingCloudProvider") ?? "") ?? .openai
         refreshKeys()
     }
@@ -80,7 +86,7 @@ final class SpellingSettings: ObservableObject {
     private func corrector(key: String) -> CloudSpellingCorrector {
         let provider = cloudProvider
         let usage = usage
-        return CloudSpellingCorrector(provider: provider, key: key, onUsage: { input, output in
+        return CloudSpellingCorrector(provider: provider, key: key, level: effectiveLevel, onUsage: { input, output in
             Task { @MainActor in usage.addTokens(provider, input: input, output: output) }
         })
     }
@@ -152,10 +158,11 @@ final class SpellingController {
                 resize()
                 return
             }
-            let local = AppleSpellingModel.makeCorrector()
+            let level = settings.effectiveLevel
+            let local = AppleSpellingModel.makeCorrector(level: level)
             let cloud = settings.cloudCorrector()
             let assistant = SpellingAssistant(corrector: cloud ?? local, fallback: cloud == nil ? nil : local,
-                                              checker: SystemWordChecker())
+                                              checker: SystemWordChecker(), level: level)
             var result = await assistant.check(captured.text)
             if settings.cloudEnabled, cloud == nil, result.cloudProblem == nil { result.cloudProblem = .noKey }
             if let cloud, result.cloudProblem == nil { settings.usage.addCheck(cloud.provider) }
@@ -213,35 +220,39 @@ final class SpellingController {
             return
         }
         close()
-        Task { await SelectionReplacer.replace(with: text) }
+        let segments = model.segments
+        Task { await SelectionReplacer.replace(with: text, segments: segments) }
     }
 }
 
-/// Sætter tekst ind i stedet for markeringen med et simuleret ⌘V. Udklipsholderens indhold gendannes bagefter.
+/// Sætter tekst ind i stedet for markeringen med et simuleret ⌘V, med formateringen bevaret, når det kan lade sig gøre.
+/// Udklipsholderens indhold gendannes bagefter.
 @MainActor
 enum SelectionReplacer {
-    static func replace(with text: String) async {
+    static func replace(with text: String, segments: [SpellingSegment] = []) async {
         let pasteboard = NSPasteboard.general
         let saved = (pasteboard.pasteboardItems ?? []).map { item in
             item.types.compactMap { type in item.data(forType: type).map { (type, $0) } }
         }
-        pasteboard.clearContents()
-        let item = NSPasteboardItem()
-        item.setString(text, forType: .string)
-        // Udklipsholder-programmer bedes om ikke at gemme teksten (nspasteboard.org).
-        item.setString("", forType: NSPasteboard.PasteboardType("org.nspasteboard.TransientType"))
-        item.setString("", forType: NSPasteboard.PasteboardType("org.nspasteboard.ConcealedType"))
-        pasteboard.writeObjects([item])
-        let changeAfterWrite = pasteboard.changeCount
 
-        let source = CGEventSource(stateID: .privateState)
-        let key = keyCode(for: "v")
-        let down = CGEvent(keyboardEventSource: source, virtualKey: key, keyDown: true)
-        let up = CGEvent(keyboardEventSource: source, virtualKey: key, keyDown: false)
-        down?.flags = .maskCommand
-        up?.flags = .maskCommand
-        down?.post(tap: .cgSessionEventTap)
-        up?.post(tap: .cgSessionEventTap)
+        // Formateringen (AP-68): kopiér markeringen med formatering, og sæt rettelserne ind i den kopi. Lykkes det
+        // ikke, sættes ren tekst ind som før.
+        var rich: NSAttributedString?
+        if !segments.isEmpty {
+            let before = pasteboard.changeCount
+            press("c")
+            for _ in 0..<10 where pasteboard.changeCount == before {
+                try? await Task.sleep(nanoseconds: 50_000_000)
+            }
+            if pasteboard.changeCount != before, let copied = RichReplacement.richText(from: pasteboard) {
+                rich = RichReplacement.apply(segments, to: copied)
+            }
+        }
+
+        pasteboard.clearContents()
+        pasteboard.writeObjects([RichReplacement.pasteboardItem(rich: rich, plain: text)])
+        let changeAfterWrite = pasteboard.changeCount
+        press("v")
 
         // Programmet skal nå at læse udklipsholderen, før den gendannes.
         try? await Task.sleep(nanoseconds: 700_000_000)
@@ -253,6 +264,18 @@ enum SelectionReplacer {
             return item
         }
         if !items.isEmpty { pasteboard.writeObjects(items) }
+    }
+
+    /// ⌘ + bogstavet i det forreste program.
+    private static func press(_ letter: Character) {
+        let source = CGEventSource(stateID: .privateState)
+        let key = keyCode(for: letter)
+        let down = CGEvent(keyboardEventSource: source, virtualKey: key, keyDown: true)
+        let up = CGEvent(keyboardEventSource: source, virtualKey: key, keyDown: false)
+        down?.flags = .maskCommand
+        up?.flags = .maskCommand
+        down?.post(tap: .cgSessionEventTap)
+        up?.post(tap: .cgSessionEventTap)
     }
 
     /// Tasten, der giver bogstavet på det aktive tastaturlayout (fx Dvorak). Kun på hovedtråden (TIS).

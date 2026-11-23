@@ -14,7 +14,8 @@ public enum SpellTest {
 
     /// `cloud`: "claude" eller "openai" måler internet-hjælpen (AP-64). Nøglen læses fra miljøvariablen
     /// `BAYMOW_TEST_KEY`, så den ikke står på kommandolinjen.
-    public static func run(sentencesFile: String, outputFile: String, cloud: String? = nil) -> Int32 {
+    public static func run(sentencesFile: String, outputFile: String, cloud: String? = nil, level: String? = nil) -> Int32 {
+        let level = level.flatMap(SpellingLevel.init(rawValue:)) ?? .standard
         guard let content = try? String(contentsOfFile: sentencesFile, encoding: .utf8) else {
             print("Kan ikke læse \(sentencesFile)"); return 1
         }
@@ -23,21 +24,24 @@ public enum SpellTest {
             return (written: parts[0], key: parts[1])
         }
         var status = "\(AppleSpellingModel.status())"
-        var corrector = AppleSpellingModel.makeCorrector()
+        var corrector = AppleSpellingModel.makeCorrector(level: level)
         if let cloud {
             guard let provider = CloudProvider(rawValue: cloud),
                   let key = ProcessInfo.processInfo.environment["BAYMOW_TEST_KEY"], !key.isEmpty else {
                 print("Brug --cloud claude|openai og sæt BAYMOW_TEST_KEY"); return 1
             }
-            corrector = CloudSpellingCorrector(provider: provider, key: key)
+            corrector = CloudSpellingCorrector(provider: provider, key: key, level: level)
             status = provider.model
         }
-        print("Model: \(status)")
-        let assistant = SpellingAssistant(corrector: corrector, checker: SystemWordChecker())
+        print("Model: \(status) · niveau: \(level.rawValue)")
+        let assistant = SpellingAssistant(corrector: corrector, checker: SystemWordChecker(), level: level)
 
         var raw = Count(), guarded = Count()
         var rows: [[String: Any]] = []
         var seconds = 0.0
+        // Tegnsætning (AP-68): sætninger, der er helt som facit (med tegn og store bogstaver), og sætninger, hvor
+        // tegnene mellem ordene er ændret.
+        var exact = 0, punctuationChanged = 0, punctuationNeeded = 0, punctuationFixed = 0
         for item in cases {
             let started = Date()
             let result = runBlocking { await assistant.check(item.written) }
@@ -47,6 +51,15 @@ public enum SpellTest {
 
             let rawScore = score(written: item.written, key: item.key, output: proposal, segments: nil)
             let guardedScore = score(written: item.written, key: item.key, output: result.text, segments: result.segments)
+            let marksOf = { (text: String) in Tokens(text).separators.map { $0.trimmingCharacters(in: .whitespaces) } }
+            if result.text == item.key { exact += 1 }
+            if marksOf(result.text) != marksOf(item.written) { punctuationChanged += 1 }
+            if marksOf(item.key) != marksOf(item.written) || item.key.first?.isUppercase != item.written.first?.isUppercase {
+                punctuationNeeded += 1
+                if marksOf(result.text) == marksOf(item.key) && result.text.first?.isUppercase == item.key.first?.isUppercase {
+                    punctuationFixed += 1
+                }
+            }
             add(rawScore, to: &raw)
             add(guardedScore, to: &guarded)
             let marks = result.segments.filter { $0.kind == .uncertain }.map { "\($0.original)?(\($0.suggestions.joined(separator: "/")))" }
@@ -64,7 +77,9 @@ public enum SpellTest {
         let report: [String: Any] = [
             "dato": ISO8601DateFormatter().string(from: Date()), "model": "\(status)", "saetninger": cases.count,
             "fejlfri_saetninger": clean, "sekunder_pr_saetning": (seconds / Double(max(cases.count, 1)) * 100).rounded() / 100,
-            "kun_model": summary(raw), "med_vagt": summary(guarded), "detaljer": rows,
+            "kun_model": summary(raw), "med_vagt": summary(guarded), "detaljer": rows, "niveau": level.rawValue,
+            "tegnsaetning": ["helt_som_facit": exact, "saetninger_med_tegnfejl": punctuationNeeded,
+                             "tegnfejl_rettet": punctuationFixed, "tegn_aendret": punctuationChanged],
         ]
         if let data = try? JSONSerialization.data(withJSONObject: report, options: [.prettyPrinted, .sortedKeys]) {
             try? data.write(to: URL(fileURLWithPath: outputFile))
@@ -72,6 +87,7 @@ public enum SpellTest {
         print("\n\(cases.count) sætninger, heraf \(clean) fejlfri. \(String(format: "%.2f", seconds / Double(max(cases.count, 1)))) s pr. sætning.")
         print("Kun model: \(summary(raw))")
         print("Med vagt:  \(summary(guarded))")
+        print("Tegnsætning: \(exact) helt som facit · \(punctuationFixed) af \(punctuationNeeded) sætninger med tegnfejl rettet · tegn ændret i \(punctuationChanged)")
         return 0
     }
 

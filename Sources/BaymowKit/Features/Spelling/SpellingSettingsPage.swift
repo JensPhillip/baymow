@@ -35,6 +35,10 @@ struct SpellingSettingsPage: View {
             GuideStep(number: 4, symbol: "checkmark.circle", text: "Tryk på \"Brug rettelsen\"")
         }
 
+        Section("Hvor meget skal Baymow rette?") {
+            LevelPicker(settings: settings)
+        }
+
         Section("Farverne") {
             ColorRow(color: SpellingPanelView.corrected, symbol: "checkmark.circle.fill", text: "Grøn: rettet af Baymow")
             ColorRow(color: SpellingPanelView.uncertain, symbol: "questionmark.circle.fill", text: "Orange: tjek selv")
@@ -382,5 +386,70 @@ struct UsageChart: View {
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8))
         .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(.primary.opacity(0.1)))
         .frame(minWidth: 220)
+    }
+}
+
+/// Tre niveauer med billede og én linje hver. "Klarere sætninger" kræver hjælp via internet og er aldrig standard.
+private struct LevelPicker: View {
+    @ObservedObject var settings: SpellingSettings
+
+    var body: some View {
+        ForEach(SpellingLevel.allCases) { level in
+            let available = level != .clarity || settings.cloudEnabled
+            Button { settings.level = level } label: {
+                HStack(spacing: 12) {
+                    Image(systemName: settings.level == level ? "largecircle.fill.circle" : "circle")
+                        .font(.system(size: 18)).foregroundStyle(settings.level == level ? Color.accentColor : .secondary)
+                    IconTile(symbol: Self.symbol(level), color: .teal, size: 30)
+                    VStack(alignment: .leading, spacing: 1) {
+                        HStack(spacing: 6) {
+                            Text(Self.title(level)).font(.headline)
+                            if level == .standard { Badge(text: "Anbefalet", symbol: "star.fill", color: .green) }
+                        }
+                        Text(Self.subtitle(level)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                    }
+                    Spacer(minLength: 0)
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .disabled(!available)
+            .opacity(available ? 1 : 0.5)
+            .accessibilityAddTraits(settings.level == level ? .isSelected : [])
+            .help(available ? Self.subtitle(level) : "Kræver \"Bedre hjælp via internet\".")
+        }
+        if settings.level == .clarity, !settings.cloudEnabled {
+            Label("Klarere sætninger kræver hjælp via internet. Indtil da retter Baymow stavning og tegnsætning.",
+                  systemImage: "info.circle")
+                .foregroundStyle(.orange)
+        } else if settings.level == .clarity {
+            Label("Baymow kender ikke hele sammenhængen. Læs forslagene, før du bruger dem: du kan altid vælge dine egne ord.",
+                  systemImage: "exclamationmark.bubble")
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    static func title(_ level: SpellingLevel) -> String {
+        switch level {
+        case .spelling: return "Kun stavning"
+        case .punctuation: return "Stavning og tegnsætning"
+        case .clarity: return "Også klarere sætninger"
+        }
+    }
+
+    static func subtitle(_ level: SpellingLevel) -> String {
+        switch level {
+        case .spelling: return "Retter stavefejl. Kommaer og punktum er dine egne."
+        case .punctuation: return "Retter også kommaer, punktum og store bogstaver."
+        case .clarity: return "Gør også tunge sætninger kortere og lettere at forstå. Kræver hjælp via internet."
+        }
+    }
+
+    static func symbol(_ level: SpellingLevel) -> String {
+        switch level {
+        case .spelling: return "textformat.abc"
+        case .punctuation: return "textformat.abc.dottedunderline"
+        case .clarity: return "text.badge.star"
+        }
     }
 }

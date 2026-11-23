@@ -30,11 +30,14 @@ final class SpellingAssistant {
     /// teksten videre af sig selv.
     private let fallback: SpellingCorrector?
     private let checker: WordChecker
+    private let level: SpellingLevel
 
-    init(corrector: SpellingCorrector?, fallback: SpellingCorrector? = nil, checker: WordChecker) {
+    init(corrector: SpellingCorrector?, fallback: SpellingCorrector? = nil, checker: WordChecker,
+         level: SpellingLevel = .standard) {
         self.corrector = corrector
         self.fallback = fallback
         self.checker = checker
+        self.level = level
     }
 
     /// Til stavetesten: modellens svar for hver sætning, før vagten har set det.
@@ -67,7 +70,7 @@ final class SpellingAssistant {
             }
             lastProposals.append(proposal ?? piece.text)
             let trusted: Bool = { if case .cloud = active?.source { return true } else { return false } }()
-            let spellGuard = SpellingGuard(checker: checker, trusted: trusted)
+            let spellGuard = SpellingGuard(checker: checker, trusted: trusted, level: level)
             segments += await resolveChoices(spellGuard.review(piece.text, proposal: proposal, language: language),
                                              using: active, language: language)
         }

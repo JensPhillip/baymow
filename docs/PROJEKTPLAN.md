@@ -438,11 +438,12 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 | AP-60 | Ordfremhævning (idé I1): vindue og/eller direkte i teksten – hver sin kontakt, slået fra som standard | 6 | Udfører + bruger | MVP | Færdig |
 | AP-61 | Højere hastighed (idé I3): op til 3×, og tallet i afspilleren svarer til det reelle tempo | 6 | Udfører + bruger | MVP | Færdig (brugeren godkendte 2,5× og 3×, 21. november 2026) |
 | AP-62 | Nyt design efter designprincipperne: sidebjælke, ikoner, flag, "Hør"-knapper, nyt udseende af afspiller og velkomst | 6 | Udfører + bruger | MVP | Færdig (brugeren godkendte runde 2, 21. november 2026) |
-| AP-63 | Stavehjælp (idé I12): ret egen tekst med Macens indbyggede sprogmodel, vist og læst op, aldrig rettet i stilhed | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
+| AP-63 | Stavehjælp (idé I12): ret egen tekst med Macens indbyggede sprogmodel, vist og læst op, aldrig rettet i stilhed | 6 | Udfører + bruger | MVP | Færdig (godkendt af brugeren 23. november) |
 | AP-64 | Stavehjælp via internet: Claude eller ChatGPT med brugerens egen nøgle, tilvalg, Macens hjælp uden internet | 6 | Udfører + bruger | MVP | Færdig (brugeren har gemt begge nøgler og godkendt 23. november) |
-| AP-65 | Forbrug af internet-hjælpen: kontroller og skønnet pris pr. firma og måned på siden Stavning; ChatGPT som standard | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
-| AP-66 | Forbrug: pris med 4 decimaler og en graf over de seneste 30 dage (lukket som standard, hold musen over en dag) | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
+| AP-65 | Forbrug af internet-hjælpen: kontroller og skønnet pris pr. firma og måned på siden Stavning; ChatGPT som standard | 6 | Udfører + bruger | MVP | Færdig (godkendt af brugeren 23. november) |
+| AP-66 | Forbrug: pris med 4 decimaler og en graf over de seneste 30 dage (lukket som standard, hold musen over en dag) | 6 | Udfører + bruger | MVP | Færdig (godkendt af brugeren 23. november) |
 | AP-67 | Genveje og Stop: stavegenvejen kan ændres på siden Genvej og vises rigtigt alle steder; stavning på Start; "Hør" bliver til "Stop"; Pris/Kontroller på grafens linje | 6 | Udfører + bruger | MVP | Færdig (godkendt af brugeren 23. november) |
+| AP-68 | Hvor meget Baymow retter (kun stavning / + tegnsætning, standard / + klarere sætninger, kun via internet) og formateringen bevares ved "Brug rettelsen" | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
 | AP-52 | Developer ID, notarisering og DMG | 5 | Udfører + bruger | AP-50, B9 | Forberedt: DMG og README; afventer certifikat, app-id og kodearkiv |
 
 ### Fase 0 – Grundlag
@@ -764,7 +765,7 @@ Rækkefølgen er arkitektens bud på nytten for en ordblind bruger.
 | I3 | **Højere hastighed (bygget som AP-61, 21. november 2026)**, op til 3× | Erfarne lyttere læser hurtigere end de læser selv; Speechify går til 4,5× | Grænsen i `SettingsStore`/sessionen; tjek, at stemmerne kan følge med | Ja: ændrer K5 (0,5–2,0) |
 | I4 | **Læs tekst fra skærmen** (OCR med Apples Vision, lokalt) | Billeder, indscannede PDF'er og programmer uden markerbar tekst | Ny strategi i `TextCaptureService`, eller egen genvej i `Features/ScreenText/` | Ja, hvis den lægges i `TextCaptureService` |
 | I5 | **Læs en hel fil** (PDF, Word, EPUB) via træk-og-slip på afspilleren | Lange dokumenter uden at markere | `Features/Documents/`, giver teksten til `ReadingSessionManager.start` | Nej |
-| I6 | **Gem oplæsning som lydfil** | Lytte på farten, uden computeren | `Features/Export/`, syntetiserer til fil (kun efter brugerens tryk) | Nej |
+| I6 | ~~Gem oplæsning som lydfil~~ – **droppet** af brugeren 23. november 2026 ("ser ingen værdi") | – | – | – |
 | I7 | **Diktering** (tale til tekst) | Skrivehjælp – Speechifys nyeste Mac-funktion | Eget modul; macOS har allerede indbygget diktering, så værdien skal afklares først | Nej |
 | I8 | **Opsummering og spørgsmål til teksten** | Overblik over lange tekster | Kræver en sprogmodel: lokal, eller cloud (udskudt, B6) | Ja – kræver arkitektens ja og en privatlivsvurdering |
 
@@ -837,6 +838,20 @@ tekst", når stavehjælpen er slået til. (4) "Hør"-knapperne på siderne, hast
 stavevinduet bliver til "Stop", mens der læses op.
 **Acceptkriterier:** Tests af gemt stavegenvej, forklaringer og Hør/Stop. Brugeren har skiftet en genvej og stoppet en
 oplæsning.
+
+#### AP-68 Hvor meget skal Baymow rette? Og formateringen
+
+**Hvorfor:** Brugeren 23. november 2026: tegnsætning skal rettes som standard ("teksten skal forbedres alt i alt"), og
+man skal selv kunne vælge, hvor stort et indgreb Baymow laver. Omskrivning må ikke være standard, fordi Baymow ikke
+kender hele sammenhængen. Formateringen (fed, punktform) forsvandt ved "Brug rettelsen".
+**Gør:** `SpellingLevel`: kun stavning / stavning og tegnsætning (standard) / også klarere sætninger (kun med hjælp via
+internet). Vagten tager kun tegnsætning og mellemrum fra modellen mellem ordene; ved "klarere sætninger" kan hele
+sætningsdele skiftes ud, men hver kan vælges tilbage. "Brug rettelsen" kopierer markeringen med formatering (RTF/HTML),
+sætter rettelserne ind i den og indsætter RTF, HTML og ren tekst; kan stykkerne ikke findes, bruges ren tekst som før.
+**Acceptkriterier:** Stavetesten: tegnsætning rettet i de fleste sætninger med tegnfejl, ingen forkerte rettelser af
+ord, "kun stavning" ændrer ingen tegn. Tests af niveauerne og af formateringen. Brugeren har prøvet niveauerne og
+formateringen i Word, Google Docs og Mail.
+**Senere (brugerens idé):** en "forståelses-score" for sætninger og mail-hjælp – drøftes med brugeren først.
 
 ## 7. Stemmeporten
 

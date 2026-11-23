@@ -9,40 +9,23 @@ Opdateret 23. november 2026.
 - ✅ Lytteskemaet (AP-03) er lukket. Plapre (AP-15) er droppet.
 - ✅ Næste idé: stavehjælp (I12). Den er bygget og klar til at blive prøvet.
 
-## Test nu: Stavehjælp (ca. 10 min)
-Slå den til først: Åbn Baymow fra menulinjen → siden **Stavning** → slå **Stavehjælp** til.
+## Afklaret 23. november
+- ✅ Stavehjælpen virker i programmerne (også "Brug rettelsen" og udklipsholderen).
+- ✅ Bedre hjælp via internet, ChatGPT som standard, forbruget og grafen giver mening.
+- ✅ Genveje og Stop.
+- ✅ Kommaer: ja – Baymow skal som standard også rette tegnsætning, og man skal kunne vælge, hvor meget den retter.
+- ✅ "Gem som lydfil" (I6) er droppet.
 
-Skriv fx dette i Noter eller en ny mail (fejlene er med vilje):
-> Jeg har ikke tit til at skrive i dag. Kan du huske at købe mælg på vej jem?
-
-- [ ] 1. Markér teksten, og tryk ⌃⌥R. Et vindue viser teksten med rettede ord på **grøn** baggrund.
-- [ ] 2. Under teksten er der én række pr. ord. Tryk på et ord: det bliver valgt, og du hører det.
-- [ ] 3. Tryk på dit eget ord (med blyanten ✎). Rettelsen bliver fortrudt.
-- [ ] 4. Tryk "Hør" øverst. Den rettede tekst bliver læst op.
-- [ ] 5. Tryk "Brug rettelsen". Din tekst bliver skiftet ud med den rettede, og vinduet lukker.
-- [ ] 6. Prøv det samme i **Google Docs** og i **Word** (hvis du har det). Bliver teksten skiftet ud det rigtige sted?
-- [ ] 7. Kopiér noget andet først (⌘C), og brug så "Brug rettelsen". Ligger det, du kopierede, stadig på
-      udklipsholderen bagefter (prøv ⌘V)?
-- [ ] 8. Markér en tekst uden fejl, og tryk ⌃⌥R. Der står "Ingen fejl fundet".
-- [ ] 9. ⌃⌥S læser stadig op som før (og starter ikke stavehjælpen).
-- [ ] 10. Prøv med noget, du selv har skrevet for nylig. Ændrer Baymow noget, så det betyder noget andet? Skriv ordet til mig.
-
-Er du i tvivl om noget i vinduet, så skriv, hvad du så, eller tag et skærmbillede (⌘⇧4).
-
-## Test nu: Forbrug (2 min)
-- ✅ Bedre hjælp via internet: begge nøgler gemt og afprøvet 23. november. ChatGPT er valgt som standard.
-- [ ] 1. Lav et par kontroller med ⌃⌥R. Åbn så Baymow → **Stavning**, og se afsnittet **Forbrug** nederst.
-      Tallet "kontroller" går op for hver kontrol, og prisen er et lille beløb (få øre).
-- [ ] 2. Giver tallene mening? Sammenlign gerne senere med regningen hos OpenAI.
-- [ ] 3. Prøv gerne at slå Wi-Fi fra og trykke ⌃⌥R: vinduet skriver "Intet internet" med orange.
-- [ ] 4. Tryk **Vis graf over tid** under Forbrug. Hold musen over dagens søjle: et lille felt viser kontroller og pris.
-      Skift mellem **Pris** og **Kontroller**. (Grafen har kun tal fra i dag og frem.)
-
-- ✅ Genveje og Stop: testet og godkendt 23. november.
+## Test nu: Hvor meget skal Baymow rette? (ca. 10 min)
+- [ ] 1. Baymow → **Stavning** → "Hvor meget skal Baymow rette?". **Stavning og tegnsætning** er valgt.
+      Markér fx "jeg tror at han kommer i morgen hvis det passer" og tryk ⌃⌥R: kommaer og stort J bliver rettet.
+- [ ] 2. Vælg **Kun stavning**, og prøv igen: kommaerne bliver ikke sat.
+- [ ] 3. Vælg **Også klarere sætninger**, og prøv en lang, tung sætning. Er forslagene gode? Kan du vælge dine egne
+      ord igen (blyanten ✎) og "(slet)"?
+- [ ] 4. **Formatering:** Skriv noget med **fed** og punktform i Word, Google Docs eller Mail, med et par fejl.
+      Markér det hele, ⌃⌥R, "Brug rettelsen". Er fed skrift og punktform der stadig?
 
 ## Beslut, når du har prøvet den
-- [ ] **Kommaer:** Baymow sætter kommaer, hvor modellen mener, de skal være (fx "Jeg tror, at …"). Vil du have det,
-      eller skal den kun rette stavning?
 - ✅ **AI-konto:** besluttet 23. november – begge, du vælger selv. **Standard:** ChatGPT.
 - [ ] **Testnøglerne** i nøgleringen (konto `baymow-test`) kan slettes, når vi ikke skal måle mere.
 
@@ -50,4 +33,4 @@ Er du i tvivl om noget i vinduet, så skriv, hvad du så, eller tag et skærmbil
 - [ ] **En testperson**, der aldrig har set Baymow, prøver velkomstvinduet uden hjælp (AP-41).
 - [ ] **Apple Developer Program** (koster et årligt gebyr), når du vil dele Baymow med andre (AP-52).
 - Idéer, der venter: I13 hent rigtige priser og forbrug, I14 fælles nøgle mod betaling for ikke-tekniske brugere, I9 engelske ord i dansk tekst, I10 ret selv et ord, I11 skrivehjælp, I4 tekst fra skærmen,
-  I5 hele filer, I6 gem som lydfil.
+  I5 hele filer.

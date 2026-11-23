@@ -434,6 +434,23 @@ CD-ORD, AppWriter) er selvstændige programmer uden adgang udefra. Pris: Claude 
 ca. 0,5 øre med Sonnet og under 0,1 øre med Luna. Testsættene er skrevet af en Claude-model; brugerens egne tekster er
 den rigtige prøve. Skriptene: `tools/stavetest/sammenlign_modeller.py` og `sammenlign_ollama.py`.
 
+### Tegnsætning og klarere sætninger (AP-68, 23. november 2026)
+
+Nye testsæt: `tegnsaetning.tsv` (25 sætninger, 21 med tegnfejl: startkomma, store bogstaver, spørgsmålstegn) og
+`klarhed.tsv` (8 tunge sætninger, læses igennem af et menneske). Facit i de gamle sæt har fået de kommaer, de manglede.
+
+| Niveau · model | Sætninger med tegnfejl rettet | Ord-fejl fundet | Forkerte rettelser af ord |
+|---|---|---|---|
+| Stavning og tegnsætning · GPT-6 Luna | 45 af 47 (alle fire sæt) | 62 af 63 | 1 ("ud og spise" → "ud at spise", begge korrekte) |
+| Stavning og tegnsætning · Macens model | 21 af 21 (tegnsætningssættet) | – | 0 |
+| Kun stavning · GPT-6 Luna | 0 (ingen tegn ændret, som det skal være) | – | 0 |
+
+Første forsøg gav kun 13 af 21: instruktionen sagde "startkomma ikke nødvendigt", og modellen lod så kommaet foran
+"at"/"om" være. Brugerens eksempel ("Jeg tror, at …") er startkomma, så instruktionen beder nu om det.
+"Klarere sætninger" var først for forsigtig (kun kommaer); med en tydeligere instruktion forkorter den tunge sætninger
+uden at ændre meningen i de 8 eksempler (fx "Jeg tænkte på om det måske kunne være en mulighed at vi eventuelt kunne
+mødes …" → "Jeg tænkte på, om vi kunne mødes …"). Spørgsmål og ordrer bliver stadig ikke besvaret.
+
 ## 4. Udviklingsplan og godkendelse
 
 | Milepæl | Indhold | Godkendes ved |

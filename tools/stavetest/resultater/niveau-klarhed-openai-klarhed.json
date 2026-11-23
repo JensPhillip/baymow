@@ -1,0 +1,156 @@
+{
+  "dato" : "2026-11-23T12:57:16Z",
+  "detaljer" : [
+    {
+      "baymow" : "Vi kan ikke gøre noget, før dem, der skal godkende det, har svaret.",
+      "facit" : "Det er sådan at vi ikke kan gøre noget ved det før at der er kommet svar fra dem der skal godkende det.",
+      "forkerte_ord" : [
+        "har",
+        "svaret"
+      ],
+      "model" : "Vi kan ikke gøre noget, før dem, der skal godkende det, har svaret.",
+      "model_forkerte_ord" : [
+        "har",
+        "svaret"
+      ],
+      "skrevet" : "Det er sådan at vi ikke kan gøre noget ved det før at der er kommet svar fra dem der skal godkende det.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Jeg tænkte på, om vi kunne mødes en dag i næste uge, hvis det passer.",
+      "facit" : "Jeg tænkte på om det måske kunne være en mulighed at vi eventuelt kunne mødes en dag i næste uge hvis det passer.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Jeg tænkte på, om vi kunne mødes en dag i næste uge, hvis det passer.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Jeg tænkte på om det måske kunne være en mulighed at vi eventuelt kunne mødes en dag i næste uge hvis det passer.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Kan du sende mig den fil, vi snakkede om i går?",
+      "facit" : "Kan du sende den fil som vi snakkede om i går til mig.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Kan du sende mig den fil, vi snakkede om i går?",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Kan du sende den fil som vi snakkede om i går til mig.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Vi har kigget på det, og det ser ud til, at det nok skal gå. Men vi ved det ikke helt endnu.",
+      "facit" : "Vi har kigget på det og det ser ud til at det nok skal gå men vi ved det ikke helt endnu.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Vi har kigget på det, og det ser ud til, at det nok skal gå. Men vi ved det ikke helt endnu.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Vi har kigget på det og det ser ud til at det nok skal gå men vi ved det ikke helt endnu.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Tak for mødet i dag.",
+      "facit" : "Tak for mødet i dag.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Tak for mødet i dag.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Tak for mødet i dag.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Hvis de er store nok, og vi vælger at bruge energien på det, kan vi muligvis finde en løsning i v1.",
+      "facit" : "Hvis de er store nok og vi vælger at bruge energien på det så kan vi muligvis godt finde en løsning i v1.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Hvis de er store nok, og vi vælger at bruge energien på det, kan vi muligvis finde en løsning i v1.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Hvis de er store nok og vi vælger at bruge energien på det så kan vi muligvis godt finde en løsning i v1.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Kan du komme i morgen?",
+      "facit" : "Kan du komme i morgen?",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Kan du komme i morgen?",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Kan du komme i morgen?",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Skriv en mail til chefen, og sig op.",
+      "facit" : "Skriv en mail til chefen og sig op.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Skriv en mail til chefen, og sig op.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Skriv en mail til chefen og sig op.",
+      "tjek_selv" : [
+
+      ]
+    }
+  ],
+  "fejlfri_saetninger" : 8,
+  "kun_model" : {
+    "falske_markeringer" : 0,
+    "fejl_i_alt" : 0,
+    "fejlfri_saetninger_aendret" : 4,
+    "forkerte_rettelser" : 2,
+    "markeret" : 0,
+    "overset" : 0,
+    "rettet" : 0
+  },
+  "med_vagt" : {
+    "falske_markeringer" : 0,
+    "fejl_i_alt" : 0,
+    "fejlfri_saetninger_aendret" : 4,
+    "forkerte_rettelser" : 2,
+    "markeret" : 0,
+    "overset" : 0,
+    "rettet" : 0
+  },
+  "model" : "gpt-6-luna",
+  "niveau" : "clarity",
+  "saetninger" : 8,
+  "sekunder_pr_saetning" : 1.3799999999999999,
+  "tegnsaetning" : {
+    "helt_som_facit" : 2,
+    "saetninger_med_tegnfejl" : 0,
+    "tegn_aendret" : 6,
+    "tegnfejl_rettet" : 0
+  }
+}

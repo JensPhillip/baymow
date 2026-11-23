@@ -28,3 +28,10 @@ BAYMOW_TEST_KEY="$(security find-generic-password -a baymow-test -s baymow-claud
 - Modellerne alene (uden Baymow): `sammenlign_modeller.py <model> low <filer…>` (nøgler fra nøgleringen,
   `baymow-claude` / `baymow-openai`, konto `baymow-test`) og `sammenlign_ollama.py <model> <filer…>` (lokalt via Ollama).
 - `resultater/sky-*.json`: Claude Sonnet 5.5 og GPT-6 Luna gennem vagten.
+
+## Niveauer (AP-68)
+
+- `tegnsaetning.tsv`: 25 sætninger med tegnfejl (startkomma, store bogstaver, spørgsmålstegn).
+- `klarhed.tsv`: 8 tunge sætninger til "klarere sætninger" – læses igennem af et menneske; der er ikke ét facit.
+- `--level spelling|punctuation|clarity` vælger niveauet; testen skriver også "Tegnsætning: … helt som facit".
+- `resultater/niveau-*.json`: GPT-6 Luna på de tre niveauer.

@@ -71,6 +71,7 @@ enum CloudKeyStore {
 struct CloudSpellingCorrector: SpellingCorrector {
     let provider: CloudProvider
     let key: String
+    var level: SpellingLevel = .standard
     /// Får tokens fra hvert svar (til forbruget på siden Stavning). `nil` i stavetesten.
     var onUsage: (@Sendable (_ input: Int, _ output: Int) -> Void)?
     var source: SpellingSource { .cloud(provider) }
@@ -83,9 +84,9 @@ struct CloudSpellingCorrector: SpellingCorrector {
     }()
 
     func correct(_ sentence: String, language: Language) async throws -> String {
-        let answer = try await send(instructions: SpellingPrompts.cloud(for: language),
-                                    prompt: SpellingPrompts.prompt(sentence, language: language),
-                                    maxTokens: max(200, sentence.count * 2))
+        let answer = try await send(instructions: SpellingPrompts.instructions(for: language, level: level, cloud: true),
+                                    prompt: SpellingPrompts.prompt(sentence, language: language, level: level),
+                                    maxTokens: max(200, sentence.count * 3))
         return Self.cleanAnswer(answer)
     }
 
@@ -193,7 +194,10 @@ struct CloudSpellingCorrector: SpellingCorrector {
     static func cleanAnswer(_ answer: String) -> String {
         let lines = answer.split(whereSeparator: \.isNewline).map { $0.trimmingCharacters(in: .whitespaces) }
             .filter { !$0.isEmpty }
-            .filter { !$0.lowercased().hasPrefix("ret stavningen") && !$0.lowercased().hasPrefix("fix the spelling") }
+            .filter { line in
+                let lower = line.lowercased()
+                return !["ret stavningen", "fix the spelling", "ret og gør", "fix and make"].contains { lower.hasPrefix($0) }
+            }
         return lines.first ?? ""
     }
 }

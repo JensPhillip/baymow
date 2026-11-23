@@ -5,11 +5,12 @@ Sidst opdateret: 2026-11-23 af udfører (Claude Opus 5.5).
 
 ## Lige nu
 
-- **I gang:** AP-63 stavehjælp (I12), AP-65 og AP-66 forbrug (med graf) – bygget, afventer brugerens afprøvning. AP-67 (genveje og Stop) er godkendt. AP-64 (internet-hjælpen) er godkendt.
+- **I gang:** AP-68 (hvor meget Baymow retter, formatering) – bygget, afventer brugerens afprøvning. AP-63–AP-67 er godkendt.
+- **Næste samtale:** brugerens idé om hjælp til at skrive mails og svar (drøftes, før der bygges noget). AP-64 (internet-hjælpen) er godkendt.
 - **Færdige pakker:** AP-00, AP-01, AP-02, AP-10, AP-11, AP-12, AP-19 (hovedstemme: Apple Sara (Enhanced)),
   AP-20, AP-21, AP-22, AP-23, AP-30, AP-31, AP-32, AP-40, AP-50, AP-51, AP-60, AP-61, AP-62.
 - **Lukket/droppet af brugeren 22. november:** AP-03 (lytteskemaet), AP-15 (Plapre).
-- **Venter på brugeren:** afprøvning af stavehjælpen (AP-63) og forbruget (AP-65), AP-41 (testperson – udskudt af brugeren 2026-11-18).
+- **Venter på brugeren:** afprøvning af AP-68, AP-41 (testperson – udskudt af brugeren 2026-11-18).
 - **Delvist:** AP-24 – udtalelister pr. motor er bygget, men gav kun lidt (Piper 14 → 18 af 30, Apple uændret).
 - **Parkeret eller udskudt:** AP-13/14 (cloud-stemmer, B6), AP-16 (Røst – hovedstemmen er valgt).
 - **Beslutninger:** B6 cloud udskudt · B7 Sara (Enhanced) · B8 GPL-3.0-or-later · B9 Baymow, app-id
@@ -39,6 +40,9 @@ Sidst opdateret: 2026-11-23 af udfører (Claude Opus 5.5).
   30 dage og tal ved musen. Forbruget gemmes nu også pr. dag; dage før 23. november findes kun som månedstal.
 - **AP-67 (genveje og Stop):** begge genveje kan skiftes på siden Genvej (stavegenvejen er nu en indstilling og vises
   ens alle steder); Start viser stavning, når den er slået til; alle "Hør"-knapper bliver til "Stop" under oplæsning.
+- **AP-68 (hvor meget Baymow retter):** kun stavning / stavning og tegnsætning (standard) / også klarere sætninger
+  (kun via internet). ChatGPT: tegnfejl rettet i 45 af 47 sætninger, Macens model 21 af 21 i tegnsætningstesten.
+  "Brug rettelsen" bevarer formateringen (RTF/HTML), når den kan; ellers ren tekst som før.
 
 ## Venter på brugeren
 
