@@ -451,6 +451,24 @@ Første forsøg gav kun 13 af 21: instruktionen sagde "startkomma ikke nødvendi
 uden at ændre meningen i de 8 eksempler (fx "Jeg tænkte på om det måske kunne være en mulighed at vi eventuelt kunne
 mødes …" → "Jeg tænkte på, om vi kunne mødes …"). Spørgsmål og ordrer bliver stadig ikke besvaret.
 
+### Mail-svar: kan Baymow læse og skrive i svarfeltet? (idé I15, prøve 23. november 2026)
+
+`Baymow --mail-probe` (kun roller, længder og ja/nej i `~/Library/Logs/Baymow/mail-probe.txt`), i Apple Mail med et
+svar på en lang tråd og stikord øverst:
+
+| Spørgsmål | Apple Mail |
+|---|---|
+| Hele feltet via almindelig Tilgængelighed (`AXValue`) | Nej (0 tegn; feltet er en `AXWebArea`) |
+| Hele feltet via tekstmarkører (`AXStringForTextMarkerRange`) | **Ja**, 15.144 tegn, uden at røre markering eller udklipsholder |
+| Citat-overskriften ("… skrev:") kan findes | **Ja** (linje 50; 1.048 tegn før) |
+| Markér alt + Kopiér | Ja: RTF, HTML, webarchive og tekst; RTF-læseren (AP-69) læser samme tekst |
+| Baymow sætter selv markeringen (`AXSelectedTextMarkerRange`) | Delvis: positionen findes præcist (1.048/1.048), men Mail markerer kun 682 tegn – signaturen standser den |
+| Markørens position | Kun via skærmplacering → tekstmarkør → indeks |
+| ⇧⌘↑ fra markøren (markér stikordene) | Ikke målt (markøren stod øverst efter en tidligere kørsel; sidste kørsel gav ingen rapport) |
+
+Konklusion: tråden læses med tekstmarkører; stikordene markeres med ⇧⌘↑ fra markøren og erstattes med svaret
+(signatur og tråd står urørt). Outlook og Gmail er ikke målt.
+
 ## 4. Udviklingsplan og godkendelse
 
 | Milepæl | Indhold | Godkendes ved |
