@@ -110,37 +110,67 @@ public enum MailProbe {
             lines.append("markørens position (tegn før markøren): \((before as? String)?.count.description ?? "kan ikke læses")")
         }
 
-        // 7. Kan Baymow markere kun brugerens del (fra starten til citat-overskriften) via tekstmarkører?
-        var settableMarker: DarwinBoolean = false
-        AXUIElementIsAttributeSettable(focused, "AXSelectedTextMarkerRange" as CFString, &settableMarker)
-        lines.append("tekstmarkør-markering kan sættes: \(settableMarker.boolValue)")
-        if let start = copy(focused, "AXStartTextMarker"), let end = copy(focused, "AXEndTextMarker") {
-            var wholeRange: CFTypeRef?
+        // 7. Hvilke tekst-funktioner har feltet? (kun navne)
+        var parameterized: CFArray?
+        AXUIElementCopyParameterizedAttributeNames(focused, &parameterized)
+        let names = (parameterized as? [String]) ?? []
+        lines.append("tekst-funktioner: \(names.filter { $0.contains("Marker") || $0.contains("Index") }.sorted().joined(separator: ", "))")
+
+        func text(_ from: CFTypeRef, _ to: CFTypeRef) -> String? {
+            var range: CFTypeRef?
             AXUIElementCopyParameterizedAttributeValue(focused, "AXTextMarkerRangeForUnorderedTextMarkers" as CFString,
-                                                       [start, end] as CFArray, &wholeRange)
-            var whole: CFTypeRef?
-            if let wholeRange { AXUIElementCopyParameterizedAttributeValue(focused, "AXStringForTextMarkerRange" as CFString, wholeRange, &whole) }
-            if let text = whole as? String, let header = text.components(separatedBy: .newlines).firstIndex(where: {
-                $0.contains("skrev:") || $0.contains("wrote:") || $0.hasPrefix("Fra:") || $0.hasPrefix("From:") }) {
-                let target = text.components(separatedBy: .newlines)[..<header].joined(separator: "\n").utf16.count
-                var marker: CFTypeRef?
-                let markerErr = AXUIElementCopyParameterizedAttributeValue(focused, "AXTextMarkerForIndex" as CFString,
-                                                                          target as CFNumber, &marker)
-                lines.append("tekstmarkør for position \(target): \(markerErr == .success ? "ja" : "fejl \(markerErr.rawValue)")")
-                if let marker {
-                    var part: CFTypeRef?
-                    AXUIElementCopyParameterizedAttributeValue(focused, "AXTextMarkerRangeForUnorderedTextMarkers" as CFString,
-                                                               [start, marker] as CFArray, &part)
-                    if let part {
-                        let setErr = AXUIElementSetAttributeValue(focused, "AXSelectedTextMarkerRange" as CFString, part)
-                        Thread.sleep(forTimeInterval: 0.3)
-                        var selectedText: CFTypeRef?
-                        if let selected = copy(focused, "AXSelectedTextMarkerRange") {
-                            AXUIElementCopyParameterizedAttributeValue(focused, "AXStringForTextMarkerRange" as CFString, selected, &selectedText)
-                        }
-                        let got = (selectedText as? String)?.utf16.count
-                        lines.append("markér kun dine ord: sæt=\(setErr.rawValue), markeret \(got.map(String.init) ?? "?") af \(target) tegn\(got == target ? " ✓" : "")")
+                                                       [from, to] as CFArray, &range)
+            guard let range else { return nil }
+            var value: CFTypeRef?
+            AXUIElementCopyParameterizedAttributeValue(focused, "AXStringForTextMarkerRange" as CFString, range, &value)
+            return value as? String
+        }
+        func marker(_ index: Int) -> CFTypeRef? {
+            var value: CFTypeRef?
+            AXUIElementCopyParameterizedAttributeValue(focused, "AXTextMarkerForIndex" as CFString, index as CFNumber, &value)
+            return value
+        }
+
+        // 8. Markørens position: teksten fra starten til markøren.
+        if let start = copy(focused, "AXStartTextMarker"), let selection = copy(focused, "AXSelectedTextMarkerRange") {
+            for name in ["AXStartTextMarkerForTextMarkerRange", "AXTextMarkerRangeStart"] {
+                var caret: CFTypeRef?
+                let err = AXUIElementCopyParameterizedAttributeValue(focused, name as CFString, selection, &caret)
+                lines.append("markør via \(name): \(err == .success ? (caret.flatMap { text(start, $0) }.map { "\($0.utf16.count) tegn før markøren" } ?? "ingen tekst") : "fejl \(err.rawValue)")")
+            }
+            var index: CFTypeRef?
+            let err = AXUIElementCopyParameterizedAttributeValue(focused, "AXIndexForTextMarker" as CFString, selection, &index)
+            lines.append("markør via AXIndexForTextMarker(markering): \(err == .success ? "\(index as? Int ?? -1)" : "fejl \(err.rawValue)")")
+        }
+
+        // 9. Markér præcis brugerens del: find positionen trin for trin (halvering), så teksten passer.
+        if let start = copy(focused, "AXStartTextMarker"), let end = copy(focused, "AXEndTextMarker"),
+           let whole = text(start, end),
+           let header = whole.components(separatedBy: .newlines).firstIndex(where: {
+               $0.contains("skrev:") || $0.contains("wrote:") || $0.hasPrefix("Fra:") || $0.hasPrefix("From:") }) {
+            let target = whole.components(separatedBy: .newlines)[..<header].joined(separator: "\n").utf16.count
+            var low = 0, high = target * 2 + 50, steps = 0
+            while low < high, steps < 30 {
+                let middle = (low + high) / 2
+                let length = marker(middle).flatMap { text(start, $0) }?.utf16.count ?? Int.max
+                if length < target { low = middle + 1 } else { high = middle }
+                steps += 1
+            }
+            let found = marker(low).flatMap { text(start, $0) }?.utf16.count
+            lines.append("halvering: indeks \(low) giver \(found.map(String.init) ?? "?") af \(target) tegn efter \(steps) trin")
+            if let m = marker(low) {
+                var part: CFTypeRef?
+                AXUIElementCopyParameterizedAttributeValue(focused, "AXTextMarkerRangeForUnorderedTextMarkers" as CFString,
+                                                           [start, m] as CFArray, &part)
+                if let part {
+                    let setErr = AXUIElementSetAttributeValue(focused, "AXSelectedTextMarkerRange" as CFString, part)
+                    Thread.sleep(forTimeInterval: 0.3)
+                    var selectedText: CFTypeRef?
+                    if let selected = copy(focused, "AXSelectedTextMarkerRange") {
+                        AXUIElementCopyParameterizedAttributeValue(focused, "AXStringForTextMarkerRange" as CFString, selected, &selectedText)
                     }
+                    let got = (selectedText as? String)?.utf16.count
+                    lines.append("markér kun dine ord: sæt=\(setErr.rawValue), markeret \(got.map(String.init) ?? "?") af \(target) tegn\(got == target ? " ✓" : "")")
                 }
             }
         }
