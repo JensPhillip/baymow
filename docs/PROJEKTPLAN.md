@@ -442,7 +442,7 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 | AP-64 | Stavehjælp via internet: Claude eller ChatGPT med brugerens egen nøgle, tilvalg, Macens hjælp uden internet | 6 | Udfører + bruger | MVP | Færdig (brugeren har gemt begge nøgler og godkendt 23. november) |
 | AP-65 | Forbrug af internet-hjælpen: kontroller og skønnet pris pr. firma og måned på siden Stavning; ChatGPT som standard | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
 | AP-66 | Forbrug: pris med 4 decimaler og en graf over de seneste 30 dage (lukket som standard, hold musen over en dag) | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
-| AP-67 | Genveje og Stop: stavegenvejen kan ændres på siden Genvej og vises rigtigt alle steder; stavning på Start; "Hør" bliver til "Stop"; Pris/Kontroller på grafens linje | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
+| AP-67 | Genveje og Stop: stavegenvejen kan ændres på siden Genvej og vises rigtigt alle steder; stavning på Start; "Hør" bliver til "Stop"; Pris/Kontroller på grafens linje | 6 | Udfører + bruger | MVP | Færdig (godkendt af brugeren 23. november) |
 | AP-52 | Developer ID, notarisering og DMG | 5 | Udfører + bruger | AP-50, B9 | Forberedt: DMG og README; afventer certifikat, app-id og kodearkiv |
 
 ### Fase 0 – Grundlag
