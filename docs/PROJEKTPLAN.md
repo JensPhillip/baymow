@@ -449,6 +449,7 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 | AP-71 | Mail-svar (idé I15), første udgave til Apple Mail: stikord + ⌃⌥M → svar i stedet for stikordene, [felter] for det ukendte | 6 | Udfører + bruger | MVP | Færdig (afprøvet af brugeren 23. november; forbedringer i AP-72) |
 | AP-72 | Mail-svar bedre (opfølgning på egen mail, antagelser vises, aldrig hilsen/navn) og siden "AI og nøgler" (nøgler, firma pr. funktion, forbrug pr. funktion) | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
 | AP-73 | Sidebjælken: "Indstillinger" fast nederst med Genveje, Stemmer og AI og nøgler; link fra Start til Genveje og fra Oplæsning til Stemmer | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
+| AP-74 | Sparring om den åbne mail: faste spørgsmål, eget spørgsmål, Hør, Kopiér; intet sendes før første spørgsmål | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
 | AP-52 | Developer ID, notarisering og DMG | 5 | Udfører + bruger | AP-50, B9 | Forberedt: DMG og README; afventer certifikat, app-id og kodearkiv |
 
 ### Fase 0 – Grundlag
@@ -895,6 +896,17 @@ fjernes, også "Venlig hilsen Jens" på én linje. `AIServices` (nøgler, "Prøv
 firmavalg, nøglestatus og månedens forbrug med "Se forbrug og nøgler".
 **Acceptkriterier:** Mail-testen (8 tråde, inkl. opfølgning) uden problemer i tre kørsler. Tests af opfølgning,
 antagelser, navn/hilsen, forbrug pr. funktion og firma pr. funktion. Brugeren har prøvet.
+
+#### AP-74 Sparring om mailen
+
+**Hvorfor:** Brugeren valgte 23. november 2026 sparring som næste mail-skridt, først med skrift (tale senere).
+**Gør:** Genvej ⌃⌥K (slået fra som standard, kan skiftes på Genveje) → Baymow læser den åbne mail i Apple Mail (alle
+webfelter i det forreste vindue, via tekstmarkører – kun læsning) og åbner et vindue med fire faste spørgsmål ("Hvad
+vil afsenderen?", "Opsummér", "Hvad bør jeg svare?", "Har jeg overset noget?") og et felt til eget spørgsmål. Svar kan
+læses op og kopieres. Intet sendes, før brugeren spørger; derefter står "Mailen blev sendt til …". Samme firma som
+mail-svar; forbruget tælles under Mail. Kender brugerens navn (egen mail = afsender).
+**Acceptkriterier:** Sparringstesten (8 tråde × 5 spørgsmål): korte svar, "står ikke i mailen" i stedet for gæt,
+brugerens egen mail genkendt. Tests. Brugeren har prøvet i Apple Mail.
 
 ## 7. Stemmeporten
 

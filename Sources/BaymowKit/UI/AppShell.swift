@@ -47,6 +47,15 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
         openSettings: { [weak self] in self?.openMainWindow(on: .mail) })
     private var mailMenuItem: NSMenuItem?
 
+    // Sparring om mailen (AP-74).
+    private let sparringShortcut = GlobalShortcutManager()
+    private lazy var sparring = MailSparringController(
+        settings: mailSettings, ai: spellingSettings.ai,
+        speak: { [weak self] text, language, done in self?.speakSpelling(text, language: language, done: done) },
+        stopSpeaking: { [weak self] in self?.spellingVoices.forEach { $0.stop() } },
+        openSettings: { [weak self] in self?.openMainWindow(on: .ai) })
+    private var sparringMenuItem: NSMenuItem?
+
     private lazy var onboarding = OnboardingWindowController(
         model: OnboardingModel(settings: settings, catalog: catalog, sampleEngine: AppleSpeechEngine()))
 
@@ -100,6 +109,15 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
             guard let self else { return }
             self.mailMenuItem?.title = "Svar på mail (\(shortcut.displayString))"
             if self.mailSettings.isEnabled { self.setMailEnabled(true, shortcut: shortcut) }
+        }.store(in: &cancellables)
+        sparringShortcut.onTrigger = { [weak self] in self?.sparring.run() }
+        mailSettings.$sparringEnabled.removeDuplicates().sink { [weak self] enabled in
+            self?.setSparringEnabled(enabled)
+        }.store(in: &cancellables)
+        mailSettings.$sparringShortcut.removeDuplicates().dropFirst().sink { [weak self] shortcut in
+            guard let self else { return }
+            self.sparringMenuItem?.title = "Sparring om mail (\(shortcut.displayString))"
+            if self.mailSettings.sparringEnabled { self.setSparringEnabled(true, shortcut: shortcut) }
         }.store(in: &cancellables)
         // Ny stavegenvej: registrér den igen og ret menuen. Siderne læser selv den samme værdi.
         spellingSettings.$shortcut.removeDuplicates().dropFirst().sink { [weak self] shortcut in
@@ -208,6 +226,22 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     @objc private func mailReplyFromMenu() { mailReply.run() }
 
+    /// Sparringens genvej er kun registreret, når brugeren har slået den til.
+    private func setSparringEnabled(_ enabled: Bool, shortcut: Shortcut? = nil) {
+        sparringMenuItem?.isHidden = !enabled
+        guard enabled else {
+            sparringShortcut.unregister()
+            mailSettings.sparringShortcutFailed = false
+            sparring.close()
+            return
+        }
+        let ok = sparringShortcut.register(shortcut ?? mailSettings.sparringShortcut)
+        if !ok { diagnostics.record(.hotkeyRegistrationFailed) }
+        mailSettings.sparringShortcutFailed = !ok
+    }
+
+    @objc private func sparringFromMenu() { sparring.run() }
+
     /// Læser et ord eller den rettede tekst op med den valgte stemme for sproget.
     private func speakSpelling(_ text: String, language: Language, done: @escaping @MainActor () -> Void) {
         spellingVoices.forEach { $0.stop() }
@@ -299,6 +333,12 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
         mailItem.isHidden = !mailSettings.isEnabled
         menu.addItem(mailItem)
         mailMenuItem = mailItem
+        let sparringItem = NSMenuItem(title: "Sparring om mail (\(mailSettings.sparringShortcut.displayString))",
+                                      action: #selector(sparringFromMenu), keyEquivalent: "")
+        sparringItem.target = self
+        sparringItem.isHidden = !mailSettings.sparringEnabled
+        menu.addItem(sparringItem)
+        sparringMenuItem = sparringItem
         menu.addItem(.separator())
         let open = NSMenuItem(title: "Åbn Baymow", action: #selector(showMainWindow), keyEquivalent: "")
         open.target = self

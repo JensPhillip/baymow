@@ -31,6 +31,19 @@ final class MailReplySettings: ObservableObject {
     }
     @Published var shortcutFailed = false
 
+    /// Sparring om den åbne mail (AP-74). Slået fra som standard; egen genvej (⌃⌥K).
+    nonisolated static let standardSparringShortcut = Shortcut(keyCode: UInt32(kVK_ANSI_K),
+                                                               modifiers: NSEvent.ModifierFlags([.control, .option]).rawValue, keyLabel: "K")
+    @Published var sparringEnabled: Bool { didSet { defaults.set(sparringEnabled, forKey: "mailSparringEnabled") } }
+    @Published var sparringShortcut: Shortcut {
+        didSet {
+            defaults.set(Int(sparringShortcut.keyCode), forKey: "sparringShortcut.keyCode")
+            defaults.set(Int(sparringShortcut.modifiers), forKey: "sparringShortcut.modifiers")
+            defaults.set(sparringShortcut.keyLabel, forKey: "sparringShortcut.keyLabel")
+        }
+    }
+    @Published var sparringShortcutFailed = false
+
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
         isEnabled = defaults.bool(forKey: "mailReplyEnabled")
@@ -38,6 +51,13 @@ final class MailReplySettings: ObservableObject {
         yourName = defaults.string(forKey: "mailReplyName") ?? NSFullUserName()
         hasStandardSignature = defaults.object(forKey: "mailReplySignature") as? Bool ?? true
         provider = CloudProvider(rawValue: defaults.string(forKey: "mailReplyProvider") ?? "") ?? .openai
+        sparringEnabled = defaults.bool(forKey: "mailSparringEnabled")
+        if defaults.object(forKey: "sparringShortcut.keyCode") != nil, let label = defaults.string(forKey: "sparringShortcut.keyLabel") {
+            sparringShortcut = Shortcut(keyCode: UInt32(defaults.integer(forKey: "sparringShortcut.keyCode")),
+                                        modifiers: UInt(defaults.integer(forKey: "sparringShortcut.modifiers")), keyLabel: label)
+        } else {
+            sparringShortcut = Self.standardSparringShortcut
+        }
         if defaults.object(forKey: "mailShortcut.keyCode") != nil, let label = defaults.string(forKey: "mailShortcut.keyLabel") {
             shortcut = Shortcut(keyCode: UInt32(defaults.integer(forKey: "mailShortcut.keyCode")),
                                 modifiers: UInt(defaults.integer(forKey: "mailShortcut.modifiers")), keyLabel: label)

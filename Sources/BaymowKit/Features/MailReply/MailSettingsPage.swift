@@ -21,6 +21,39 @@ struct MailSettingsPage: View {
             }
         }
         if settings.isEnabled { details }
+
+        Section {
+            OptionRow(symbol: "bubble.left.and.text.bubble.right.fill", color: .indigo, title: "Sparring om mailen",
+                      subtitle: "Stil spørgsmål til den mail, du har åben.",
+                      help: "Åbn en mail i Apple Mail, og tryk \(settings.sparringShortcut.displayString). Spørg fx, hvad afsenderen vil, eller hvad du bør svare.",
+                      isOn: $settings.sparringEnabled)
+            if settings.sparringEnabled {
+                GuideStep(number: 1, symbol: "envelope.open.fill", text: "Åbn mailen i Apple Mail")
+                HStack(spacing: 10) {
+                    Text("2").font(.caption.weight(.bold)).foregroundStyle(.white)
+                        .frame(width: 20, height: 20).background(Color.accentColor, in: Circle())
+                    Image(systemName: "keyboard").foregroundStyle(.secondary).frame(width: 20)
+                    Text("Tryk")
+                    KeyCaps(shortcut: settings.sparringShortcut, size: 26)
+                }
+                .accessibilityElement(children: .combine)
+                GuideStep(number: 3, symbol: "questionmark.bubble", text: "Tryk på et spørgsmål, eller skriv dit eget")
+                if settings.sparringShortcutFailed {
+                    Label("Tasterne \(settings.sparringShortcut.displayString) bruges af et andet program.",
+                          systemImage: "exclamationmark.triangle.fill")
+                        .foregroundStyle(.orange)
+                }
+                Label("Intet sendes, før du stiller et spørgsmål. Så sendes mailen til \(settings.provider.company).",
+                      systemImage: "paperplane.fill")
+                    .foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+            }
+        }
+
+        if settings.sparringEnabled && !settings.isEnabled {
+            Section("Hvem svarer") {
+                FeatureAIChoice(ai: ai, feature: .mail, provider: $settings.provider, openAIPage: openAIPage)
+            }
+        }
     }
 
     @ViewBuilder private var details: some View {

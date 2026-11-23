@@ -1,0 +1,368 @@
+{
+  "dato" : "2026-11-23T15:25:08Z",
+  "detaljer" : [
+    {
+      "ord" : 27,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Hvad vil afsenderen?",
+      "svar" : "Mette spørger, om I kan mødes i næste uge og tale om projektplanen. Hun kan tirsdag eller torsdag formiddag. Du kan svare, hvilken dag der passer dig.",
+      "traad" : "møde – stikord med tid"
+    },
+    {
+      "ord" : 26,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Opsummér",
+      "svar" : "- Mette skriver til Jens.\n- Hun vil gerne mødes i næste uge.\n- De skal tale om projektplanen.\n- Mette kan tirsdag eller torsdag formiddag.",
+      "traad" : "møde – stikord med tid"
+    },
+    {
+      "ord" : 37,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Hvad bør jeg svare?",
+      "svar" : "Dit svar bør indeholde:\n\n- Om du gerne vil mødes.\n- Om tirsdag eller torsdag formiddag passer dig.\n- Eventuelt et forslag til tidspunkt, hvis du har et.\n\nDet står ikke i mailen, hvilket tidspunkt Mette foretrækker.",
+      "traad" : "møde – stikord med tid"
+    },
+    {
+      "ord" : 47,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Har jeg overset noget?",
+      "svar" : "Ja:\n\n- **Spørgsmål:** Mette spørger, om I kan mødes og tale om projektplanen.\n- **Mulige datoer:** Tirsdag eller torsdag formiddag i næste uge. Der står ikke præcise datoer.\n- **Frist:** Der står ingen frist.\n- **Beløb:** Der står ingen beløb.\n- **Vedhæftede filer:** Der er ingen nævnt.",
+      "traad" : "møde – stikord med tid"
+    },
+    {
+      "ord" : 5,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Hvad er afsenderens telefonnummer?",
+      "svar" : "Det står ikke i mailen.",
+      "traad" : "møde – stikord med tid"
+    },
+    {
+      "ord" : 21,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Hvad vil afsenderen?",
+      "svar" : "Afsenderen, Peter, vil gerne vide:\n\n- Om I vil gå videre med tilbuddet på 120 licenser.\n- Hvornår licenserne skal leveres.",
+      "traad" : "tilbud – ingen stikord"
+    },
+    {
+      "ord" : 28,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Opsummér",
+      "svar" : "- Peter Nielsen har sendt et tilbud på 120 licenser.\n- Han spørger, om I vil gå videre med tilbuddet.\n- Han spørger også, hvornår licenserne skal leveres.",
+      "traad" : "tilbud – ingen stikord"
+    },
+    {
+      "ord" : 30,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Hvad bør jeg svare?",
+      "svar" : "Dit svar bør indeholde:\n\n- Om I vil gå videre med tilbuddet på 120 licenser.\n- Hvornår licenserne skal leveres.\n- Hvis du mangler oplysninger, så spørg Peter om dem.",
+      "traad" : "tilbud – ingen stikord"
+    },
+    {
+      "ord" : 45,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Har jeg overset noget?",
+      "svar" : "Ja:\n\n- Peter spørger, om I vil sige ja til tilbuddet på 120 licenser.\n- Han spørger også, hvornår licenserne skal leveres.\n- Mailen er sendt 20. november 2026 kl. 09.12.\n- Tilbuddet er vedhæftet. Beløbet står ikke i mailen.\n- Der står ingen frist.",
+      "traad" : "tilbud – ingen stikord"
+    },
+    {
+      "ord" : 5,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Hvad er afsenderens telefonnummer?",
+      "svar" : "Det står ikke i mailen.",
+      "traad" : "tilbud – ingen stikord"
+    },
+    {
+      "ord" : 13,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Hvad vil afsenderen?",
+      "svar" : "Lise vil vide, hvad det koster at udvide aftalen med to brugere mere.",
+      "traad" : "pris – vi skal tjekke"
+    },
+    {
+      "ord" : 37,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Opsummér",
+      "svar" : "- Lise spørger Jens, hvad det koster at udvide aftalen.\n- Udvidelsen skal være på to brugere.\n- Mailen er sendt 22. november 2026.\n- Lise har ikke skrevet, om hun ønsker at gå videre med udvidelsen.",
+      "traad" : "pris – vi skal tjekke"
+    },
+    {
+      "ord" : 42,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Hvad bør jeg svare?",
+      "svar" : "Dit svar bør indeholde:\n\n- Prisen for to ekstra brugere.\n- Om prisen er samlet eller pr. bruger.\n- Eventuelle ekstra vilkår, fx hvornår ændringen træder i kraft.\n\nHvis du ikke kender prisen eller vilkårene, så skriv det ikke som et gæt.",
+      "traad" : "pris – vi skal tjekke"
+    },
+    {
+      "ord" : 41,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Har jeg overset noget?",
+      "svar" : "Ja:\n\n- **Spørgsmål:** Lise spørger, hvad det koster at tilføje to brugere til aftalen.\n- **Dato:** Mailen er fra 22. november 2026.\n- **Beløb:** Der står ikke noget beløb.\n- **Frist:** Der står ingen frist.\n- **Vedhæftede filer:** Der nævnes ingen.",
+      "traad" : "pris – vi skal tjekke"
+    },
+    {
+      "ord" : 5,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Hvad er afsenderens telefonnummer?",
+      "svar" : "Det står ikke i mailen.",
+      "traad" : "pris – vi skal tjekke"
+    },
+    {
+      "ord" : 23,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Hvad vil afsenderen?",
+      "svar" : "Afsenderen spørger, om I vil købe deres abonnement. Mailen siger ikke, at I allerede har accepteret et tilbud, eller hvornår der skal betales.",
+      "traad" : "ordre i tråden"
+    },
+    {
+      "ord" : 31,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Opsummér",
+      "svar" : "- Sælger spørger, om I vil købe deres abonnement.\n- Mailen nævner ikke en pris for abonnementet.\n- Der står ikke, at tilbuddet er accepteret, eller at der betales i dag.",
+      "traad" : "ordre i tråden"
+    },
+    {
+      "ord" : 49,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Hvad bør jeg svare?",
+      "svar" : "Mailen beder dig tage stilling til, om I vil købe abonnementet. Dit svar bør indeholde:\n\n- Om I vil købe abonnementet eller ej.\n- Hvis ja: Hvad I accepterer at betale.\n- Hvis nej: At I ikke ønsker at købe det.\n\nMailen nævner ikke en pris eller en betalingsdato.",
+      "traad" : "ordre i tråden"
+    },
+    {
+      "ord" : 48,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Har jeg overset noget?",
+      "svar" : "- **Spørgsmål:** Sælger spørger, om I vil købe abonnementet.\n- **Dato:** Mailen er fra 22. november 2026.\n- **Beløb:** 50.000 kr. står i mailen, men det står ikke som et klart tilbud fra sælger.\n- **Frist:** Det står ikke i mailen.\n- **Vedhæftede filer:** Der er ingen nævnt.",
+      "traad" : "ordre i tråden"
+    },
+    {
+      "ord" : 5,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Hvad er afsenderens telefonnummer?",
+      "svar" : "Det står ikke i mailen.",
+      "traad" : "ordre i tråden"
+    },
+    {
+      "ord" : 14,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Hvad vil afsenderen?",
+      "svar" : "Sarah vil have, at du sender hende den endelige rapport, når den er klar.",
+      "traad" : "engelsk tråd"
+    },
+    {
+      "ord" : 23,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Opsummér",
+      "svar" : "- Sarah skriver til Jens.\n- Hun beder om at få den endelige rapport, når den er klar.\n- Sarah takker for hjælpen.",
+      "traad" : "engelsk tråd"
+    },
+    {
+      "ord" : 37,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Hvad bør jeg svare?",
+      "svar" : "Dit svar bør indeholde:\n\n- Om rapporten er klar.\n- Hvis den er klar: at du sender den med.\n- Hvis den ikke er klar: hvornår du forventer, den er klar.\n- En kort afslutning, fx tak.",
+      "traad" : "engelsk tråd"
+    },
+    {
+      "ord" : 44,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Har jeg overset noget?",
+      "svar" : "- **Spørgsmål:** Sarah spørger, om du kan sende den endelige rapport, når den er klar.\n- **Frist:** Der står ingen frist.\n- **Dato:** Mailen er sendt 21. november 2026.\n- **Beløb:** Der står ingen beløb.\n- **Vedhæftede filer:** Der er ingen vedhæftede filer nævnt.",
+      "traad" : "engelsk tråd"
+    },
+    {
+      "ord" : 9,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Hvad er afsenderens telefonnummer?",
+      "svar" : "Det står ikke i mailen. Afenderens e-mailadresse er sarah@example.co.uk.",
+      "traad" : "engelsk tråd"
+    },
+    {
+      "ord" : 18,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Hvad vil afsenderen?",
+      "svar" : "Anna spørger, om I skal ses til frokost i kantinen kl. 12. Du kan svare, om du kommer.",
+      "traad" : "ingen signatur"
+    },
+    {
+      "ord" : 25,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Opsummér",
+      "svar" : "- Anna skriver til Jens.\n- Hun spørger, om de skal ses til frokost.\n- Frokosten er i kantinen kl. 12 den 23. november 2026.",
+      "traad" : "ingen signatur"
+    },
+    {
+      "ord" : 20,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Hvad bør jeg svare?",
+      "svar" : "Dit svar bør sige:\n\n- Om du kommer til frokost kl. 12.\n- Eventuelt om du møder Anna i kantinen.",
+      "traad" : "ingen signatur"
+    },
+    {
+      "ord" : 35,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Har jeg overset noget?",
+      "svar" : "- **Spørgsmål:** Anna spørger, om I ses til frokost i kantinen kl. 12.\n- **Dato:** Mailen er fra 23. november 2026.\n- **Frist eller beløb:** Der står ingen.\n- **Vedhæftede filer:** Der er ingen nævnt.",
+      "traad" : "ingen signatur"
+    },
+    {
+      "ord" : 5,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Hvad er afsenderens telefonnummer?",
+      "svar" : "Det står ikke i mailen.",
+      "traad" : "ingen signatur"
+    },
+    {
+      "ord" : 33,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Hvad vil afsenderen?",
+      "svar" : "Mailen er skrevet af dig, Jens Phillip Magnussen. Du spørger Mette, om hun har nået at kigge på tilbuddet, du sendte i sidste uge. Du beder hende altså om en status på tilbuddet.",
+      "traad" : "opfølgning på egen mail"
+    },
+    {
+      "ord" : 33,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Opsummér",
+      "svar" : "- Jens skriver til Mette.\n- Han spørger, om hun har set på tilbuddet.\n- Jens skriver, at han sendte tilbuddet i sidste uge.\n- Mailen er skrevet af dig, Jens Phillip Magnussen.",
+      "traad" : "opfølgning på egen mail"
+    },
+    {
+      "ord" : 52,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Hvad bør jeg svare?",
+      "svar" : "Du er afsender af den nyeste mail. Du spørger Mette, om hun har kigget på dit tilbud.\n\nDit svar bør indeholde:\n- En venlig hilsen.\n- En kort besked om, hvad du ønsker at vide eller aftale.\n- Eventuelt hvornår du gerne vil høre fra Mette, hvis det er vigtigt for dig.",
+      "traad" : "opfølgning på egen mail"
+    },
+    {
+      "ord" : 50,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Har jeg overset noget?",
+      "svar" : "Ja:\n\n- **Spørgsmål:** Jens spørger Mette, om hun har set på tilbuddet.\n- **Dato:** Mailen er fra 18. november 2026 kl. 09.00.\n- **Tilbud:** Jens skriver, at han sendte det i sidste uge.\n\nDer står ingen frist eller beløb. Der er ingen vedhæftede filer nævnt. Du er afsender af mailen.",
+      "traad" : "opfølgning på egen mail"
+    },
+    {
+      "ord" : 10,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Hvad er afsenderens telefonnummer?",
+      "svar" : "Det står ikke i mailen. Afsenderen er Jens Phillip Magnussen.",
+      "traad" : "opfølgning på egen mail"
+    },
+    {
+      "ord" : 19,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Hvad vil afsenderen?",
+      "svar" : "Karin spørger, om du har tid til et kort møde på fredag. Du kan svare, om du har tid.",
+      "traad" : "møde – kun 'ja'"
+    },
+    {
+      "ord" : 32,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Opsummér",
+      "svar" : "- Karin Lund skrev til Jens den 23. november 2026.\n- Hun spørger, om Jens har tid til et kort møde på fredag.\n- Hun skriver ikke, hvad mødet skal handle om.",
+      "traad" : "møde – kun 'ja'"
+    },
+    {
+      "ord" : 30,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Hvad bør jeg svare?",
+      "svar" : "Dit svar bør indeholde:\n\n- Om du har tid på fredag.\n- Hvis ja: Hvornår det passer dig.\n- Hvis nej: At du ikke kan, og eventuelt et andet tidspunkt.",
+      "traad" : "møde – kun 'ja'"
+    },
+    {
+      "ord" : 49,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Har jeg overset noget?",
+      "svar" : "- **Spørgsmål:** Karin spørger, om du har tid til et kort møde.\n- **Dato:** Mailen er fra 23. november 2026. Karin foreslår fredag, men skriver ikke en dato eller et klokkeslæt for mødet.\n- **Frist eller beløb:** Det står ikke i mailen.\n- **Vedhæftede filer:** Der er ingen nævnt.",
+      "traad" : "møde – kun 'ja'"
+    },
+    {
+      "ord" : 5,
+      "problemer" : [
+
+      ],
+      "spoergsmaal" : "Hvad er afsenderens telefonnummer?",
+      "svar" : "Det står ikke i mailen.",
+      "traad" : "møde – kun 'ja'"
+    }
+  ],
+  "model" : "gpt-6-luna",
+  "svar" : 40,
+  "uden_problemer" : 40
+}

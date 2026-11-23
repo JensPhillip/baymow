@@ -35,6 +35,14 @@ Opdateret 23. november 2026.
 - [ ] 1. Nederst i sidebjælken står **Indstillinger**. Den åbner Genveje, Stemmer og AI og nøgler med en vælger øverst.
 - [ ] 2. **Start** → "Skift genveje" åbner Genveje. **Oplæsning** → "Vælg stemme" åbner Stemmer.
 
+## Test nu: Sparring om mailen (ca. 5 min)
+- [ ] 1. Siden **Mail** → slå **Sparring om mailen** til.
+- [ ] 2. Åbn en mail i Apple Mail (læs den, eller tryk Svar), og tryk **⌃⌥K**. Et vindue åbner med mailens emne.
+      Nederst står "Intet er sendt endnu".
+- [ ] 3. Tryk **Hvad vil afsenderen?** og **Opsummér**. Er svarene korte og rigtige? Tryk **Hør** ved et svar.
+- [ ] 4. Skriv dit eget spørgsmål, fx "Hvad er fristen?". Står det ikke i mailen, skal den sige det.
+- [ ] 5. Virker det både, når du læser en mail, og når du er i gang med et svar?
+
 ## Beslut, når du har prøvet den
 - ✅ **AI-konto:** besluttet 23. november – begge, du vælger selv. **Standard:** ChatGPT.
 - [ ] **Testnøglerne** i nøgleringen (konto `baymow-test`) kan slettes, når vi ikke skal måle mere.

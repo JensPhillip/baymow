@@ -11,7 +11,7 @@ final class MainWindowModel: ObservableObject {
     @Published var shortcutError: (target: ShortcutTarget, text: String)?
     var isRecordingShortcut: Bool { recording != nil }
 
-    enum ShortcutTarget: Equatable { case read, spelling, mail }
+    enum ShortcutTarget: Equatable { case read, spelling, mail, sparring }
     /// Siden, der vises i hovedvinduet.
     @Published var page: MainPage = .start {
         didSet { if page.isSetting { lastSettingsPage = page } }
@@ -214,7 +214,7 @@ enum MainPage: String, CaseIterable, Identifiable {
             return "Stavehjælpen retter den tekst, du selv har skrevet. Markér teksten, og tryk på \(spelling.shortcut.spokenKeys) på samme tid. Baymow viser rettelserne med farver. Grøn er rettet. Orange skal du selv tjekke. Tryk på et ord for at vælge det og høre det. Tryk til sidst på Brug rettelsen." + (spelling.cloudEnabled ? " Du har slået bedre hjælp via internet til, så teksten bliver sendt til \(spelling.cloudProvider.title)." : " Din tekst bliver på din Mac.")
         case .mail:
             let keys = (mail?.shortcut ?? MailReplySettings.standardShortcut).spokenKeys
-            return "Mail svar skriver et forslag til et svar på en mail. Tryk på Svar i Apple Mail, og skriv nogle stikord øverst. Tryk så på \(keys) med markøren lige efter stikordene. Baymow sender stikordene og mailtråden til \((mail?.provider ?? .openai).title) og sætter svaret ind i stedet for stikordene. Står der noget i firkantede klammer, skal du selv udfylde det. Læs altid svaret igennem, før du sender det."
+            return "Mail svar skriver et forslag til et svar på en mail. Tryk på Svar i Apple Mail, og skriv nogle stikord øverst. Tryk så på \(keys) med markøren lige efter stikordene. Baymow sender stikordene og mailtråden til \((mail?.provider ?? .openai).title) og sætter svaret ind i stedet for stikordene. Står der noget i firkantede klammer, skal du selv udfylde det. Læs altid svaret igennem, før du sender det. Med sparring kan du stille spørgsmål til den mail, du har åben, for eksempel hvad afsenderen vil, eller hvad du bør svare."
         case .ai:
             return "Her gemmer du dine nøgler til ChatGPT og Claude. Du vælger, hvilket firma stavning og mail bruger, og du kan se, hvad det har kostet. Prisen er et skøn. Den præcise regning står hos firmaerne."
         case .shortcut:
@@ -267,9 +267,10 @@ struct MainView: View {
         case .voices: return VoiceLibrary.needsMainVoiceGuide(installed: catalog.voices)
         case .shortcut: return shortcutRegistrationFailed
         case .spelling: return spelling.isEnabled && spelling.shortcutFailed
-        case .mail: return mail.isEnabled && (mail.shortcutFailed || !ai.savedKeys.contains(mail.provider))
+        case .mail: return (mail.isEnabled && mail.shortcutFailed) || (mail.sparringEnabled && mail.sparringShortcutFailed)
+            || ((mail.isEnabled || mail.sparringEnabled) && !ai.savedKeys.contains(mail.provider))
         case .ai: return (spelling.cloudEnabled && !ai.savedKeys.contains(spelling.cloudProvider))
-            || (mail.isEnabled && !ai.savedKeys.contains(mail.provider))
+            || ((mail.isEnabled || mail.sparringEnabled) && !ai.savedKeys.contains(mail.provider))
         case .reading, .display: return false
         }
     }
@@ -580,6 +581,18 @@ struct MainView: View {
                     .foregroundStyle(.secondary)
             }
         }
+        Section {
+            shortcutEditor(.sparring, title: "Sparring om mail", symbol: "bubble.left.and.text.bubble.right.fill", color: .indigo,
+                           shortcut: mail.sparringShortcut, failed: mail.sparringEnabled && mail.sparringShortcutFailed) { new in
+                if let taken = taken(new, except: .sparring) { return taken }
+                mail.sparringShortcut = new
+                return nil
+            }
+            if !mail.sparringEnabled {
+                Label("Sparring er slået fra. Slå den til på siden Mail.", systemImage: "info.circle")
+                    .foregroundStyle(.secondary)
+            }
+        }
     }
 
     /// Bruges tasterne allerede af en af Baymows andre genveje?
@@ -587,6 +600,7 @@ struct MainView: View {
         if target != .read, shortcut == settings.shortcut { return "De taster bruges allerede til at læse op." }
         if target != .spelling, shortcut == spelling.shortcut { return "De taster bruges allerede til at rette stavning." }
         if target != .mail, shortcut == mail.shortcut { return "De taster bruges allerede til mail-svar." }
+        if target != .sparring, shortcut == mail.sparringShortcut { return "De taster bruges allerede til sparring om mail." }
         return nil
     }
 

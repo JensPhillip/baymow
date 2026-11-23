@@ -143,17 +143,28 @@ public enum ScreenshotTool {
         shoot("stavehjaelp-klarere", size: nil, SpellingPanelView(model: clarityModel, onApply: {}, onCopy: {}, onClose: {}))
         // Mail-svar (AP-71): siden med mail-svar slået til og vinduet med et svar fra testtrådene.
         defaults.set(true, forKey: "mailReplyEnabled")
+        defaults.set(true, forKey: "mailSparringEnabled")
         model.page = .mail
-        shoot("hovedvindue-mail", size: NSSize(width: 780, height: 900),
+        shoot("hovedvindue-mail", size: NSSize(width: 780, height: 1250),
               MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
                        spelling: SpellingSettings(defaults: defaults, ai: demoAI), ai: demoAI, mail: MailReplySettings(defaults: defaults),
                        shortcutRegistrationFailed: false))
         defaults.set(false, forKey: "mailReplyEnabled")
+        defaults.set(false, forKey: "mailSparringEnabled")
         model.page = .start
         let mailModel = MailReplyPanelModel(speak: { _, _, _ in })
         mailModel.inserted = true
         mailModel.state = .done("Hej Peter,\n\nTak for tilbuddet. Vi vil gerne [gå videre / vente]. Licenserne skal leveres [hvornår?].")
         shoot("mailsvar", size: nil, MailReplyPanelView(model: mailModel, onUndo: {}, onClose: {}, onSettings: {}))
+        // Sparring (AP-74) med en fast samtale om en af testtrådene.
+        let sparringModel = MailSparringModel(
+            mail: "Den 20. nov. 2026 kl. 09.12 skrev Peter Nielsen <peter@leverandoer.dk>:\n\nHej\n\nVedhæftet finder du vores tilbud på 120 licenser. Vil I gå videre med det, og hvornår skal de leveres?",
+            subject: "Tilbud på licenser", provider: .openai, name: "Jens",
+            corrector: CloudSpellingCorrector(provider: .openai, key: "skærmbillede"), speak: { _, _, _ in })
+        sparringModel.addForPreview(question: "Hvad vil afsenderen?",
+                                    answer: "Peter vil gerne vide to ting:\n- Om I vil gå videre med tilbuddet på 120 licenser.\n- Hvornår licenserne skal leveres.")
+        sparringModel.addForPreview(question: "Hvad er prisen?", answer: "Det står ikke i mailen. Prisen står måske i det vedhæftede tilbud.")
+        shoot("sparring", size: NSSize(width: 500, height: 560), MailSparringView(model: sparringModel, onSettings: {}))
         let assumedModel = MailReplyPanelModel(speak: { _, _, _ in })
         assumedModel.inserted = true
         assumedModel.followUp = true

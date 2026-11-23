@@ -5,7 +5,7 @@ Sidst opdateret: 2026-11-23 af udfører (Claude Opus 5.5).
 
 ## Lige nu
 
-- **I gang:** AP-72 (mail-svar bedre, siden "AI og nøgler") og AP-73 (sidebjælken) – bygget, afventer brugerens afprøvning. AP-71 er afprøvet af brugeren.
+- **I gang:** AP-74 (sparring om mailen), AP-72 og AP-73 – bygget, afventer brugerens afprøvning. AP-71 er afprøvet af brugeren.
 - **Mail – plan aftalt 23. november:** 1) sparring på den åbne mail, 2) Outlook og Gmail, 3) senere: proaktiv hjælp med
   app på telefonen, brugerens kontekst og opklarende spørgsmål (I16), og login på kontoen. Proaktiv del venter, til
   mail-svar og sparring virker godt.
@@ -58,6 +58,8 @@ Sidst opdateret: 2026-11-23 af udfører (Claude Opus 5.5).
   Stemmer og AI og nøgler (vælger øverst på siden). Start linker til Genveje, Oplæsning til Stemmer.
   Rettet 23. november efter brugerens ønske: "Skift genveje" er en selvstændig knap nederst på Start; "Farverne" står
   lige under "Sådan gør du" på Stavning; overskriften ved fanerne i Indstillinger er fjernet.
+- **AP-74 (sparring om mailen):** ⌃⌥K på en åben mail i Apple Mail → vindue med fire faste spørgsmål og eget
+  spørgsmål. Sparringstesten: 40 af 40 svar (højst 68 ord, "Det står ikke i mailen" til det ukendte).
 
 ## Venter på brugeren
 

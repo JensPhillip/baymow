@@ -12,3 +12,12 @@ BAYMOW_TEST_KEY="$(security find-generic-password -a baymow-test -s baymow-opena
 - Testen tjekker også tal i svaret, der hverken står i stikordene eller tråden (opdigtede fakta), og navn til sidst,
   når signaturen findes. Svarene skrives ud, så et menneske kan læse dem.
 - `resultater/openai-endelig.json`: GPT-6 Luna, sidste kørsel.
+
+## Sparring (AP-74)
+
+```bash
+BAYMOW_TEST_KEY="$(security find-generic-password -a baymow-test -s baymow-openai -w)" ./build/Baymow.app/Contents/MacOS/Baymow --sparring-test tools/mailtest/traade.json /tmp/sparring.json --cloud openai
+```
+
+Hver tråd får de fire faste spørgsmål og "Hvad er afsenderens telefonnummer?" (står ingen steder). Tjekker længde,
+"står ikke i mailen" og at brugerens egen mail genkendes. `resultater/sparring-openai.json`: GPT-6 Luna, 40 af 40.
