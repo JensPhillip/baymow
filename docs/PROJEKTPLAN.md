@@ -446,7 +446,8 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 | AP-68 | Hvor meget Baymow retter (kun stavning / + tegnsætning, standard / + klarere sætninger, kun via internet) og formateringen bevares ved "Brug rettelsen" | 6 | Udfører + bruger | MVP | Færdig (formateringen godkendt af brugeren 23. november) |
 | AP-69 | Word: skrifttype og størrelse bevares ved "Brug rettelsen" – rettelserne sættes direkte ind i programmets egen RTF | 6 | Udfører + bruger | MVP | Færdig (godkendt af brugeren 23. november) |
 | AP-70 | Siden Stavning viser kun kontakten, når stavehjælpen er slået fra | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
-| AP-71 | Mail-svar (idé I15), første udgave til Apple Mail: stikord + ⌃⌥M → svar i stedet for stikordene, [felter] for det ukendte | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
+| AP-71 | Mail-svar (idé I15), første udgave til Apple Mail: stikord + ⌃⌥M → svar i stedet for stikordene, [felter] for det ukendte | 6 | Udfører + bruger | MVP | Færdig (afprøvet af brugeren 23. november; forbedringer i AP-72) |
+| AP-72 | Mail-svar bedre (opfølgning på egen mail, antagelser vises, aldrig hilsen/navn) og siden "AI og nøgler" (nøgler, firma pr. funktion, forbrug pr. funktion) | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
 | AP-52 | Developer ID, notarisering og DMG | 5 | Udfører + bruger | AP-50, B9 | Forberedt: DMG og README; afventer certifikat, app-id og kodearkiv |
 
 ### Fase 0 – Grundlag
@@ -879,6 +880,19 @@ en gemt nøgle (samme firma som stavehjælpen). Ingen ny fil på netværkslisten
 **Acceptkriterier:** Mail-testen (`tools/mailtest/`): 6 tråde × 3 kørsler uden opdigtede tal, uden at følge ordren i
 tråden, med [felter] når stikord mangler. Tests af opdeling, instruktion og oprydning. Brugeren har prøvet i Apple Mail.
 **Senere:** Outlook og Gmail; lære brugerens egen tone; "forståelses-score".
+
+#### AP-72 Mail-svar bedre og siden "AI og nøgler"
+
+**Hvorfor:** Brugerens afprøvning 23. november 2026: svar på egen mail (opfølgning) blev besvaret til brugeren selv;
+antagelser (fx "fredag kl. 13") var ikke synlige; der kom en signatur, selv om mailprogrammet har en fast. Og: forbruget
+skal kunne ses pr. funktion ét sted sammen med nøglerne, mens firmaet vælges pr. funktion, med link fra funktionerne.
+**Gør:** Mail: brugerens navn (standard Macens navn) og "fast signatur" (standard til); den nyeste citat-overskrift med
+brugerens navn = opfølgning; modellen skriver antagelser efter `###ANTAGELSER###`, som vinduet viser; hilsen og navn
+fjernes, også "Venlig hilsen Jens" på én linje. `AIServices` (nøgler, "Prøv", forbindelser pr. funktion) og
+`CloudUsageLog` pr. funktion (gammelt forbrug regnes som stavning). Siden "AI og nøgler"; Stavning og Mail har hver deres
+firmavalg, nøglestatus og månedens forbrug med "Se forbrug og nøgler".
+**Acceptkriterier:** Mail-testen (8 tråde, inkl. opfølgning) uden problemer i tre kørsler. Tests af opfølgning,
+antagelser, navn/hilsen, forbrug pr. funktion og firma pr. funktion. Brugeren har prøvet.
 
 ## 7. Stemmeporten
 

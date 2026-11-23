@@ -4,7 +4,9 @@ import BaymowCore
 /// Siden "Mail" i hovedvinduet: slå mail-svar til, se hvordan, vælg tone og firma.
 struct MailSettingsPage: View {
     @ObservedObject var settings: MailReplySettings
-    @ObservedObject var cloud: SpellingSettings
+    @ObservedObject var ai: AIServices
+    /// Åbner siden "AI og nøgler".
+    var openAIPage: () -> Void = {}
 
     var body: some View {
         Section {
@@ -37,6 +39,20 @@ struct MailSettingsPage: View {
             GuideStep(number: 4, symbol: "exclamationmark.bubble", text: "Udfyld felterne i [klammer], og læs svaret igennem")
         }
 
+        Section("Om dig") {
+            HStack(spacing: 10) {
+                Image(systemName: "person.fill").foregroundStyle(.secondary).frame(width: 20)
+                TextField("Dit navn", text: $settings.yourName, prompt: Text("Dit navn"))
+                    .textFieldStyle(.roundedBorder)
+            }
+            Text("Så kan Baymow se, når den nyeste mail er din egen, og skrive en opfølgning i stedet for at svare dig selv.")
+                .foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+            Toggle(isOn: $settings.hasStandardSignature) {
+                Label("Jeg har en fast signatur i mailprogrammet", systemImage: "signature")
+            }
+            .help("Så skriver Baymow aldrig hilsen eller navn til sidst i svaret.")
+        }
+
         Section("Tone") {
             HStack(spacing: 10) {
                 Image(systemName: "text.bubble").foregroundStyle(.secondary).frame(width: 20)
@@ -48,11 +64,11 @@ struct MailSettingsPage: View {
         }
 
         Section("Hvem skriver svaret") {
-            CloudSettings(settings: cloud, showsSpellingNote: false)
-            Label("Når du trykker \(settings.shortcut.displayString), sendes dine stikord og den citerede mailtråd til \(cloud.cloudProvider.company). Der kan stå andre menneskers oplysninger i tråden.",
+            FeatureAIChoice(ai: ai, feature: .mail, provider: $settings.provider, openAIPage: openAIPage)
+            Label("Når du trykker \(settings.shortcut.displayString), sendes dine stikord og den citerede mailtråd til \(settings.provider.company). Der kan stå andre menneskers oplysninger i tråden.",
                   systemImage: "paperplane.fill")
                 .foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
         }
-        .onAppear { cloud.refreshKeys() }
+        .onAppear { ai.refreshKeys() }
     }
 }

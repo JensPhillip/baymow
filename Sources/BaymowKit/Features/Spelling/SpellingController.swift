@@ -33,18 +33,16 @@ final class SpellingSettings: ObservableObject {
 
     /// Bedre hjælp via internet (AP-64). Slået fra som standard; kræver brugerens egen nøgle.
     @Published var cloudEnabled: Bool { didSet { defaults.set(cloudEnabled, forKey: "spellingCloudEnabled") } }
+    /// Stavehjælpens eget firma (kan være et andet end mail-svarets).
     @Published var cloudProvider: CloudProvider {
-        didSet { defaults.set(cloudProvider.rawValue, forKey: "spellingCloudProvider"); testResult = nil }
+        didSet { defaults.set(cloudProvider.rawValue, forKey: "spellingCloudProvider") }
     }
-    /// Hvilke firmaer der er gemt en nøgle til. Selve nøglen ligger kun i nøgleringen.
-    @Published private(set) var savedKeys: Set<CloudProvider> = []
-    @Published var testResult: CloudTestResult?
+    /// Nøgler og forbrug, fælles for alle funktioner (siden "AI og nøgler").
+    let ai: AIServices
 
-    enum CloudTestResult: Equatable { case testing, ok, failed(CloudSpellingError) }
-
-    init(defaults: UserDefaults = .standard) {
+    init(defaults: UserDefaults = .standard, ai: AIServices? = nil) {
         self.defaults = defaults
-        usage = CloudUsageLog(defaults: defaults)
+        self.ai = ai ?? AIServices(defaults: defaults)
         isEnabled = defaults.bool(forKey: "spellingHelpEnabled")
         if defaults.object(forKey: "spellingShortcut.keyCode") != nil, let label = defaults.string(forKey: "spellingShortcut.keyLabel") {
             shortcut = Shortcut(keyCode: UInt32(defaults.integer(forKey: "spellingShortcut.keyCode")),
@@ -55,63 +53,12 @@ final class SpellingSettings: ObservableObject {
         cloudEnabled = defaults.bool(forKey: "spellingCloudEnabled")
         level = SpellingLevel(rawValue: defaults.string(forKey: "spellingLevel") ?? "") ?? .standard
         cloudProvider = CloudProvider(rawValue: defaults.string(forKey: "spellingCloudProvider") ?? "") ?? .openai
-        refreshKeys()
-    }
-
-    func refreshKeys() {
-        savedKeys = Set(CloudProvider.allCases.filter { CloudKeyStore.hasKey(for: $0) })
-    }
-
-    func saveKey(_ key: String) {
-        CloudKeyStore.save(key, for: cloudProvider)
-        refreshKeys()
-        testResult = nil
-    }
-
-    func deleteKey() {
-        CloudKeyStore.delete(cloudProvider)
-        refreshKeys()
-        testResult = nil
     }
 
     /// Internet-retteren, hvis den er slået til, og der er en nøgle. Ellers `nil`: så bruges Macens egen hjælp.
     func cloudCorrector() -> CloudSpellingCorrector? {
-        guard cloudEnabled, let key = CloudKeyStore.key(for: cloudProvider) else { return nil }
-        return corrector(key: key)
-    }
-
-    /// Til mail-svar (AP-71): det valgte firma med den gemte nøgle – uafhængigt af, om stavehjælpen bruger internet.
-    /// Brugerens samtykke er, at mail-svar er slået til, og at vinduet siger det hver gang.
-    func cloudCorrectorForWriting() -> CloudSpellingCorrector? {
-        guard let key = CloudKeyStore.key(for: cloudProvider) else { return nil }
-        return corrector(key: key)
-    }
-
-    /// Forbruget af internet-hjælpen (kun tal).
-    let usage: CloudUsageLog
-
-    private func corrector(key: String) -> CloudSpellingCorrector {
-        let provider = cloudProvider
-        let usage = usage
-        return CloudSpellingCorrector(provider: provider, key: key, level: effectiveLevel, onUsage: { input, output in
-            Task { @MainActor in usage.addTokens(provider, input: input, output: output) }
-        })
-    }
-
-    /// Brugeren trykker "Prøv": sender en fast testsætning (aldrig brugerens tekst) og viser, om nøglen virker.
-    func testConnection() {
-        guard let key = CloudKeyStore.key(for: cloudProvider) else { testResult = .failed(.noKey); return }
-        let corrector = corrector(key: key)
-        usage.addCheck(cloudProvider)
-        testResult = .testing
-        Task {
-            do {
-                try await corrector.test()
-                testResult = .ok
-            } catch {
-                testResult = .failed(error as? CloudSpellingError ?? .failed)
-            }
-        }
+        guard cloudEnabled else { return nil }
+        return ai.corrector(cloudProvider, feature: .spelling, level: effectiveLevel)
     }
 
     func refreshModelStatus() {
@@ -172,7 +119,7 @@ final class SpellingController {
                                               checker: SystemWordChecker(), level: level)
             var result = await assistant.check(captured.text)
             if settings.cloudEnabled, cloud == nil, result.cloudProblem == nil { result.cloudProblem = .noKey }
-            if let cloud, result.cloudProblem == nil { settings.usage.addCheck(cloud.provider) }
+            if let cloud, result.cloudProblem == nil { settings.ai.usage.addCheck(cloud.provider, feature: .spelling) }
             guard self.model === model else { return } // lukket undervejs
             model.load(result)
             resize()

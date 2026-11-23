@@ -19,15 +19,17 @@ Opdateret 23. november 2026.
 - ✅ Formateringen (også skrifttype og størrelse i Word) er godkendt 23. november.
 - [ ] Siden **Stavning**: slå stavehjælpen fra. Kun kontakten står tilbage.
 
-## Test nu: Mail-svar i Apple Mail (ca. 10 min)
-- [ ] 1. Baymow → siden **Mail** → slå **Mail-svar** til. Under "Hvem skriver svaret" står "Nøgle til ChatGPT er gemt".
-- [ ] 2. Åbn en mail i Apple Mail, og tryk **Svar**. Skriv stikord øverst, fx "ja tak, torsdag kl. 10 passer".
-- [ ] 3. Lad markøren stå lige efter stikordene, og tryk **⌃⌥M**. Efter et par sekunder står svaret i stedet for
-      stikordene. Din signatur og tråden nedenunder er urørt.
-- [ ] 4. Vinduet øverst til højre siger "Mailtråden blev sendt til OpenAI". Tryk **Hør**. Tryk **Fortryd**: dine
-      stikord kommer tilbage.
-- [ ] 5. Prøv uden stikord: Tryk Svar og straks ⌃⌥M. Der kommer [felter] i klammer, som du selv udfylder.
-- [ ] 6. Står der noget i svaret, som hverken stod i dine stikord eller i tråden? Skriv det til mig.
+- ✅ Mail-svar virker i Apple Mail (23. nov.). Rettet efter din afprøvning: opfølgning på egen mail, antagelser og signatur.
+
+## Test nu: Mail-svar igen og siden "AI og nøgler" (ca. 10 min)
+- [ ] 1. Siden **Mail** → "Om dig": står dit navn rigtigt? "Jeg har en fast signatur" er slået til.
+- [ ] 2. Svar på **din egen** mail (en opfølgning), med stikord som "rykker venligt for svar". Svaret skal gå til
+      modtageren, og vinduet siger "Den nyeste mail var din egen".
+- [ ] 3. Prøv en mail, hvor Baymow skal gætte noget (fx et mødetidspunkt). Står det under "Baymow har antaget"?
+- [ ] 4. Kommer der stadig hilsen eller navn over din signatur? Skriv det til mig, hvis ja.
+- [ ] 5. Siden **AI og nøgler**: begge nøgler står der. Vælg fx Claude til Mail og ChatGPT til Stavning.
+- [ ] 6. Forbruget viser Stavning og Mail hver for sig. På siderne Stavning og Mail står månedens forbrug med
+      "Se forbrug og nøgler", som åbner siden.
 
 ## Beslut, når du har prøvet den
 - ✅ **AI-konto:** besluttet 23. november – begge, du vælger selv. **Standard:** ChatGPT.

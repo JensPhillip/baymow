@@ -16,6 +16,12 @@ final class MailReplySettings: ObservableObject {
     private let defaults: UserDefaults
     @Published var isEnabled: Bool { didSet { defaults.set(isEnabled, forKey: "mailReplyEnabled") } }
     @Published var tone: String { didSet { defaults.set(tone, forKey: "mailReplyTone") } }
+    /// Brugerens navn, så Baymow kan se, når den nyeste mail er brugerens egen (en opfølgning). Standard: Macens navn.
+    @Published var yourName: String { didSet { defaults.set(yourName, forKey: "mailReplyName") } }
+    /// Brugeren har en fast signatur i mailprogrammet: svaret får aldrig hilsen eller navn til sidst.
+    @Published var hasStandardSignature: Bool { didSet { defaults.set(hasStandardSignature, forKey: "mailReplySignature") } }
+    /// Firmaet, der skriver mail-svar – kan være et andet end stavehjælpens. Standard: ChatGPT.
+    @Published var provider: CloudProvider { didSet { defaults.set(provider.rawValue, forKey: "mailReplyProvider") } }
     @Published var shortcut: Shortcut {
         didSet {
             defaults.set(Int(shortcut.keyCode), forKey: "mailShortcut.keyCode")
@@ -29,6 +35,9 @@ final class MailReplySettings: ObservableObject {
         self.defaults = defaults
         isEnabled = defaults.bool(forKey: "mailReplyEnabled")
         tone = defaults.string(forKey: "mailReplyTone") ?? Self.standardTone
+        yourName = defaults.string(forKey: "mailReplyName") ?? NSFullUserName()
+        hasStandardSignature = defaults.object(forKey: "mailReplySignature") as? Bool ?? true
+        provider = CloudProvider(rawValue: defaults.string(forKey: "mailReplyProvider") ?? "") ?? .openai
         if defaults.object(forKey: "mailShortcut.keyCode") != nil, let label = defaults.string(forKey: "mailShortcut.keyLabel") {
             shortcut = Shortcut(keyCode: UInt32(defaults.integer(forKey: "mailShortcut.keyCode")),
                                 modifiers: UInt(defaults.integer(forKey: "mailShortcut.modifiers")), keyLabel: label)
@@ -131,7 +140,7 @@ enum MailReader {
 @MainActor
 final class MailReplyController {
     private let settings: MailReplySettings
-    private let spelling: SpellingSettings
+    private let ai: AIServices
     private let speak: SpellingPanelModel.Speak
     private let stopSpeaking: () -> Void
     private let openSettings: () -> Void
@@ -139,10 +148,10 @@ final class MailReplyController {
     private var model: MailReplyPanelModel?
     private var isWorking = false
 
-    init(settings: MailReplySettings, spelling: SpellingSettings, speak: @escaping SpellingPanelModel.Speak,
+    init(settings: MailReplySettings, ai: AIServices, speak: @escaping SpellingPanelModel.Speak,
          stopSpeaking: @escaping () -> Void, openSettings: @escaping () -> Void) {
         self.settings = settings
-        self.spelling = spelling
+        self.ai = ai
         self.speak = speak
         self.stopSpeaking = stopSpeaking
         self.openSettings = openSettings
@@ -155,7 +164,7 @@ final class MailReplyController {
         Task {
             defer { isWorking = false }
             let model = MailReplyPanelModel(speak: speak, stop: stopSpeaking)
-            guard let cloud = spelling.cloudCorrectorForWriting() else {
+            guard let cloud = ai.corrector(settings.provider, feature: .mail) else {
                 model.state = .failed(.needsCloud)
                 show(model)
                 return
@@ -171,19 +180,25 @@ final class MailReplyController {
             }
             show(model)
             let parts = MailThread.split(whole: captured.whole, notes: captured.notes)
+            let signature = parts.hasSignature || settings.hasStandardSignature
+            let followUp = MailThread.latestIsFromUser(thread: parts.thread, name: settings.yourName)
             let reply: String
             do {
                 let answer = try await cloud.send(
-                    instructions: MailReplyPrompt.instructions(tone: settings.tone, hasSignature: parts.hasSignature),
+                    instructions: MailReplyPrompt.instructions(tone: settings.tone, hasSignature: signature,
+                                                               name: settings.yourName, followUp: followUp),
                     prompt: MailReplyPrompt.prompt(notes: parts.notes, thread: parts.thread), maxTokens: 1200)
-                reply = MailReplyPrompt.clean(answer, hasSignature: parts.hasSignature)
+                let parsed = MailReplyPrompt.parse(answer)
+                reply = MailReplyPrompt.clean(parsed.reply, hasSignature: signature, name: settings.yourName)
+                model.assumptions = parsed.assumptions
+                model.followUp = followUp
             } catch {
                 MailReader.press(0x7C, []) // stikordene bliver stående; markeringen fjernes
                 model.state = .failed(.cloud(error as? CloudSpellingError ?? .failed))
                 resize()
                 return
             }
-            spelling.usage.addCheck(cloud.provider)
+            ai.usage.addCheck(cloud.provider, feature: .mail)
             guard self.model === model, !reply.isEmpty else { return }
             model.sourceBundleID = captured.bundleID
             // Direkte ind i mailen (brugerens valg), hvis mailprogrammet stadig er forrest; ellers kopieret.

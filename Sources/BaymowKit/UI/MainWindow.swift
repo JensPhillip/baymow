@@ -130,7 +130,7 @@ final class MainWindowModel: ObservableObject {
 
 /// Siderne i hovedvinduet: én ting pr. side, hver med sit ikon (designprincip 4).
 enum MainPage: String, CaseIterable, Identifiable {
-    case start, reading, display, voices, spelling, mail, shortcut
+    case start, reading, display, voices, spelling, mail, ai, shortcut
     var id: String { rawValue }
 
     var title: String {
@@ -141,6 +141,7 @@ enum MainPage: String, CaseIterable, Identifiable {
         case .voices: return "Stemmer"
         case .spelling: return "Stavning"
         case .mail: return "Mail"
+        case .ai: return "AI og nøgler"
         case .shortcut: return "Genvej"
         }
     }
@@ -153,6 +154,7 @@ enum MainPage: String, CaseIterable, Identifiable {
         case .voices: return "person.wave.2.fill"
         case .spelling: return "textformat.abc.dottedunderline"
         case .mail: return "envelope.fill"
+        case .ai: return "sparkles"
         case .shortcut: return "keyboard.fill"
         }
     }
@@ -165,6 +167,7 @@ enum MainPage: String, CaseIterable, Identifiable {
         case .voices: return .green
         case .spelling: return .teal
         case .mail: return .indigo
+        case .ai: return .pink
         case .shortcut: return .gray
         }
     }
@@ -178,6 +181,7 @@ enum MainPage: String, CaseIterable, Identifiable {
         case .voices: return "Vælg, hvem der læser for dig."
         case .spelling: return "Få rettet det, du selv skriver."
         case .mail: return "Få et forslag til svar på en mail."
+        case .ai: return "Nøgler, firmaer og forbrug."
         case .shortcut: return "Tasterne, der starter Baymow."
         }
     }
@@ -200,7 +204,9 @@ enum MainPage: String, CaseIterable, Identifiable {
             return "Stavehjælpen retter den tekst, du selv har skrevet. Markér teksten, og tryk på \(spelling.shortcut.spokenKeys) på samme tid. Baymow viser rettelserne med farver. Grøn er rettet. Orange skal du selv tjekke. Tryk på et ord for at vælge det og høre det. Tryk til sidst på Brug rettelsen." + (spelling.cloudEnabled ? " Du har slået bedre hjælp via internet til, så teksten bliver sendt til \(spelling.cloudProvider.title)." : " Din tekst bliver på din Mac.")
         case .mail:
             let keys = (mail?.shortcut ?? MailReplySettings.standardShortcut).spokenKeys
-            return "Mail svar skriver et forslag til et svar på en mail. Tryk på Svar i Apple Mail, og skriv nogle stikord øverst. Tryk så på \(keys) med markøren lige efter stikordene. Baymow sender stikordene og mailtråden til \(spelling.cloudProvider.title) og sætter svaret ind i stedet for stikordene. Står der noget i firkantede klammer, skal du selv udfylde det. Læs altid svaret igennem, før du sender det."
+            return "Mail svar skriver et forslag til et svar på en mail. Tryk på Svar i Apple Mail, og skriv nogle stikord øverst. Tryk så på \(keys) med markøren lige efter stikordene. Baymow sender stikordene og mailtråden til \((mail?.provider ?? .openai).title) og sætter svaret ind i stedet for stikordene. Står der noget i firkantede klammer, skal du selv udfylde det. Læs altid svaret igennem, før du sender det."
+        case .ai:
+            return "Her gemmer du dine nøgler til ChatGPT og Claude. Du vælger, hvilket firma stavning og mail bruger, og du kan se, hvad det har kostet. Prisen er et skøn. Den præcise regning står hos firmaerne."
         case .shortcut:
             return "En genvej er de taster, du trykker på samtidig. Den ene får den markerede tekst læst op. De andre retter stavningen i din egen tekst og skriver svar på mails. Du kan skifte til andre taster, hvis du vil."
         }
@@ -213,6 +219,7 @@ struct MainView: View {
     @ObservedObject var catalog: VoiceCatalog
     @ObservedObject var downloader: ModelDownloader
     @ObservedObject var spelling: SpellingSettings
+    @ObservedObject var ai: AIServices
     @ObservedObject var mail: MailReplySettings
     /// Sat af AppShell, hvis den valgte genvej ikke kunne registreres.
     let shortcutRegistrationFailed: Bool
@@ -245,7 +252,9 @@ struct MainView: View {
         case .voices: return VoiceLibrary.needsMainVoiceGuide(installed: catalog.voices)
         case .shortcut: return shortcutRegistrationFailed
         case .spelling: return spelling.isEnabled && spelling.shortcutFailed
-        case .mail: return mail.isEnabled && (mail.shortcutFailed || !spelling.savedKeys.contains(spelling.cloudProvider))
+        case .mail: return mail.isEnabled && (mail.shortcutFailed || !ai.savedKeys.contains(mail.provider))
+        case .ai: return (spelling.cloudEnabled && !ai.savedKeys.contains(spelling.cloudProvider))
+            || (mail.isEnabled && !ai.savedKeys.contains(mail.provider))
         case .reading, .display: return false
         }
     }
@@ -256,8 +265,9 @@ struct MainView: View {
         case .reading: readingPage
         case .display: displayPage
         case .voices: voicesPage
-        case .spelling: SpellingSettingsPage(settings: spelling, speak: { model.speakHelp($0) })
-        case .mail: MailSettingsPage(settings: mail, cloud: spelling)
+        case .spelling: SpellingSettingsPage(settings: spelling, speak: { model.speakHelp($0) }, openAIPage: { model.page = .ai })
+        case .mail: MailSettingsPage(settings: mail, ai: ai, openAIPage: { model.page = .ai })
+        case .ai: AISettingsPage(ai: ai, spelling: spelling, mail: mail)
         case .shortcut: shortcutPage
         }
     }

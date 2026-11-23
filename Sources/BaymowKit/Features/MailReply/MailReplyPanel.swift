@@ -22,6 +22,10 @@ final class MailReplyPanelModel: ObservableObject {
     /// Sat i mailen (ellers kopieret, fordi brugeren var skiftet til et andet program).
     var inserted = false
     var provider: CloudProvider = .openai
+    /// Det, modellen selv har antaget (fx et tidspunkt) – vises, så brugeren kan tjekke det.
+    var assumptions: [String] = []
+    /// Den nyeste mail var brugerens egen: svaret er en opfølgning.
+    var followUp = false
     var sourceBundleID: String?
     private let speak: SpellingPanelModel.Speak
     private let stop: () -> Void
@@ -91,9 +95,23 @@ struct MailReplyPanelView: View {
             Label(model.inserted ? "Svaret står i din mail i stedet for dine stikord." : "Svaret er kopieret. Gå tilbage til mailen, og tryk ⌘V.",
                   systemImage: model.inserted ? "checkmark.circle.fill" : "doc.on.clipboard")
                 .foregroundStyle(model.inserted ? .green : .orange)
-            if fields.isEmpty {
+            if model.followUp {
+                Label("Den nyeste mail var din egen, så det er en opfølgning.", systemImage: "arrow.uturn.forward")
+                    .foregroundStyle(.secondary)
+            }
+            if !model.assumptions.isEmpty {
+                VStack(alignment: .leading, spacing: 6) {
+                    Label("Baymow har antaget:", systemImage: "lightbulb.fill").foregroundStyle(.orange).font(.headline)
+                    ForEach(Array(model.assumptions.enumerated()), id: \.offset) { _, assumption in
+                        Label(assumption, systemImage: "questionmark.circle").foregroundStyle(.primary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    Text("Ret det i mailen, hvis det ikke passer.").font(.callout).foregroundStyle(.secondary)
+                }
+            }
+            if fields.isEmpty && model.assumptions.isEmpty {
                 Label("Læs svaret igennem, før du sender det.", systemImage: "eye").foregroundStyle(.secondary)
-            } else {
+            } else if !fields.isEmpty {
                 VStack(alignment: .leading, spacing: 6) {
                     Label(fields.count == 1 ? "Udfyld 1 felt i [klammer]:" : "Udfyld \(fields.count) felter i [klammer]:",
                           systemImage: "exclamationmark.bubble.fill")

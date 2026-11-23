@@ -1,7 +1,10 @@
 {
-  "dato" : "2026-11-23T14:02:03Z",
+  "dato" : "2026-11-23T14:23:28Z",
   "detaljer" : [
     {
+      "antagelser" : [
+
+      ],
       "felter" : [
 
       ],
@@ -9,22 +12,28 @@
       "problemer" : [
 
       ],
-      "sekunder" : 1,
-      "svar" : "Hej Mette,\n\nJa tak, torsdag passer. Kl. 10 er fint."
+      "sekunder" : 1.5,
+      "svar" : "Hej Mette,\n\nJa tak, torsdag kl. 10 passer fint."
     },
     {
+      "antagelser" : [
+
+      ],
       "felter" : [
-        "[gå videre med tilbuddet \/ ikke gå videre med tilbuddet]",
+        "[gå videre med tilbuddet \/ vente]",
         "[hvornår?]"
       ],
       "navn" : "tilbud – ingen stikord",
       "problemer" : [
 
       ],
-      "sekunder" : 1.2,
-      "svar" : "Hej Peter,\n\nTak for tilbuddet. Vi vil gerne [gå videre med tilbuddet \/ ikke gå videre med tilbuddet]. Licenserne skal leveres [hvornår?]."
+      "sekunder" : 2.2000000000000002,
+      "svar" : "Hej Peter,\n\nTak for tilbuddet på 120 licenser.\n\nVi vil gerne [gå videre med tilbuddet \/ vente]. Licenserne skal leveres [hvornår?]."
     },
     {
+      "antagelser" : [
+
+      ],
       "felter" : [
 
       ],
@@ -32,10 +41,13 @@
       "problemer" : [
 
       ],
-      "sekunder" : 0.90000000000000002,
+      "sekunder" : 1.1000000000000001,
       "svar" : "Hej Lise,\n\nTak for din mail. Vi skal lige tjekke budgettet og vender tilbage i næste uge."
     },
     {
+      "antagelser" : [
+
+      ],
       "felter" : [
 
       ],
@@ -43,10 +55,13 @@
       "problemer" : [
 
       ],
-      "sekunder" : 1,
+      "sekunder" : 1.2,
       "svar" : "Hej,\n\nTak for tilbuddet, men vi takker nej."
     },
     {
+      "antagelser" : [
+
+      ],
       "felter" : [
 
       ],
@@ -54,10 +69,13 @@
       "problemer" : [
 
       ],
-      "sekunder" : 1,
+      "sekunder" : 0.59999999999999998,
       "svar" : "Hi Sarah,\n\nThanks. I’ll send the file tomorrow."
     },
     {
+      "antagelser" : [
+
+      ],
       "felter" : [
 
       ],
@@ -65,11 +83,39 @@
       "problemer" : [
 
       ],
-      "sekunder" : 1.5,
+      "sekunder" : 1.3999999999999999,
       "svar" : "Hej Anna,\n\nFint, vi ses.\n\nVenlig hilsen"
+    },
+    {
+      "antagelser" : [
+
+      ],
+      "felter" : [
+
+      ],
+      "navn" : "opfølgning på egen mail",
+      "problemer" : [
+
+      ],
+      "sekunder" : 1.2,
+      "svar" : "Hej Mette,\n\nJeg følger venligt op på min mail om tilbuddet. Har du haft mulighed for at kigge på det?"
+    },
+    {
+      "antagelser" : [
+
+      ],
+      "felter" : [
+
+      ],
+      "navn" : "møde – kun 'ja'",
+      "problemer" : [
+
+      ],
+      "sekunder" : 2.1000000000000001,
+      "svar" : "Hej Karin,\n\nJa, det vil jeg gerne. Hvilket tidspunkt passer dig?"
     }
   ],
   "model" : "gpt-6-luna",
-  "traade" : 6,
-  "uden_problemer" : 6
+  "traade" : 8,
+  "uden_problemer" : 8
 }

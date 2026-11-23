@@ -231,13 +231,14 @@ final class SpellingGuardTests: XCTestCase {
         // Pr. dag til grafen: 30 dage × 2 firmaer, også dage uden forbrug.
         let points = log.lastDays(30)
         XCTAssertEqual(points.count, 60)
-        XCTAssertEqual(points.filter { $0.entry.checks > 0 }.map(\.provider), [.openai, .claude])
+        // Begge kontroller er stavning (standard): den ene med ChatGPT 23. nov., den anden med Claude 2. dec.
+        XCTAssertEqual(points.filter { $0.entry.checks > 0 }.map(\.feature), [.spelling, .spelling])
         XCTAssertEqual(CloudUsageLog.dayKey(points.last!.day), "2026-12-02")
 
         // Gemt og læst igen.
         let again = CloudUsageLog(defaults: defaults, now: { date })
         XCTAssertEqual(again.entry(.openai, month: "2026-11").inputTokens, 1_000_000)
-        XCTAssertEqual(again.days["2026-11-23"]?["openai"]?.checks, 1)
+        XCTAssertEqual(again.days["2026-11-23"]?["spelling.openai"]?.checks, 1)
         again.reset()
         XCTAssertTrue(CloudUsageLog(defaults: defaults).months.isEmpty)
         XCTAssertTrue(CloudUsageLog(defaults: defaults).days.isEmpty)
@@ -277,5 +278,39 @@ final class SpellingGuardTests: XCTestCase {
         model.listen()
         finish?()
         XCTAssertFalse(model.isListening, "knappen bliver til Hør igen, når oplæsningen er færdig")
+    }
+
+    // MARK: Forbrug pr. funktion (AP-72)
+
+    func testUsageIsCountedPerFeatureAndOldDataCountsAsSpelling() throws {
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: "baymow-feature-usage-test"))
+        defaults.removePersistentDomain(forName: "baymow-feature-usage-test")
+        let date = ISO8601DateFormatter().date(from: "2026-11-23T12:00:00Z")!
+        // Gemt før AP-72: kun firma, ingen funktion.
+        let old: [String: [String: CloudUsageEntry]] = ["2026-11": ["openai": CloudUsageEntry(checks: 5, inputTokens: 1000, outputTokens: 100)]]
+        defaults.set(try JSONEncoder().encode(old), forKey: "spellingCloudUsage")
+        let log = CloudUsageLog(defaults: defaults, now: { date })
+        XCTAssertEqual(log.entry(feature: .spelling).checks, 5)
+        log.addCheck(.claude, feature: .mail)
+        log.addTokens(.claude, feature: .mail, input: 1_000_000, output: 0)
+        XCTAssertEqual(log.entry(feature: .mail).checks, 1)
+        XCTAssertEqual(log.entry().checks, 6)
+        XCTAssertEqual(log.providers(for: .mail), [.claude])
+        // Claude Sonnet: $2 pr. million tokens ind.
+        XCTAssertEqual(log.kroner(feature: .mail), 2 * CloudPricing.kronerPerDollar, accuracy: 0.0001)
+        XCTAssertEqual(log.kroner(), log.kroner(feature: .mail) + log.kroner(feature: .spelling), accuracy: 0.0001)
+        defaults.removePersistentDomain(forName: "baymow-feature-usage-test")
+    }
+
+    func testEachFeatureHasItsOwnProvider() throws {
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: "baymow-provider-test"))
+        defaults.removePersistentDomain(forName: "baymow-provider-test")
+        let spelling = SpellingSettings(defaults: defaults)
+        let mail = MailReplySettings(defaults: defaults)
+        spelling.cloudProvider = .claude
+        mail.provider = .openai
+        XCTAssertEqual(SpellingSettings(defaults: defaults).cloudProvider, .claude)
+        XCTAssertEqual(MailReplySettings(defaults: defaults).provider, .openai)
+        defaults.removePersistentDomain(forName: "baymow-provider-test")
     }
 }

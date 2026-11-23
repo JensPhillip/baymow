@@ -41,7 +41,7 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private let mailSettings = MailReplySettings()
     private let mailShortcut = GlobalShortcutManager()
     private lazy var mailReply = MailReplyController(
-        settings: mailSettings, spelling: spellingSettings,
+        settings: mailSettings, ai: spellingSettings.ai,
         speak: { [weak self] text, language, done in self?.speakSpelling(text, language: language, done: done) },
         stopSpeaking: { [weak self] in self?.spellingVoices.forEach { $0.stop() } },
         openSettings: { [weak self] in self?.openMainWindow(on: .mail) })
@@ -267,7 +267,8 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private func refreshMainWindowContent() {
         mainWindow?.contentView = NSHostingView(rootView: MainView(
             model: windowModel, settings: settings, catalog: catalog, downloader: downloader,
-            spelling: spellingSettings, mail: mailSettings, shortcutRegistrationFailed: shortcutRegistrationFailed
+            spelling: spellingSettings, ai: spellingSettings.ai, mail: mailSettings,
+            shortcutRegistrationFailed: shortcutRegistrationFailed
         ))
     }
 

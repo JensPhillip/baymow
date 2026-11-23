@@ -37,6 +37,7 @@ public enum ScreenshotTool {
 
         let suite = "dk.jpmag.baymow.render.\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suite)!
+        let demoAI = AIServices(defaults: defaults)
         defer { defaults.removePersistentDomain(forName: suite) }
         let settings = SettingsStore(defaults: defaults)
         settings.rate = 1.5
@@ -66,21 +67,21 @@ public enum ScreenshotTool {
             model.page = page
             shoot("hovedvindue-\(page.rawValue)", size: NSSize(width: 780, height: 600),
                   MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
-                           spelling: SpellingSettings(defaults: defaults), mail: MailReplySettings(defaults: defaults), shortcutRegistrationFailed: false))
+                           spelling: SpellingSettings(defaults: defaults, ai: demoAI), ai: demoAI, mail: MailReplySettings(defaults: defaults), shortcutRegistrationFailed: false))
         }
         // Siden Stavning med "Bedre hjælp via internet" slået til (AP-64).
         defaults.set(true, forKey: "spellingCloudEnabled")
         defaults.set(true, forKey: "spellingHelpEnabled")
-        let demoUsage = CloudUsageLog(defaults: defaults)
+        let demoUsage = demoAI.usage
         demoUsage.reset()
         for _ in 0..<143 { demoUsage.addCheck(.openai) }
         demoUsage.addTokens(.openai, input: 60_000, output: 25_000)
-        for _ in 0..<12 { demoUsage.addCheck(.claude) }
-        demoUsage.addTokens(.claude, input: 5_000, output: 700)
+        for _ in 0..<12 { demoUsage.addCheck(.openai, feature: .mail) }
+        demoUsage.addTokens(.openai, feature: .mail, input: 30_000, output: 4_000)
         model.page = .spelling
         shoot("hovedvindue-spelling-internet", size: NSSize(width: 780, height: 1250),
               MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
-                       spelling: SpellingSettings(defaults: defaults), mail: MailReplySettings(defaults: defaults), shortcutRegistrationFailed: false))
+                       spelling: SpellingSettings(defaults: defaults, ai: demoAI), ai: demoAI, mail: MailReplySettings(defaults: defaults), shortcutRegistrationFailed: false))
         defaults.set(false, forKey: "spellingCloudEnabled")
         defaults.set(false, forKey: "spellingHelpEnabled")
         // Start og Genvej med stavehjælpen slået til.
@@ -89,7 +90,7 @@ public enum ScreenshotTool {
             model.page = page
             shoot("hovedvindue-\(page.rawValue)-stavning", size: NSSize(width: 780, height: 760),
                   MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
-                           spelling: SpellingSettings(defaults: defaults), mail: MailReplySettings(defaults: defaults), shortcutRegistrationFailed: false))
+                           spelling: SpellingSettings(defaults: defaults, ai: demoAI), ai: demoAI, mail: MailReplySettings(defaults: defaults), shortcutRegistrationFailed: false))
         }
         defaults.set(false, forKey: "spellingHelpEnabled")
 
@@ -101,7 +102,7 @@ public enum ScreenshotTool {
             let checks = [0, 3, 8, 5, 0, 0, 12, 6, 4, 9, 2, 0, 7, 11, 5, 3, 0, 0, 6, 14, 8, 4, 10, 3, 0, 5, 9, 13, 7, 6][day]
             for _ in 0..<checks { chartLog.addCheck(.openai) }
             chartLog.addTokens(.openai, input: checks * 420, output: checks * 160)
-            if day % 6 == 2 { chartLog.addCheck(.claude); chartLog.addTokens(.claude, input: 380, output: 40) }
+            if day % 3 == 1 { chartLog.addCheck(.openai, feature: .mail); chartLog.addTokens(.openai, feature: .mail, input: 2_400, output: 300) }
             demoDate = demoDate.addingTimeInterval(86_400)
         }
         demoDate = demoDate.addingTimeInterval(-86_400)
@@ -145,7 +146,7 @@ public enum ScreenshotTool {
         model.page = .mail
         shoot("hovedvindue-mail", size: NSSize(width: 780, height: 900),
               MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
-                       spelling: SpellingSettings(defaults: defaults), mail: MailReplySettings(defaults: defaults),
+                       spelling: SpellingSettings(defaults: defaults, ai: demoAI), ai: demoAI, mail: MailReplySettings(defaults: defaults),
                        shortcutRegistrationFailed: false))
         defaults.set(false, forKey: "mailReplyEnabled")
         model.page = .start
@@ -153,6 +154,22 @@ public enum ScreenshotTool {
         mailModel.inserted = true
         mailModel.state = .done("Hej Peter,\n\nTak for tilbuddet. Vi vil gerne [gå videre / vente]. Licenserne skal leveres [hvornår?].")
         shoot("mailsvar", size: nil, MailReplyPanelView(model: mailModel, onUndo: {}, onClose: {}, onSettings: {}))
+        let assumedModel = MailReplyPanelModel(speak: { _, _, _ in })
+        assumedModel.inserted = true
+        assumedModel.followUp = true
+        assumedModel.assumptions = ["At du kan holde mødet fredag kl. 13"]
+        assumedModel.state = .done("Hej Karin,\n\nFredag kl. 13 passer fint.")
+        shoot("mailsvar-antagelse", size: nil, MailReplyPanelView(model: assumedModel, onUndo: {}, onClose: {}, onSettings: {}))
+        defaults.set(true, forKey: "spellingCloudEnabled")
+        defaults.set(true, forKey: "mailReplyEnabled")
+        model.page = .ai
+        shoot("hovedvindue-ai", size: NSSize(width: 780, height: 1000),
+              MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
+                       spelling: SpellingSettings(defaults: defaults, ai: demoAI), ai: demoAI, mail: MailReplySettings(defaults: defaults),
+                       shortcutRegistrationFailed: false))
+        defaults.set(false, forKey: "spellingCloudEnabled")
+        defaults.set(false, forKey: "mailReplyEnabled")
+        model.page = .start
         var offlineResult = demoResult
         offlineResult.cloudProblem = .offline
         let offlineModel = SpellingPanelModel(sourceBundleID: nil) { _, _, _ in }

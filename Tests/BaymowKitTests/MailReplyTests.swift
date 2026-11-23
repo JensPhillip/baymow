@@ -89,4 +89,31 @@ final class MailReplyTests: XCTestCase {
         let all = [Shortcut.standard, SpellingSettings.standardShortcut, MailReplySettings.standardShortcut]
         XCTAssertEqual(Set(all.map(\.displayString)).count, 3)
     }
+
+    // MARK: Brugerens afprøvning 23. november (AP-72)
+
+    func testFollowUpOnOwnMailIsRecognised() {
+        let own = "Den 22. nov. 2026 kl. 09.00 skrev Jens Phillip Magnussen <jens@eksempel.dk>:\n\nHej Mette, har du set tilbuddet?"
+        XCTAssertTrue(MailThread.latestIsFromUser(thread: own, name: "Jens Phillip Magnussen"))
+        XCTAssertTrue(MailThread.latestIsFromUser(thread: own.replacingOccurrences(of: "Phillip ", with: ""), name: "Jens Phillip Magnussen"))
+        XCTAssertFalse(MailThread.latestIsFromUser(thread: "\(appleMailDanish)\n\nHej Jens", name: "Jens Phillip Magnussen"))
+        XCTAssertTrue(MailReplyPrompt.instructions(tone: "", hasSignature: true, name: "Jens", followUp: true).contains("opfølgning"))
+    }
+
+    func testAssumptionsAreSeparatedFromTheReply() {
+        let answer = "Hej Mette,\n\nFredag kl. 13 passer fint.\n\(MailReplyPrompt.assumptionsMarker)\n- At du kan fredag kl. 13\n"
+        let parsed = MailReplyPrompt.parse(answer)
+        XCTAssertEqual(parsed.reply.trimmingCharacters(in: .whitespacesAndNewlines), "Hej Mette,\n\nFredag kl. 13 passer fint.")
+        XCTAssertEqual(parsed.assumptions, ["At du kan fredag kl. 13"])
+        XCTAssertEqual(MailReplyPrompt.parse("Hej").assumptions, [])
+    }
+
+    func testNameAndClosingAreRemovedWithAStandardSignature() {
+        let reply = "Hej Mette,\n\nJa tak.\n\nVenlig hilsen\nJens Phillip Magnussen"
+        XCTAssertEqual(MailReplyPrompt.clean(reply, hasSignature: true, name: "Jens Phillip Magnussen"), "Hej Mette,\n\nJa tak.")
+        XCTAssertEqual(MailReplyPrompt.clean("Hej Mette,\n\nJa tak.\n\nJens", hasSignature: true, name: "Jens Phillip Magnussen"),
+                       "Hej Mette,\n\nJa tak.")
+        XCTAssertEqual(MailReplyPrompt.clean("Hej Mette,\n\nJa tak.\n\nVenlig hilsen Jens", hasSignature: true, name: "Jens Phillip Magnussen"),
+                       "Hej Mette,\n\nJa tak.")
+    }
 }

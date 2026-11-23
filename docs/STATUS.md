@@ -5,12 +5,13 @@ Sidst opdateret: 2026-11-23 af udfører (Claude Opus 5.5).
 
 ## Lige nu
 
-- **I gang:** AP-71 mail-svar (første udgave, Apple Mail) og AP-70 – bygget, afventer brugerens afprøvning. AP-63–AP-69 er godkendt.
+- **I gang:** AP-72 (mail-svar bedre, siden "AI og nøgler") – bygget, afventer brugerens afprøvning. AP-71 er afprøvet af brugeren.
+- **Til drøftelse:** login på mailkontoen (proaktiv hjælp, sparring) – brugerens idé 23. november.
 - **Mail-svar (I15):** Brugerens svar 23. november: hele tråden som kontekst, udkast/stikord/intet, direkte ind i mailprogrammet, defineret menneskelig og formel tone, alle programmer (først Apple Mail). AP-64 (internet-hjælpen) er godkendt.
 - **Færdige pakker:** AP-00, AP-01, AP-02, AP-10, AP-11, AP-12, AP-19 (hovedstemme: Apple Sara (Enhanced)),
   AP-20, AP-21, AP-22, AP-23, AP-30, AP-31, AP-32, AP-40, AP-50, AP-51, AP-60, AP-61, AP-62.
 - **Lukket/droppet af brugeren 22. november:** AP-03 (lytteskemaet), AP-15 (Plapre).
-- **Venter på brugeren:** afprøvning af AP-70 og AP-71, AP-41 (testperson – udskudt af brugeren 2026-11-18).
+- **Venter på brugeren:** afprøvning af AP-70 og AP-72, AP-41 (testperson – udskudt af brugeren 2026-11-18).
 - **Delvist:** AP-24 – udtalelister pr. motor er bygget, men gav kun lidt (Piper 14 → 18 af 30, Apple uændret).
 - **Parkeret eller udskudt:** AP-13/14 (cloud-stemmer, B6), AP-16 (Røst – hovedstemmen er valgt).
 - **Beslutninger:** B6 cloud udskudt · B7 Sara (Enhanced) · B8 GPL-3.0-or-later · B9 Baymow, app-id
@@ -48,6 +49,9 @@ Sidst opdateret: 2026-11-23 af udfører (Claude Opus 5.5).
 - **AP-71 (mail-svar, Apple Mail):** stikord øverst i svaret + ⌃⌥M → ChatGPT skriver svaret, der erstatter stikordene;
   signatur og tråd står urørt. [Felter] for det ukendte. Mail-testen: 18 af 18 svar uden problemer (6 tråde × 3).
   Siden "Mail", slået fra som standard. Outlook og Gmail er ikke prøvet.
+- **AP-72:** mail-svar kender brugerens navn (opfølgning på egen mail), viser antagelser og skriver aldrig hilsen/navn
+  over den faste signatur. Ny side "AI og nøgler": begge nøgler, firma pr. funktion, forbrug pr. funktion med graf.
+  Mail-testen: 8 af 8 i tre kørsler.
 
 ## Venter på brugeren
 
