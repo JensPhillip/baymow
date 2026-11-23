@@ -70,6 +70,7 @@ public enum ScreenshotTool {
         }
         // Siden Stavning med "Bedre hjælp via internet" slået til (AP-64).
         defaults.set(true, forKey: "spellingCloudEnabled")
+        defaults.set(true, forKey: "spellingHelpEnabled")
         let demoUsage = CloudUsageLog(defaults: defaults)
         demoUsage.reset()
         for _ in 0..<143 { demoUsage.addCheck(.openai) }
@@ -81,6 +82,7 @@ public enum ScreenshotTool {
               MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
                        spelling: SpellingSettings(defaults: defaults), shortcutRegistrationFailed: false))
         defaults.set(false, forKey: "spellingCloudEnabled")
+        defaults.set(false, forKey: "spellingHelpEnabled")
         // Start og Genvej med stavehjælpen slået til.
         defaults.set(true, forKey: "spellingHelpEnabled")
         for page in [MainPage.start, .shortcut] {

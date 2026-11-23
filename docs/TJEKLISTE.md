@@ -16,16 +16,8 @@ Opdateret 23. november 2026.
 - ✅ Kommaer: ja – Baymow skal som standard også rette tegnsætning, og man skal kunne vælge, hvor meget den retter.
 - ✅ "Gem som lydfil" (I6) er droppet.
 
-## Test nu: Hvor meget skal Baymow rette? (ca. 10 min)
-- [ ] 1. Baymow → **Stavning** → "Hvor meget skal Baymow rette?". **Stavning og tegnsætning** er valgt.
-      Markér fx "jeg tror at han kommer i morgen hvis det passer" og tryk ⌃⌥R: kommaer og stort J bliver rettet.
-- [ ] 2. Vælg **Kun stavning**, og prøv igen: kommaerne bliver ikke sat.
-- [ ] 3. Vælg **Også klarere sætninger**, og prøv en lang, tung sætning. Er forslagene gode? Kan du vælge dine egne
-      ord igen (blyanten ✎) og "(slet)"?
-- [ ] 4. **Formatering:** Skriv noget med **fed** og punktform i Word, Google Docs eller Mail, med et par fejl.
-      Markér det hele, ⌃⌥R, "Brug rettelsen". Er fed skrift og punktform der stadig?
-      ✅ Formateringen blev bevaret (23. nov.), men Word skiftede skrifttype og størrelse – rettet i AP-69.
-- [ ] 5. **Word igen:** Prøv det samme i Word. Er skrifttype og størrelse nu de samme som før?
+- ✅ Formateringen (også skrifttype og størrelse i Word) er godkendt 23. november.
+- [ ] Siden **Stavning**: slå stavehjælpen fra. Kun kontakten står tilbage.
 
 ## Beslut, når du har prøvet den
 - ✅ **AI-konto:** besluttet 23. november – begge, du vælger selv. **Standard:** ChatGPT.

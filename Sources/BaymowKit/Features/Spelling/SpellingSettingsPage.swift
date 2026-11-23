@@ -20,7 +20,13 @@ struct SpellingSettingsPage: View {
                     .foregroundStyle(.orange)
             }
         }
+        .onAppear { settings.refreshModelStatus(); settings.refreshKeys() }
 
+        // Slået fra: kun kontakten, så siden ikke forvirrer (brugerens ønske 23. november 2026).
+        if settings.isEnabled { details }
+    }
+
+    @ViewBuilder private var details: some View {
         Section("Sådan gør du") {
             GuideStep(number: 1, symbol: "character.cursor.ibeam", text: "Markér det, du har skrevet")
             HStack(spacing: 10) {
@@ -51,7 +57,6 @@ struct SpellingSettingsPage: View {
                     .foregroundStyle(.secondary)
             }
         }
-        .onAppear { settings.refreshModelStatus(); settings.refreshKeys() }
 
         Section {
             OptionRow(symbol: "cloud.fill", color: .blue, title: "Bedre hjælp via internet",
