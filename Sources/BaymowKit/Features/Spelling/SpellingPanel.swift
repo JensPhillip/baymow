@@ -15,7 +15,7 @@ final class SpellingPanelModel: ObservableObject {
     private(set) var source: SpellingSource = .mac
     private(set) var cloudProblem: CloudSpellingError?
     /// Det firma, brugeren har valgt (til beskeder, når internet-hjælpen ikke virkede).
-    var chosenProvider: CloudProvider = .claude
+    var chosenProvider: CloudProvider = .openai
     private(set) var language: Language = .danish
     /// Valgmulighederne for hvert ændret ord, i fast rækkefølge: det skrevne, Baymows rettelse, andre forslag.
     private(set) var options: [Int: [String]] = [:]

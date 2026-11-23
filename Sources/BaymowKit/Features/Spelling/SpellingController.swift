@@ -30,9 +30,10 @@ final class SpellingSettings: ObservableObject {
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
+        usage = CloudUsageLog(defaults: defaults)
         isEnabled = defaults.bool(forKey: "spellingHelpEnabled")
         cloudEnabled = defaults.bool(forKey: "spellingCloudEnabled")
-        cloudProvider = CloudProvider(rawValue: defaults.string(forKey: "spellingCloudProvider") ?? "") ?? .claude
+        cloudProvider = CloudProvider(rawValue: defaults.string(forKey: "spellingCloudProvider") ?? "") ?? .openai
         refreshKeys()
     }
 
@@ -55,13 +56,25 @@ final class SpellingSettings: ObservableObject {
     /// Internet-retteren, hvis den er slået til, og der er en nøgle. Ellers `nil`: så bruges Macens egen hjælp.
     func cloudCorrector() -> CloudSpellingCorrector? {
         guard cloudEnabled, let key = CloudKeyStore.key(for: cloudProvider) else { return nil }
-        return CloudSpellingCorrector(provider: cloudProvider, key: key)
+        return corrector(key: key)
+    }
+
+    /// Forbruget af internet-hjælpen (kun tal).
+    let usage: CloudUsageLog
+
+    private func corrector(key: String) -> CloudSpellingCorrector {
+        let provider = cloudProvider
+        let usage = usage
+        return CloudSpellingCorrector(provider: provider, key: key, onUsage: { input, output in
+            Task { @MainActor in usage.addTokens(provider, input: input, output: output) }
+        })
     }
 
     /// Brugeren trykker "Prøv": sender en fast testsætning (aldrig brugerens tekst) og viser, om nøglen virker.
     func testConnection() {
         guard let key = CloudKeyStore.key(for: cloudProvider) else { testResult = .failed(.noKey); return }
-        let corrector = CloudSpellingCorrector(provider: cloudProvider, key: key)
+        let corrector = corrector(key: key)
+        usage.addCheck(cloudProvider)
         testResult = .testing
         Task {
             do {
@@ -130,6 +143,7 @@ final class SpellingController {
                                               checker: SystemWordChecker())
             var result = await assistant.check(captured.text)
             if settings.cloudEnabled, cloud == nil, result.cloudProblem == nil { result.cloudProblem = .noKey }
+            if let cloud, result.cloudProblem == nil { settings.usage.addCheck(cloud.provider) }
             guard self.model === model else { return } // lukket undervejs
             model.load(result)
             resize()

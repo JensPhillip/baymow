@@ -55,6 +55,10 @@ struct SpellingSettingsPage: View {
                       isOn: $settings.cloudEnabled)
             if settings.cloudEnabled { CloudSettings(settings: settings) }
         }
+
+        if settings.cloudEnabled {
+            Section("Forbrug") { UsageView(usage: settings.usage) }
+        }
     }
 
     @ViewBuilder private var modelStatus: some View {
@@ -167,5 +171,63 @@ private struct CloudSettings: View {
         guard !key.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
         settings.saveKey(key)
         settings.testConnection()
+    }
+}
+
+/// Forbruget denne måned pr. firma, og tidligere måneder. Et skøn ud fra priserne; kun tal er gemt.
+private struct UsageView: View {
+    @ObservedObject var usage: CloudUsageLog
+    @State private var showEarlier = false
+    @State private var confirmReset = false
+
+    var body: some View {
+        Text(CloudUsageLog.monthName(usage.currentMonth).capitalized).font(.headline)
+        ForEach(CloudProvider.allCases) { provider in row(provider, month: usage.currentMonth) }
+
+        if !usage.earlierMonths.isEmpty {
+            DisclosureGroup("Tidligere måneder", isExpanded: $showEarlier) {
+                ForEach(usage.earlierMonths, id: \.self) { month in
+                    Text(CloudUsageLog.monthName(month).capitalized).font(.subheadline.weight(.semibold)).padding(.top, 4)
+                    ForEach(CloudProvider.allCases) { provider in
+                        if usage.entry(provider, month: month).checks > 0 { row(provider, month: month) }
+                    }
+                }
+            }
+        }
+
+        HStack(alignment: .top) {
+            Label("Et skøn ud fra priserne \(CloudPricing.checked) og en kurs på \(Self.kroner(CloudPricing.kronerPerDollar, decimals: 2)) pr. dollar. Den præcise regning står hos OpenAI og Anthropic.",
+                  systemImage: "info.circle")
+                .font(.callout).foregroundStyle(.secondary)
+            Spacer()
+            Button("Nulstil") { confirmReset = true }
+                .help("Sætter tallene på 0. Det ændrer ikke din regning hos firmaerne.")
+                .confirmationDialog("Nulstil forbruget?", isPresented: $confirmReset) {
+                    Button("Nulstil", role: .destructive) { usage.reset() }
+                } message: { Text("Tallene i Baymow sættes på 0. Det ændrer ikke din regning hos firmaerne.") }
+        }
+    }
+
+    private func row(_ provider: CloudProvider, month: String) -> some View {
+        let entry = usage.entry(provider, month: month)
+        return HStack(spacing: 10) {
+            Image(systemName: "cloud.fill").foregroundStyle(.blue).frame(width: 20)
+            Text(provider.title)
+            Spacer()
+            Text(entry.checks == 1 ? "1 kontrol" : "\(entry.checks) kontroller").foregroundStyle(.secondary).monospacedDigit()
+            Text("ca. " + Self.kroner(usage.kroner(provider, month: month), decimals: 2))
+                .monospacedDigit().frame(minWidth: 90, alignment: .trailing)
+        }
+        .accessibilityElement(children: .combine)
+        .help("\(entry.inputTokens) tokens sendt, \(entry.outputTokens) tokens i svar")
+    }
+
+    /// "0,35 kr." – med dansk komma.
+    static func kroner(_ value: Double, decimals: Int) -> String {
+        let formatter = NumberFormatter()
+        formatter.locale = Locale(identifier: "da_DK")
+        formatter.minimumFractionDigits = decimals
+        formatter.maximumFractionDigits = decimals
+        return (formatter.string(from: NSNumber(value: value)) ?? "\(value)") + " kr."
     }
 }

@@ -9,8 +9,9 @@ import BaymowCore
 /// Firmaerne, brugeren kan vælge. Modellerne er valgt ud fra stavetesten 23. november 2026 (115 sætninger):
 /// GPT-6 Luna fandt 63 af 63 fejl, Claude Sonnet 5.5 62 af 63, begge uden forkerte rettelser.
 enum CloudProvider: String, CaseIterable, Identifiable, Sendable {
-    case claude
+    // ChatGPT først: brugerens standard (23. november 2026), lige så god og billigst.
     case openai
+    case claude
 
     var id: String { rawValue }
     /// Navnet, brugeren kender.
@@ -70,6 +71,8 @@ enum CloudKeyStore {
 struct CloudSpellingCorrector: SpellingCorrector {
     let provider: CloudProvider
     let key: String
+    /// Får tokens fra hvert svar (til forbruget på siden Stavning). `nil` i stavetesten.
+    var onUsage: (@Sendable (_ input: Int, _ output: Int) -> Void)?
     var source: SpellingSource { .cloud(provider) }
 
     private static let session: URLSession = {
@@ -127,6 +130,7 @@ struct CloudSpellingCorrector: SpellingCorrector {
         case 401, 403: throw CloudSpellingError.badKey
         default: throw CloudSpellingError.failed // svaret læses ikke: det kan indeholde teksten
         }
+        if let usage = Self.usage(from: data, provider: provider) { onUsage?(usage.input, usage.output) }
         guard let text = Self.text(from: data, provider: provider) else { throw CloudSpellingError.failed }
         return text
     }
@@ -175,6 +179,14 @@ struct CloudSpellingCorrector: SpellingCorrector {
         }
         let text = parts.joined().trimmingCharacters(in: .whitespacesAndNewlines)
         return text.isEmpty ? nil : text
+    }
+
+    /// Tokens, firmaet tager betaling for. Begge firmaer kalder dem `input_tokens` og `output_tokens`.
+    static func usage(from data: Data, provider: CloudProvider) -> (input: Int, output: Int)? {
+        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let usage = json["usage"] as? [String: Any],
+              let input = usage["input_tokens"] as? Int, let output = usage["output_tokens"] as? Int else { return nil }
+        return (input, output)
     }
 
     /// Første rigtige linje af svaret. Nogle modeller gentager opgaven ("Ret stavningen i denne tekst:") først (målt).

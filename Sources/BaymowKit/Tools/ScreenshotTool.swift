@@ -70,8 +70,14 @@ public enum ScreenshotTool {
         }
         // Siden Stavning med "Bedre hjælp via internet" slået til (AP-64).
         defaults.set(true, forKey: "spellingCloudEnabled")
+        let demoUsage = CloudUsageLog(defaults: defaults)
+        demoUsage.reset()
+        for _ in 0..<143 { demoUsage.addCheck(.openai) }
+        demoUsage.addTokens(.openai, input: 60_000, output: 25_000)
+        for _ in 0..<12 { demoUsage.addCheck(.claude) }
+        demoUsage.addTokens(.claude, input: 5_000, output: 700)
         model.page = .spelling
-        shoot("hovedvindue-spelling-internet", size: NSSize(width: 780, height: 1000),
+        shoot("hovedvindue-spelling-internet", size: NSSize(width: 780, height: 1250),
               MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
                        spelling: SpellingSettings(defaults: defaults), shortcutRegistrationFailed: false))
         defaults.set(false, forKey: "spellingCloudEnabled")

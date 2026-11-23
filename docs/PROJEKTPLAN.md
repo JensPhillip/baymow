@@ -439,7 +439,8 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 | AP-61 | Højere hastighed (idé I3): op til 3×, og tallet i afspilleren svarer til det reelle tempo | 6 | Udfører + bruger | MVP | Færdig (brugeren godkendte 2,5× og 3×, 21. november 2026) |
 | AP-62 | Nyt design efter designprincipperne: sidebjælke, ikoner, flag, "Hør"-knapper, nyt udseende af afspiller og velkomst | 6 | Udfører + bruger | MVP | Færdig (brugeren godkendte runde 2, 21. november 2026) |
 | AP-63 | Stavehjælp (idé I12): ret egen tekst med Macens indbyggede sprogmodel, vist og læst op, aldrig rettet i stilhed | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
-| AP-64 | Stavehjælp via internet: Claude eller ChatGPT med brugerens egen nøgle, tilvalg, Macens hjælp uden internet | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
+| AP-64 | Stavehjælp via internet: Claude eller ChatGPT med brugerens egen nøgle, tilvalg, Macens hjælp uden internet | 6 | Udfører + bruger | MVP | Færdig (brugeren har gemt begge nøgler og godkendt 23. november) |
+| AP-65 | Forbrug af internet-hjælpen: kontroller og skønnet pris pr. firma og måned på siden Stavning; ChatGPT som standard | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
 | AP-52 | Developer ID, notarisering og DMG | 5 | Udfører + bruger | AP-50, B9 | Forberedt: DMG og README; afventer certifikat, app-id og kodearkiv |
 
 ### Fase 0 – Grundlag
@@ -769,6 +770,8 @@ Rækkefølgen er arkitektens bud på nytten for en ordblind bruger.
 | I10 | **Egne udtaleord:** brugeren retter et ord, der læses forkert, og Baymow husker det | Brugeren kan selv rette det, Baymow siger forkert | Liste i indstillingerne, bruges af `PronunciationOverrides` | Lille (ny indstilling) |
 | I11 | **Skrivehjælp: læs det, jeg lige har skrevet** (egen genvej: sætningen før markøren) | Ordblinde opdager stavefejl, når de hører teksten | `Features/WritingHelp/`, henter teksten før markøren via Tilgængelighed | Ja, hvis det lægges i `TextCaptureService` |
 | I12 | **Stavehjælp: ret min tekst** (brugerens idé 22. november 2026). Markér egen tekst, tryk en genvej: Baymow foreslår en rettet udgave, viser ændringerne og læser den op; brugeren vælger "Brug rettelsen". Trin 1 lokalt med Apples indbyggede sprogmodel; trin 2 eventuelt cloud (Claude/ChatGPT) som tilvalg. Se TEKNISK-VURDERING "Stavehjælp" | Ordblinde kan skrive uden frygt for stavefejl – kombineret med I11 | `Features/Spelling/`; motor bag en protokol (`SpellingCorrector`), så Apple, egen model og cloud kan skiftes | Nej, hvis den læser markeringen via den eksisterende indfangning; ellers som I11 |
+| I13 | **Hent de rigtige priser og det rigtige forbrug** (brugerens note 23. november 2026). Forbruget i Baymow er i dag et skøn ud fra faste priser og en fast kurs (AP-65). Senere: hent priserne og det faktiske forbrug hos firmaerne | Tallene passer med regningen, også når priserne ændres | Kræver en administrator-nøgle hos firmaerne eller en Baymow-tjeneste (se I14); netværk | Ja: ny fil på netværkslisten |
+| I14 | **Fælles nøgle mod betaling** (brugerens idé 23. november 2026). For brugere uden teknisk kendskab: brugeren (ejeren) stiller en fælles nøgle til rådighed mod et abonnement eller betaling pr. forbrug, så de slipper for selv at oprette en konto. Egen nøgle skal altid kunne bruges ved siden af | Et nemt valg for dem, der bare vil betale for et nemt setup | Kræver en lille tjeneste (server), der holder nøglen hemmelig, kender brugerne og tager betaling; nøglen må aldrig ligge i appen. Juridisk: databehandleraftale, privatlivspolitik og firmaernes vilkår for videresalg | Ja: server, betaling, konti – brugerens beslutning |
 
 Fælles for alle: slået fra som standard eller uden virkning, før brugeren tager dem i brug; de må ikke gøre
 genvejen langsommere; og kernekontrakten skal bestå uændret, medmindre idéen udtrykkeligt ændrer den.
@@ -804,6 +807,15 @@ en nøgle, der ikke virker: Macens egen hjælp, og vinduet siger det. Aldrig omv
 sætninger. Tests af reserven og af, at teksten aldrig sendes, når kun Macens hjælp er valgt. Brugeren har prøvet begge.
 **Netværk:** `Features/Spelling/CloudSpellingCorrector.swift` står på netværkslisten (brugerens ja 23. november 2026).
 Kun når brugeren har slået det til, har en nøgle og trykker ⌃⌥R eller "Prøv"/"Gem".
+
+#### AP-65 Forbrug af internet-hjælpen
+
+**Hvorfor:** Brugeren vil kunne følge forbrug og pris i Baymow (23. november 2026) og har valgt ChatGPT som standard
+("omtrent lige gode", ChatGPT billigst).
+**Gør:** Tokens fra hvert svar og antal kontroller lægges sammen pr. firma og måned (`CloudUsageLog`, kun tal – aldrig
+tekst). Afsnittet "Forbrug" på siden Stavning viser denne måned og tidligere måneder med en skønnet pris i kroner.
+**Acceptkriterier:** Tests af tælling, måneder, pris og gemning. Ingen tekst gemmes. Brugeren har set afsnittet.
+**Senere:** I13 (rigtige priser og forbrug hentet hos firmaerne) og I14 (fælles nøgle mod betaling).
 
 ## 7. Stemmeporten
 

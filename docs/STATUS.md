@@ -5,11 +5,11 @@ Sidst opdateret: 2026-11-23 af udfører (Claude Opus 5.5).
 
 ## Lige nu
 
-- **I gang:** AP-63 stavehjælp (I12) og AP-64 stavehjælp via internet – bygget og målt, afventer brugerens afprøvning.
+- **I gang:** AP-63 stavehjælp (I12) og AP-65 forbrug af internet-hjælpen – bygget, afventer brugerens afprøvning. AP-64 (internet-hjælpen) er godkendt.
 - **Færdige pakker:** AP-00, AP-01, AP-02, AP-10, AP-11, AP-12, AP-19 (hovedstemme: Apple Sara (Enhanced)),
   AP-20, AP-21, AP-22, AP-23, AP-30, AP-31, AP-32, AP-40, AP-50, AP-51, AP-60, AP-61, AP-62.
 - **Lukket/droppet af brugeren 22. november:** AP-03 (lytteskemaet), AP-15 (Plapre).
-- **Venter på brugeren:** afprøvning af stavehjælpen (AP-63, AP-64), AP-41 (testperson – udskudt af brugeren 2026-11-18).
+- **Venter på brugeren:** afprøvning af stavehjælpen (AP-63) og forbruget (AP-65), AP-41 (testperson – udskudt af brugeren 2026-11-18).
 - **Delvist:** AP-24 – udtalelister pr. motor er bygget, men gav kun lidt (Piper 14 → 18 af 30, Apple uændret).
 - **Parkeret eller udskudt:** AP-13/14 (cloud-stemmer, B6), AP-16 (Røst – hovedstemmen er valgt).
 - **Beslutninger:** B6 cloud udskudt · B7 Sara (Enhanced) · B8 GPL-3.0-or-later · B9 Baymow, app-id
@@ -32,6 +32,9 @@ Sidst opdateret: 2026-11-23 af udfører (Claude Opus 5.5).
 - **AP-64 (stavehjælp via internet):** tilvalg på siden "Stavning": Claude (Sonnet 5.5) eller ChatGPT (GPT-6 Luna)
   med brugerens egen nøgle i nøgleringen. Gennem vagten: 63 og 62 af 63 fejl, 0 forkerte rettelser (Macens: 46).
   Uden internet eller med en nøgle, der ikke virker: Macens egen hjælp, og vinduet siger det. Netværkslisten har en ny fil.
+- **AP-65 (forbrug):** afsnittet "Forbrug" på siden Stavning: kontroller og skønnet pris pr. firma og måned
+  (priser tjekket 23. november: GPT-6 Luna $0,10/$0,50, Sonnet 5.5 $2/$10; kurs 6,45 kr.). ChatGPT er standard.
+  Idéer til senere: I13 rigtige priser hentet hos firmaerne, I14 fælles nøgle mod betaling for ikke-tekniske brugere.
 
 ## Venter på brugeren
 
@@ -40,7 +43,7 @@ Brugerens samlede tjekliste i almindeligt sprog: `docs/TJEKLISTE.md` (opdatér d
 | Hvad | Hvorfor | Blokerer |
 |---|---|---|
 | Prøv stavehjælpen (⌃⌥R) i et par programmer, og godkend vinduet | Udseende, lyd og indsætning kan kun prøves af brugeren | AP-63 |
-| Slå "Bedre hjælp via internet" til, gem nøglerne i Baymow, og prøv begge firmaer på egen tekst | Kun brugerens egne tekster viser, hvilken der er bedst | AP-64 |
+| Se afsnittet "Forbrug" på siden Stavning efter et par kontroller | Kun brugeren kan se, om tallene giver mening | AP-65 |
 | Find en testperson til førstegangsopsætningen (udskudt af brugeren 2026-11-18) | Kun et nyt menneske kan vise, om den er til at forstå | AP-41 |
 | Meld dig ind i Apple Developer Program (Developer ID og notarisering) | Udgivelse til andre kræver det | AP-52 |
 

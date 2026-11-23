@@ -199,4 +199,40 @@ final class SpellingGuardTests: XCTestCase {
             XCTAssertTrue(body.contains(provider.model))
         }
     }
+
+    // MARK: Forbrug (AP-65)
+
+    func testTokensAreReadFromBothCompanies() {
+        let claude = #"{"content":[],"usage":{"input_tokens":120,"output_tokens":15}}"#
+        XCTAssertEqual(CloudSpellingCorrector.usage(from: Data(claude.utf8), provider: .claude)?.input, 120)
+        let openai = #"{"output":[],"usage":{"input_tokens":160,"output_tokens":40,"total_tokens":200}}"#
+        XCTAssertEqual(CloudSpellingCorrector.usage(from: Data(openai.utf8), provider: .openai)?.output, 40)
+        XCTAssertNil(CloudSpellingCorrector.usage(from: Data("{}".utf8), provider: .openai))
+    }
+
+    func testUsageIsCountedPerMonthAndKeptOnlyAsNumbers() throws {
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: "baymow-usage-test"))
+        defaults.removePersistentDomain(forName: "baymow-usage-test")
+        var date = ISO8601DateFormatter().date(from: "2026-11-23T12:00:00Z")!
+        let log = CloudUsageLog(defaults: defaults, now: { date })
+        log.addCheck(.openai)
+        log.addTokens(.openai, input: 1_000_000, output: 1_000_000)
+        XCTAssertEqual(log.entry(.openai).checks, 1)
+        // GPT-6 Luna: $0,10 + $0,50 = $0,60 for en million af hver.
+        XCTAssertEqual(log.kroner(.openai), 0.60 * CloudPricing.kronerPerDollar, accuracy: 0.0001)
+        XCTAssertEqual(log.entry(.claude), CloudUsageEntry())
+
+        date = ISO8601DateFormatter().date(from: "2026-12-02T12:00:00Z")!
+        log.addCheck(.claude)
+        XCTAssertEqual(log.currentMonth, "2026-12")
+        XCTAssertEqual(log.earlierMonths, ["2026-11"])
+        XCTAssertEqual(CloudUsageLog.monthName("2026-11"), "november 2026")
+
+        // Gemt og læst igen.
+        let again = CloudUsageLog(defaults: defaults, now: { date })
+        XCTAssertEqual(again.entry(.openai, month: "2026-11").inputTokens, 1_000_000)
+        again.reset()
+        XCTAssertTrue(CloudUsageLog(defaults: defaults).months.isEmpty)
+        defaults.removePersistentDomain(forName: "baymow-usage-test")
+    }
 }

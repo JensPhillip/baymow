@@ -29,26 +29,21 @@ Skriv fx dette i Noter eller en ny mail (fejlene er med vilje):
 
 Er du i tvivl om noget i vinduet, så skriv, hvad du så, eller tag et skærmbillede (⌘⇧4).
 
-## Test nu: Bedre hjælp via internet (ca. 10 min)
-Baymow bruger sine egne poster i nøgleringen, så nøglerne skal indsættes én gang til – nu direkte i Baymow.
+## Test nu: Forbrug (2 min)
+- ✅ Bedre hjælp via internet: begge nøgler gemt og afprøvet 23. november. ChatGPT er valgt som standard.
+- [ ] 1. Lav et par kontroller med ⌃⌥R. Åbn så Baymow → **Stavning**, og se afsnittet **Forbrug** nederst.
+      Tallet "kontroller" går op for hver kontrol, og prisen er et lille beløb (få øre).
+- [ ] 2. Giver tallene mening? Sammenlign gerne senere med regningen hos OpenAI.
+- [ ] 3. Prøv gerne at slå Wi-Fi fra og trykke ⌃⌥R: vinduet skriver "Intet internet" med orange.
 
-- [ ] 1. Baymow → siden **Stavning** → slå **Bedre hjælp via internet** til.
-- [ ] 2. Vælg **Claude**, indsæt din Claude-nøgle i feltet, og tryk **Gem**. Der står "Det virker" efter et øjeblik.
-- [ ] 3. Vælg **ChatGPT**, og gør det samme med ChatGPT-nøglen.
-- [ ] 4. Markér din egen tekst (fx beskeden med "ernagien" og "vinde"), og tryk ⌃⌥R. Nederst i vinduet står
-      "Rettet af … via internet". Er "energien" og "finde" rettet?
-- [ ] 5. Skift firma på siden Stavning, og prøv den samme tekst. Hvilken retter bedst? Skriv det til mig.
-- [ ] 6. Slå Wi-Fi fra, og tryk ⌃⌥R. Vinduet skriver "Intet internet" med orange og retter med Macens egen hjælp.
-- [ ] 7. Ændrer en af dem noget, så det betyder noget andet? Skriv ordet til mig.
-
+## Beslut, når du har prøvet den
 - [ ] **Kommaer:** Baymow sætter kommaer, hvor modellen mener, de skal være (fx "Jeg tror, at …"). Vil du have det,
       eller skal den kun rette stavning?
-- ✅ **AI-konto:** besluttet 23. november – begge, du vælger selv (bygget som "Bedre hjælp via internet").
-- [ ] **Hvilken som standard?** Når du har prøvet begge: Claude eller ChatGPT?
+- ✅ **AI-konto:** besluttet 23. november – begge, du vælger selv. **Standard:** ChatGPT.
 - [ ] **Testnøglerne** i nøgleringen (konto `baymow-test`) kan slettes, når vi ikke skal måle mere.
 
 ## Senere (ikke nu)
 - [ ] **En testperson**, der aldrig har set Baymow, prøver velkomstvinduet uden hjælp (AP-41).
 - [ ] **Apple Developer Program** (koster et årligt gebyr), når du vil dele Baymow med andre (AP-52).
-- Idéer, der venter: I9 engelske ord i dansk tekst, I10 ret selv et ord, I11 skrivehjælp, I4 tekst fra skærmen,
+- Idéer, der venter: I13 hent rigtige priser og forbrug, I14 fælles nøgle mod betaling for ikke-tekniske brugere, I9 engelske ord i dansk tekst, I10 ret selv et ord, I11 skrivehjælp, I4 tekst fra skærmen,
   I5 hele filer, I6 gem som lydfil.
