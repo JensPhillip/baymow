@@ -107,7 +107,7 @@ public enum ScreenshotTool {
         }
         demoDate = demoDate.addingTimeInterval(-86_400)
         let selected = chartLog.lastDays(30).max { $0.entry.checks < $1.entry.checks }?.day
-        shoot("forbrug-graf", size: NSSize(width: 640, height: 330),
+        shoot("forbrug-graf", size: NSSize(width: 640, height: 380),
               UsageChart(usage: chartLog, selectedDay: selected).padding(20))
         shoot("forbrug-afsnit", size: NSSize(width: 640, height: 560),
               Form { Section("Forbrug") { UsageView(usage: chartLog, showChart: true) } }.formStyle(.grouped))

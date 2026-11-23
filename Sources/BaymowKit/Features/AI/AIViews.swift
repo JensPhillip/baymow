@@ -350,7 +350,7 @@ struct UsageChart: View {
                 }
             }
             .frame(height: 200)
-            .padding(.top, 34)
+            .padding(.top, 84) // plads til hele feltet med dagens tal (dato + én linje pr. funktion)
 
             if points.allSatisfy({ $0.entry.checks == 0 && $0.entry.inputTokens == 0 }) {
                 Text("Intet forbrug de seneste 30 dage endnu.").foregroundStyle(.secondary)
