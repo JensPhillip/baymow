@@ -7,9 +7,18 @@ import BaymowCore
 /// Stavehjælpens indstillinger. Slået fra som standard (planens afsnit 3).
 @MainActor
 final class SpellingSettings: ObservableObject {
-    /// ⌃⌥R – "R" for "ret".
-    nonisolated static let shortcut = Shortcut(keyCode: UInt32(kVK_ANSI_R),
+    /// ⌃⌥R – "R" for "ret". Brugeren kan vælge andre taster på siden Genvej.
+    nonisolated static let standardShortcut = Shortcut(keyCode: UInt32(kVK_ANSI_R),
                                    modifiers: NSEvent.ModifierFlags([.control, .option]).rawValue, keyLabel: "R")
+
+    /// Tasterne, der starter stavehjælpen. Vises alle steder ud fra denne ene værdi.
+    @Published var shortcut: Shortcut {
+        didSet {
+            defaults.set(Int(shortcut.keyCode), forKey: "spellingShortcut.keyCode")
+            defaults.set(Int(shortcut.modifiers), forKey: "spellingShortcut.modifiers")
+            defaults.set(shortcut.keyLabel, forKey: "spellingShortcut.keyLabel")
+        }
+    }
 
     private let defaults: UserDefaults
     @Published var isEnabled: Bool { didSet { defaults.set(isEnabled, forKey: "spellingHelpEnabled") } }
@@ -32,6 +41,12 @@ final class SpellingSettings: ObservableObject {
         self.defaults = defaults
         usage = CloudUsageLog(defaults: defaults)
         isEnabled = defaults.bool(forKey: "spellingHelpEnabled")
+        if defaults.object(forKey: "spellingShortcut.keyCode") != nil, let label = defaults.string(forKey: "spellingShortcut.keyLabel") {
+            shortcut = Shortcut(keyCode: UInt32(defaults.integer(forKey: "spellingShortcut.keyCode")),
+                                modifiers: UInt(defaults.integer(forKey: "spellingShortcut.modifiers")), keyLabel: label)
+        } else {
+            shortcut = Self.standardShortcut
+        }
         cloudEnabled = defaults.bool(forKey: "spellingCloudEnabled")
         cloudProvider = CloudProvider(rawValue: defaults.string(forKey: "spellingCloudProvider") ?? "") ?? .openai
         refreshKeys()
@@ -97,14 +112,14 @@ final class SpellingSettings: ObservableObject {
 final class SpellingController {
     private let capture: TextCaptureService
     private let settings: SpellingSettings
-    private let speak: (String, Language) -> Void
+    private let speak: SpellingPanelModel.Speak
     private let stopSpeaking: () -> Void
     private let onFailure: (Notice) -> Void
     private var panel: NSPanel?
     private var model: SpellingPanelModel?
     private var isWorking = false
 
-    init(capture: TextCaptureService, settings: SpellingSettings, speak: @escaping (String, Language) -> Void,
+    init(capture: TextCaptureService, settings: SpellingSettings, speak: @escaping SpellingPanelModel.Speak,
          stopSpeaking: @escaping () -> Void, onFailure: @escaping (Notice) -> Void) {
         self.capture = capture
         self.settings = settings
@@ -129,7 +144,7 @@ final class SpellingController {
                 }
             }
             settings.refreshModelStatus()
-            let model = SpellingPanelModel(sourceBundleID: captured.bundleID, speak: speak)
+            let model = SpellingPanelModel(sourceBundleID: captured.bundleID, speak: speak, stop: stopSpeaking)
             model.chosenProvider = settings.cloudProvider
             show(model)
             guard captured.text.count <= SpellingAssistant.maximumLength else {

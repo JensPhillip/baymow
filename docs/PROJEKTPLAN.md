@@ -442,6 +442,7 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 | AP-64 | Stavehjælp via internet: Claude eller ChatGPT med brugerens egen nøgle, tilvalg, Macens hjælp uden internet | 6 | Udfører + bruger | MVP | Færdig (brugeren har gemt begge nøgler og godkendt 23. november) |
 | AP-65 | Forbrug af internet-hjælpen: kontroller og skønnet pris pr. firma og måned på siden Stavning; ChatGPT som standard | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
 | AP-66 | Forbrug: pris med 4 decimaler og en graf over de seneste 30 dage (lukket som standard, hold musen over en dag) | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
+| AP-67 | Genveje og Stop: stavegenvejen kan ændres på siden Genvej og vises rigtigt alle steder; stavning på Start; "Hør" bliver til "Stop"; Pris/Kontroller på grafens linje | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
 | AP-52 | Developer ID, notarisering og DMG | 5 | Udfører + bruger | AP-50, B9 | Forberedt: DMG og README; afventer certifikat, app-id og kodearkiv |
 
 ### Fase 0 – Grundlag
@@ -825,6 +826,17 @@ tekst). Afsnittet "Forbrug" på siden Stavning viser denne måned og tidligere m
 lukket som standard: søjler pr. dag de seneste 30 dage, ét firma pr. farve (palet kontrolleret for farveblindhed i lys
 og mørk), "Pris"/"Kontroller", og et lille felt med dagens tal, når musen holdes over en dag.
 **Acceptkriterier:** Tests af tal pr. dag. Brugeren har åbnet grafen og holdt musen over en dag.
+
+#### AP-67 Genveje, Start og Stop
+
+**Hvorfor:** Brugerens forbedringer 23. november 2026.
+**Gør:** (1) "Pris"/"Kontroller" står på samme linje som "Vis graf over tid". (2) Siden Genvej har begge genveje (Læs op
+og Ret stavning), hver med "Skift genvej"; de samme taster kan ikke bruges til begge. Stavegenvejen er en gemt
+indstilling, som siden Stavning, Start, menuen og de oplæste forklaringer læser fra. (3) Start viser "Ret din egen
+tekst", når stavehjælpen er slået til. (4) "Hør"-knapperne på siderne, hastigheds- og stemmeprøverne, velkomstvinduet og
+stavevinduet bliver til "Stop", mens der læses op.
+**Acceptkriterier:** Tests af gemt stavegenvej, forklaringer og Hør/Stop. Brugeren har skiftet en genvej og stoppet en
+oplæsning.
 
 ## 7. Stemmeporten
 

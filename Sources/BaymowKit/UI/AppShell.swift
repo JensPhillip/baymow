@@ -32,7 +32,7 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private lazy var spellingVoices: [SpeechEngine] = [AppleSpeechEngine(), BackendSpeechEngine(backend: piperBackend)]
     private lazy var spelling = SpellingController(
         capture: capture, settings: spellingSettings,
-        speak: { [weak self] text, language in self?.speakSpelling(text, language: language) },
+        speak: { [weak self] text, language, done in self?.speakSpelling(text, language: language, done: done) },
         stopSpeaking: { [weak self] in self?.spellingVoices.forEach { $0.stop() } },
         onFailure: { [weak self] notice in self?.present(notice) })
     private var spellingMenuItem: NSMenuItem?
@@ -81,6 +81,12 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
         spellingShortcut.onTrigger = { [weak self] in self?.spelling.run() }
         spellingSettings.$isEnabled.removeDuplicates().sink { [weak self] enabled in
             self?.setSpellingEnabled(enabled)
+        }.store(in: &cancellables)
+        // Ny stavegenvej: registrér den igen og ret menuen. Siderne læser selv den samme værdi.
+        spellingSettings.$shortcut.removeDuplicates().dropFirst().sink { [weak self] shortcut in
+            guard let self else { return }
+            self.spellingMenuItem?.title = "Ret stavning (\(shortcut.displayString))"
+            if self.spellingSettings.isEnabled { self.setSpellingEnabled(true, shortcut: shortcut) }
         }.store(in: &cancellables)
 
         // Første opstart: velkomstvinduet. Senere, hvis adgangen mangler: hovedvinduet, der forklarer det.
@@ -154,7 +160,7 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     /// Stavehjælpens genvej er kun registreret, når brugeren har slået den til.
-    private func setSpellingEnabled(_ enabled: Bool) {
+    private func setSpellingEnabled(_ enabled: Bool, shortcut: Shortcut? = nil) {
         spellingMenuItem?.isHidden = !enabled
         guard enabled else {
             spellingShortcut.unregister()
@@ -162,18 +168,23 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
             spelling.close()
             return
         }
-        let ok = spellingShortcut.register(SpellingSettings.shortcut)
+        let ok = spellingShortcut.register(shortcut ?? spellingSettings.shortcut)
         if !ok { diagnostics.record(.hotkeyRegistrationFailed) }
         spellingSettings.shortcutFailed = !ok
     }
 
     /// Læser et ord eller den rettede tekst op med den valgte stemme for sproget.
-    private func speakSpelling(_ text: String, language: Language) {
+    private func speakSpelling(_ text: String, language: Language, done: @escaping @MainActor () -> Void) {
         spellingVoices.forEach { $0.stop() }
         guard let voice = catalog.voice(for: language),
-              let engine = spellingVoices.first(where: { $0.engineID == voice.engineID }) else { return }
+              let engine = spellingVoices.first(where: { $0.engineID == voice.engineID }) else { done(); return }
         let prepared = language == .danish ? DanishTextNormalizer.normalize(text) : text
-        engine.speak(prepared, voice: voice, rate: settings.rate) { _ in }
+        engine.speak(prepared, voice: voice, rate: settings.rate) { event in
+            switch event {
+            case .finished, .failed: Task { @MainActor in done() }
+            default: break
+            }
+        }
     }
 
     @objc private func spellCheckFromMenu() { spelling.run() }
@@ -235,7 +246,7 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
         read.target = self
         menu.addItem(read)
         readMenuItem = read
-        let spell = NSMenuItem(title: "Ret stavning (\(SpellingSettings.shortcut.displayString))",
+        let spell = NSMenuItem(title: "Ret stavning (\(spellingSettings.shortcut.displayString))",
                                action: #selector(spellCheckFromMenu), keyEquivalent: "")
         spell.target = self
         spell.isHidden = !spellingSettings.isEnabled

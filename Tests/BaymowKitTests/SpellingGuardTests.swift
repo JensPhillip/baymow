@@ -243,4 +243,39 @@ final class SpellingGuardTests: XCTestCase {
         XCTAssertTrue(CloudUsageLog(defaults: defaults).days.isEmpty)
         defaults.removePersistentDomain(forName: "baymow-usage-test")
     }
+
+    // MARK: Genvej og "Hør"/"Stop" (AP-67)
+
+    func testSpellingShortcutIsSavedAndUsedInTheExplanations() throws {
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: "baymow-shortcut-test"))
+        defaults.removePersistentDomain(forName: "baymow-shortcut-test")
+        let settings = SpellingSettings(defaults: defaults)
+        XCTAssertEqual(settings.shortcut, SpellingSettings.standardShortcut)
+        settings.shortcut = Shortcut(keyCode: 15, modifiers: NSEvent.ModifierFlags([.command, .shift]).rawValue, keyLabel: "R")
+        XCTAssertEqual(SpellingSettings(defaults: defaults).shortcut.displayString, "⇧⌘R")
+
+        settings.isEnabled = true
+        let start = MainPage.start.explanation(shortcut: .standard, spelling: settings)
+        XCTAssertTrue(start.contains(settings.shortcut.spokenKeys))
+        XCTAssertTrue(MainPage.spelling.explanation(shortcut: .standard, spelling: settings).contains(settings.shortcut.spokenKeys))
+        settings.isEnabled = false
+        XCTAssertFalse(MainPage.start.explanation(shortcut: .standard, spelling: settings).contains(settings.shortcut.spokenKeys))
+        defaults.removePersistentDomain(forName: "baymow-shortcut-test")
+    }
+
+    func testListenButtonStopsAndResetsWhenDone() {
+        var finish: (@MainActor () -> Void)?
+        var stopped = 0
+        let model = SpellingPanelModel(sourceBundleID: nil, speak: { _, _, done in finish = done }, stop: { stopped += 1 })
+        model.listen()
+        XCTAssertTrue(model.isListening)
+        model.listen() // anden gang: stop
+        XCTAssertFalse(model.isListening)
+        XCTAssertEqual(stopped, 1)
+        finish?() // et sent "færdig" fra den stoppede oplæsning ændrer intet
+        XCTAssertFalse(model.isListening)
+        model.listen()
+        finish?()
+        XCTAssertFalse(model.isListening, "knappen bliver til Hør igen, når oplæsningen er færdig")
+    }
 }

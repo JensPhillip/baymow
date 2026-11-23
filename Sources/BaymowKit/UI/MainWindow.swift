@@ -6,8 +6,12 @@ import BaymowCore
 @MainActor
 final class MainWindowModel: ObservableObject {
     @Published var hasPermission = TextCaptureService.hasPermission
-    @Published var isRecordingShortcut = false
-    @Published var shortcutError: String?
+    /// Hvilken genvej der optages lige nu (`nil`: ingen).
+    @Published var recording: ShortcutTarget?
+    @Published var shortcutError: (target: ShortcutTarget, text: String)?
+    var isRecordingShortcut: Bool { recording != nil }
+
+    enum ShortcutTarget: Equatable { case read, spelling }
     /// Siden, der vises i hovedvinduet.
     @Published var page: MainPage = .start
 
@@ -38,7 +42,7 @@ final class MainWindowModel: ObservableObject {
         timer?.invalidate()
         timer = nil
         cancelRecording()
-        sampleEngines.forEach { $0.stop() }
+        stopSpeaking()
     }
 
     private func refresh() {
@@ -47,24 +51,53 @@ final class MainWindowModel: ObservableObject {
         catalog.refresh()
     }
 
-    func playSample(_ voice: Voice) {
-        sampleEngines.forEach { $0.stop() }
-        let text = voice.language == .danish ? DanishTextNormalizer.normalize(voice.language.sampleText) : voice.language.sampleText
-        sampleEngines.first { $0.engineID == voice.engineID }?
-            .speak(text, voice: voice, rate: settings.rate) { _ in }
-    }
+    /// Det, der bliver læst op lige nu ("Hør"-knapper og stemmeprøver), så knappen kan vise "Stop".
+    @Published private(set) var playing: String?
+    private var playToken = 0
 
-    /// Læser en af Baymows egne forklaringer op med den valgte danske stemme ("Hør"-knappen).
-    func speakHelp(_ text: String) {
-        sampleEngines.forEach { $0.stop() }
-        guard let voice = catalog.voice(for: .danish),
+    /// Læser op, eller stopper, hvis det samme allerede bliver læst op.
+    private func toggle(_ id: String, text: String, voice: Voice) {
+        let wasPlaying = playing == id
+        stopSpeaking()
+        guard !wasPlaying,
               let engine = sampleEngines.first(where: { $0.engineID == voice.engineID }) else { return }
-        engine.speak(DanishTextNormalizer.normalize(text), voice: voice, rate: settings.rate) { _ in }
+        playToken += 1
+        let token = playToken
+        playing = id
+        engine.speak(text, voice: voice, rate: settings.rate) { [weak self] event in
+            switch event {
+            case .finished, .failed:
+                Task { @MainActor in
+                    guard let self, self.playToken == token else { return }
+                    self.playing = nil
+                }
+            default: break
+            }
+        }
     }
 
-    func beginRecording() {
+    func stopSpeaking() {
+        playToken += 1
+        sampleEngines.forEach { $0.stop() }
+        playing = nil
+    }
+
+    func playSample(_ voice: Voice, id: String? = nil) {
+        let text = voice.language == .danish ? DanishTextNormalizer.normalize(voice.language.sampleText) : voice.language.sampleText
+        toggle(id ?? "sample:\(voice.id)", text: text, voice: voice)
+    }
+
+    /// Læser en af Baymows egne forklaringer op med den valgte danske stemme ("Hør"-knappen). Et tryk mere stopper.
+    func speakHelp(_ text: String, id: String = "help") {
+        guard let voice = catalog.voice(for: .danish) else { return }
+        toggle(id, text: DanishTextNormalizer.normalize(text), voice: voice)
+    }
+
+    /// Optager nye taster til en genvej. `apply` gemmer dem, eller returnerer en fejltekst (fx hvis tasterne allerede
+    /// bruges af Baymows anden genvej).
+    func beginRecording(_ target: ShortcutTarget, apply: @escaping (Shortcut) -> String?) {
         cancelRecording()
-        isRecordingShortcut = true
+        recording = target
         shortcutError = nil
         keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
             guard let self else { return event }
@@ -75,10 +108,14 @@ final class MainWindowModel: ObservableObject {
             let flags = event.modifierFlags.intersection([.command, .option, .control, .shift])
             guard !flags.intersection([.command, .option, .control]).isEmpty,
                   let label = event.charactersIgnoringModifiers?.uppercased(), !label.isEmpty else {
-                self.shortcutError = "Genvejen skal indeholde ⌘, ⌥ eller ⌃ sammen med en tast."
+                self.shortcutError = (target, "Genvejen skal indeholde ⌘, ⌥ eller ⌃ sammen med en tast.")
                 return nil
             }
-            self.settings.shortcut = Shortcut(keyCode: UInt32(event.keyCode), modifiers: flags.rawValue, keyLabel: label)
+            let shortcut = Shortcut(keyCode: UInt32(event.keyCode), modifiers: flags.rawValue, keyLabel: label)
+            if let error = apply(shortcut) {
+                self.shortcutError = (target, error)
+                return nil
+            }
             self.cancelRecording()
             return nil
         }
@@ -87,7 +124,7 @@ final class MainWindowModel: ObservableObject {
     func cancelRecording() {
         if let keyMonitor { NSEvent.removeMonitor(keyMonitor) }
         keyMonitor = nil
-        isRecordingShortcut = false
+        recording = nil
     }
 }
 
@@ -137,15 +174,18 @@ enum MainPage: String, CaseIterable, Identifiable {
         case .display: return "Se ordet, der bliver læst."
         case .voices: return "Vælg, hvem der læser for dig."
         case .spelling: return "Få rettet det, du selv skriver."
-        case .shortcut: return "Tasterne, der starter oplæsningen."
+        case .shortcut: return "Tasterne, der starter Baymow."
         }
     }
 
     /// Det, "Hør"-knappen læser op. Almindeligt dansk uden forkortelser.
-    func explanation(shortcut: Shortcut) -> String {
+    @MainActor
+    func explanation(shortcut: Shortcut, spelling: SpellingSettings) -> String {
         switch self {
         case .start:
-            return "Markér en tekst i et hvilket som helst program. Tryk så på \(shortcut.spokenKeys) på samme tid. Så læser Baymow teksten højt for dig."
+            let read = "Markér en tekst i et hvilket som helst program. Tryk så på \(shortcut.spokenKeys) på samme tid. Så læser Baymow teksten højt for dig."
+            guard spelling.isEnabled else { return read }
+            return read + " Vil du have rettet din egen tekst, så markér den, og tryk på \(spelling.shortcut.spokenKeys)."
         case .reading:
             return "Her vælger du, hvor hurtigt der bliver læst. Skildpadden er langsomt, og haren er hurtigt. Du kan også vælge sproget. Står den på automatisk, finder Baymow selv ud af, om teksten er dansk eller engelsk."
         case .display:
@@ -153,9 +193,9 @@ enum MainPage: String, CaseIterable, Identifiable {
         case .voices:
             return "Her vælger du en stemme til hvert sprog. Tryk på afspil for at høre en stemme. Tryk på vælg for at bruge den."
         case .spelling:
-            return "Stavehjælpen retter den tekst, du selv har skrevet. Markér teksten, og tryk på \(SpellingSettings.shortcut.spokenKeys) på samme tid. Baymow viser rettelserne med farver. Grøn er rettet. Orange skal du selv tjekke. Tryk på et ord for at vælge det og høre det. Tryk til sidst på Brug rettelsen. Din tekst bliver på din Mac."
+            return "Stavehjælpen retter den tekst, du selv har skrevet. Markér teksten, og tryk på \(spelling.shortcut.spokenKeys) på samme tid. Baymow viser rettelserne med farver. Grøn er rettet. Orange skal du selv tjekke. Tryk på et ord for at vælge det og høre det. Tryk til sidst på Brug rettelsen." + (spelling.cloudEnabled ? " Du har slået bedre hjælp via internet til, så teksten bliver sendt til \(spelling.cloudProvider.title)." : " Din tekst bliver på din Mac.")
         case .shortcut:
-            return "Genvejen er de taster, du trykker på samtidig for at få den markerede tekst læst op. Du kan skifte til andre taster, hvis du vil."
+            return "En genvej er de taster, du trykker på samtidig. Den ene får den markerede tekst læst op. Den anden retter stavningen i din egen tekst. Du kan skifte til andre taster, hvis du vil."
         }
     }
 }
@@ -175,7 +215,10 @@ struct MainView: View {
             .navigationSplitViewColumnWidth(min: 180, ideal: 200, max: 240)
         } detail: {
             VStack(alignment: .leading, spacing: 0) {
-                PageHeader(page: model.page, onListen: { model.speakHelp(model.page.explanation(shortcut: settings.shortcut)) })
+                PageHeader(page: model.page, isPlaying: model.playing == "help:\(model.page.rawValue)", onListen: {
+                    model.speakHelp(model.page.explanation(shortcut: settings.shortcut, spelling: spelling),
+                                    id: "help:\(model.page.rawValue)")
+                })
                     .padding(.horizontal, 28)
                     .padding(.top, 24)
                     .padding(.bottom, 8)
@@ -204,7 +247,7 @@ struct MainView: View {
         case .reading: readingPage
         case .display: displayPage
         case .voices: voicesPage
-        case .spelling: SpellingSettingsPage(settings: spelling, speak: model.speakHelp)
+        case .spelling: SpellingSettingsPage(settings: spelling, speak: { model.speakHelp($0) })
         case .shortcut: shortcutPage
         }
     }
@@ -240,7 +283,7 @@ struct MainView: View {
             .padding(.vertical, 6)
         }
 
-        Section("Sådan gør du") {
+        Section(spelling.isEnabled ? "Læs op" : "Sådan gør du") {
             HStack(alignment: .top, spacing: 0) {
                 HowToStep(number: 1, title: "Markér") {
                     Image(systemName: "character.cursor.ibeam").font(.system(size: 30, weight: .medium))
@@ -255,6 +298,25 @@ struct MainView: View {
                 }
             }
             .padding(.vertical, 10)
+        }
+
+        if spelling.isEnabled {
+            Section("Ret din egen tekst") {
+                HStack(alignment: .top, spacing: 0) {
+                    HowToStep(number: 1, title: "Markér") {
+                        Image(systemName: "character.cursor.ibeam").font(.system(size: 30, weight: .medium))
+                            .foregroundStyle(.teal)
+                    }
+                    arrow
+                    HowToStep(number: 2, title: "Tryk") { KeyCaps(shortcut: spelling.shortcut, size: 30) }
+                    arrow
+                    HowToStep(number: 3, title: "Ret") {
+                        Image(systemName: "textformat.abc.dottedunderline").font(.system(size: 30, weight: .medium))
+                            .foregroundStyle(.teal)
+                    }
+                }
+                .padding(.vertical, 10)
+            }
         }
 
         if VoiceLibrary.needsMainVoiceGuide(installed: catalog.voices) {
@@ -299,14 +361,14 @@ struct MainView: View {
                     Image(systemName: "hare.fill").font(.system(size: 20)).foregroundStyle(.secondary)
                         .help("Hurtigt").accessibilityHidden(true)
                     Button {
-                        if let voice = catalog.voice(for: .danish) { model.playSample(voice) }
+                        if let voice = catalog.voice(for: .danish) { model.playSample(voice, id: "rate") }
                     } label: {
-                        Image(systemName: "play.circle.fill").font(.system(size: 26))
+                        Image(systemName: model.playing == "rate" ? "stop.circle.fill" : "play.circle.fill").font(.system(size: 26))
                     }
                     .buttonStyle(.plain)
                     .foregroundStyle(Color.accentColor)
-                    .help("Hør hastigheden")
-                    .accessibilityLabel("Hør hastigheden")
+                    .help(model.playing == "rate" ? "Stop" : "Hør hastigheden")
+                    .accessibilityLabel(model.playing == "rate" ? "Stop" : "Hør hastigheden")
                 }
                 HStack(spacing: 8) {
                     ForEach([1.0, 1.5, 2.0, 2.5, 3.0], id: \.self) { preset in
@@ -409,38 +471,69 @@ struct MainView: View {
 
     @ViewBuilder private var shortcutPage: some View {
         Section {
-            VStack(spacing: 16) {
-                if model.isRecordingShortcut {
+            shortcutEditor(.read, title: "Læs op", symbol: "speaker.wave.2.fill", color: .blue,
+                           shortcut: settings.shortcut, failed: shortcutRegistrationFailed) { new in
+                if new == spelling.shortcut { return "De taster bruges allerede til at rette stavning." }
+                settings.shortcut = new
+                return nil
+            }
+        }
+        Section {
+            shortcutEditor(.spelling, title: "Ret stavning", symbol: "textformat.abc.dottedunderline", color: .teal,
+                           shortcut: spelling.shortcut, failed: spelling.isEnabled && spelling.shortcutFailed) { new in
+                if new == settings.shortcut { return "De taster bruges allerede til at læse op." }
+                spelling.shortcut = new
+                return nil
+            }
+            if !spelling.isEnabled {
+                Label("Stavehjælpen er slået fra. Slå den til på siden Stavning.", systemImage: "info.circle")
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    /// Én genvej: hvad den gør, tasterne, og "Skift genvej".
+    private func shortcutEditor(_ target: MainWindowModel.ShortcutTarget, title: String, symbol: String, color: Color,
+                                shortcut: Shortcut, failed: Bool,
+                                apply: @escaping (Shortcut) -> String?) -> some View {
+        let recording = model.recording == target
+        return VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 14) {
+                IconTile(symbol: symbol, color: color, size: 40)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title).font(.headline)
+                    Text(shortcut.spokenKeys).foregroundStyle(.secondary)
+                }
+                Spacer()
+                if recording {
                     Label("Tryk de nye taster nu", systemImage: "keyboard.badge.ellipsis")
-                        .font(.title3.weight(.semibold)).foregroundStyle(Color.accentColor)
-                        .frame(height: 48)
+                        .font(.headline).foregroundStyle(Color.accentColor)
                 } else {
-                    KeyCaps(shortcut: settings.shortcut, size: 48)
-                }
-                Text(settings.shortcut.spokenKeys).foregroundStyle(.secondary)
-                HStack {
-                    if model.isRecordingShortcut {
-                        Button { model.cancelRecording() } label: { Label("Fortryd", systemImage: "xmark") }
-                            .controlSize(.large)
-                            .keyboardShortcut(.cancelAction)
-                    } else {
-                        Button { model.beginRecording() } label: { Label("Skift genvej", systemImage: "pencil") }
-                            .controlSize(.large)
-                            .help("Tryk, og tryk så de nye taster. Esc fortryder.")
-                    }
-                }
-                if let error = model.shortcutError {
-                    Label(error, systemImage: "exclamationmark.triangle.fill").foregroundStyle(.orange)
-                        .fixedSize(horizontal: false, vertical: true)
-                } else if shortcutRegistrationFailed {
-                    Label("Genvejen virker ikke. Et andet program bruger den måske. Vælg en anden.",
-                          systemImage: "exclamationmark.triangle.fill")
-                        .foregroundStyle(.orange).fixedSize(horizontal: false, vertical: true)
+                    KeyCaps(shortcut: shortcut, size: 34)
                 }
             }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 18)
+            HStack {
+                Spacer()
+                if recording {
+                    Button { model.cancelRecording() } label: { Label("Fortryd", systemImage: "xmark") }
+                        .controlSize(.large)
+                        .keyboardShortcut(.cancelAction)
+                } else {
+                    Button { model.beginRecording(target, apply: apply) } label: { Label("Skift genvej", systemImage: "pencil") }
+                        .controlSize(.large)
+                        .help("Tryk, og tryk så de nye taster. Esc fortryder.")
+                }
+            }
+            if let error = model.shortcutError, error.target == target {
+                Label(error.text, systemImage: "exclamationmark.triangle.fill").foregroundStyle(.orange)
+                    .fixedSize(horizontal: false, vertical: true)
+            } else if failed {
+                Label("Genvejen virker ikke. Et andet program bruger den måske. Vælg en anden.",
+                      systemImage: "exclamationmark.triangle.fill")
+                    .foregroundStyle(.orange).fixedSize(horizontal: false, vertical: true)
+            }
         }
+        .padding(.vertical, 8)
     }
 }
 
@@ -470,6 +563,7 @@ struct MainSidebar: View {
 /// Overskriften øverst på hver side: ikon, titel, én kort sætning og "Hør".
 private struct PageHeader: View {
     let page: MainPage
+    let isPlaying: Bool
     let onListen: () -> Void
 
     var body: some View {
@@ -480,7 +574,7 @@ private struct PageHeader: View {
                 Text(page.subtitle).font(.title3).foregroundStyle(.secondary)
             }
             Spacer()
-            ListenButton(action: onListen)
+            ListenButton(isPlaying: isPlaying, action: onListen)
         }
     }
 }
@@ -604,13 +698,14 @@ private struct VoiceRowView: View {
             }
             Spacer()
             if let voice = row.installed {
+                let isPlaying = model.playing == "sample:\(voice.id)"
                 Button { model.playSample(voice) } label: {
-                    Image(systemName: "play.circle.fill").font(.system(size: 24))
+                    Image(systemName: isPlaying ? "stop.circle.fill" : "play.circle.fill").font(.system(size: 24))
                 }
                 .buttonStyle(.plain)
                 .foregroundStyle(Color.accentColor)
-                .help("Hør stemmen")
-                .accessibilityLabel("Hør \(row.name)")
+                .help(isPlaying ? "Stop" : "Hør stemmen")
+                .accessibilityLabel(isPlaying ? "Stop" : "Hør \(row.name)")
                 Group {
                     if row.isChosen {
                         Text("Valgt").foregroundStyle(.secondary)

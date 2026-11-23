@@ -38,6 +38,14 @@ Er du i tvivl om noget i vinduet, så skriv, hvad du så, eller tag et skærmbil
 - [ ] 4. Tryk **Vis graf over tid** under Forbrug. Hold musen over dagens søjle: et lille felt viser kontroller og pris.
       Skift mellem **Pris** og **Kontroller**. (Grafen har kun tal fra i dag og frem.)
 
+## Test nu: Genveje og Stop (5 min)
+- [ ] 1. Siden **Genvej**: der er nu to genveje. Tryk **Skift genvej** ved "Ret stavning", og tryk fx ⌃⌥E.
+      Står de nye taster nu også på siden Stavning, på Start og i menuen ("Ret stavning")? Virker de?
+- [ ] 2. Prøv at give "Ret stavning" de samme taster som "Læs op". Baymow siger nej.
+- [ ] 3. Tryk **Hør** øverst på en side. Knappen bliver til **Stop**. Tryk Stop: oplæsningen stopper.
+- [ ] 4. Det samme med afspil-knapperne ved stemmerne og hastigheden, og med **Hør** i stavevinduet.
+- [ ] 5. Åbn grafen under Forbrug: "Pris" og "Kontroller" står nu på samme linje som "Vis graf over tid".
+
 ## Beslut, når du har prøvet den
 - [ ] **Kommaer:** Baymow sætter kommaer, hvor modellen mener, de skal være (fx "Jeg tror, at …"). Vil du have det,
       eller skal den kun rette stavning?

@@ -21,11 +21,18 @@ final class SpellingPanelModel: ObservableObject {
     private(set) var options: [Int: [String]] = [:]
 
     let sourceBundleID: String?
-    private let speak: (String, Language) -> Void
+    /// Læser op; `done` kaldes, når oplæsningen er færdig eller stoppet.
+    typealias Speak = (_ text: String, _ language: Language, _ done: @escaping @MainActor () -> Void) -> Void
+    private let speak: Speak
+    private let stop: () -> Void
+    /// Bliver den rettede tekst læst op lige nu? Så er "Hør" en stopknap.
+    @Published private(set) var isListening = false
+    private var listenToken = 0
 
-    init(sourceBundleID: String?, speak: @escaping (String, Language) -> Void) {
+    init(sourceBundleID: String?, speak: @escaping Speak, stop: @escaping () -> Void = {}) {
         self.sourceBundleID = sourceBundleID
         self.speak = speak
+        self.stop = stop
     }
 
     func load(_ result: SpellingResult) {
@@ -49,10 +56,26 @@ final class SpellingPanelModel: ObservableObject {
         guard let index = segments.firstIndex(where: { $0.id == id }) else { return }
         segments[index].text = word
         copied = false
-        speak(word, language)
+        listenToken += 1
+        isListening = false
+        speak(word, language) {}
     }
 
-    func listen() { speak(text, language) }
+    /// "Hør": læser den rettede tekst op. Et tryk mere stopper.
+    func listen() {
+        listenToken += 1
+        if isListening {
+            stop()
+            isListening = false
+            return
+        }
+        let token = listenToken
+        isListening = true
+        speak(text, language) { [weak self] in
+            guard let self, self.listenToken == token else { return }
+            self.isListening = false
+        }
+    }
 }
 
 /// Stavehjælpens vindue: teksten med farver, ét felt pr. rettelse og to knapper.
@@ -100,9 +123,8 @@ struct SpellingPanelView: View {
             Text("Stavehjælp").font(.title3.weight(.semibold))
             Spacer()
             if model.state == .ready {
-                Button(action: model.listen) { Label("Hør", systemImage: "speaker.wave.2.fill") }
-                    .buttonStyle(.bordered)
-                    .help("Læs den rettede tekst højt")
+                ListenButton(isPlaying: model.isListening, help: "Læs den rettede tekst højt", controlSize: .regular,
+                             action: model.listen)
             }
             Button(action: onClose) { Image(systemName: "xmark").font(.system(size: 13, weight: .semibold)) }
                 .buttonStyle(.plain).foregroundStyle(.secondary)

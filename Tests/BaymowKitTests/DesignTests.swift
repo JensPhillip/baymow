@@ -27,13 +27,22 @@ final class DesignTests: XCTestCase {
     }
 
     /// Forklaringerne, "Hør"-knapperne læser op, skal være almindeligt dansk, som stemmen kan læse uden omskrivning.
+    @MainActor
     func testExplanationsArePlainDanish() {
-        for page in MainPage.allCases {
-            let text = page.explanation(shortcut: .standard)
-            XCTAssertEqual(DanishTextNormalizer.normalize(text), text, page.rawValue)
-            XCTAssertFalse(page.title.isEmpty)
-            XCTAssertFalse(page.subtitle.isEmpty)
+        let defaults = UserDefaults(suiteName: "baymow-design-test")!
+        defaults.removePersistentDomain(forName: "baymow-design-test")
+        let spelling = SpellingSettings(defaults: defaults)
+        for (enabled, cloud) in [(false, false), (true, false), (true, true)] {
+            spelling.isEnabled = enabled
+            spelling.cloudEnabled = cloud
+            for page in MainPage.allCases {
+                let text = page.explanation(shortcut: .standard, spelling: spelling)
+                XCTAssertEqual(DanishTextNormalizer.normalize(text), text, page.rawValue)
+                XCTAssertFalse(page.title.isEmpty)
+                XCTAssertFalse(page.subtitle.isEmpty)
+            }
         }
+        defaults.removePersistentDomain(forName: "baymow-design-test")
     }
 
     /// Korte overskrifter (designprincip 1): højst tre ord pr. side i sidebjælken.

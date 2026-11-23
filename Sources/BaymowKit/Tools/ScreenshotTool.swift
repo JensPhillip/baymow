@@ -81,6 +81,15 @@ public enum ScreenshotTool {
               MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
                        spelling: SpellingSettings(defaults: defaults), shortcutRegistrationFailed: false))
         defaults.set(false, forKey: "spellingCloudEnabled")
+        // Start og Genvej med stavehjælpen slået til.
+        defaults.set(true, forKey: "spellingHelpEnabled")
+        for page in [MainPage.start, .shortcut] {
+            model.page = page
+            shoot("hovedvindue-\(page.rawValue)-stavning", size: NSSize(width: 780, height: 760),
+                  MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
+                           spelling: SpellingSettings(defaults: defaults), shortcutRegistrationFailed: false))
+        }
+        defaults.set(false, forKey: "spellingHelpEnabled")
 
         // Grafen over forbruget (AP-66) med opdigtede tal for 30 dage og musen over en dag.
         var demoDate = Calendar(identifier: .gregorian).startOfDay(for: Date()).addingTimeInterval(-29 * 86_400 + 43_200)
@@ -97,6 +106,8 @@ public enum ScreenshotTool {
         let selected = chartLog.lastDays(30).max { $0.entry.checks < $1.entry.checks }?.day
         shoot("forbrug-graf", size: NSSize(width: 640, height: 330),
               UsageChart(usage: chartLog, selectedDay: selected).padding(20))
+        shoot("forbrug-afsnit", size: NSSize(width: 640, height: 560),
+              Form { Section("Forbrug") { UsageView(usage: chartLog, showChart: true) } }.formStyle(.grouped))
         chartLog.reset()
         model.page = .start
         shoot("sidebjaelke", size: NSSize(width: 220, height: 300), MainSidebar(model: model, needsAttention: { $0 == .voices }))
@@ -108,7 +119,7 @@ public enum ScreenshotTool {
         sessions.close()
 
         // Stavehjælpen (AP-63) med egne eksempelsætninger og den rigtige vagt; Macens model, hvis den er klar.
-        let spellingModel = SpellingPanelModel(sourceBundleID: nil) { _, _ in }
+        let spellingModel = SpellingPanelModel(sourceBundleID: nil) { _, _, _ in }
         shoot("stavehjaelp-arbejder", size: nil, SpellingPanelView(model: spellingModel, onApply: {}, onCopy: {}, onClose: {}))
         let assistant = SpellingAssistant(corrector: AppleSpellingModel.makeCorrector(), checker: SystemWordChecker())
         let demoResult = SpellTest.runBlocking { await assistant.check(spellingDemo) }
@@ -116,12 +127,12 @@ public enum ScreenshotTool {
         shoot("stavehjaelp", size: nil, SpellingPanelView(model: spellingModel, onApply: {}, onCopy: {}, onClose: {}))
         var cloudResult = demoResult
         cloudResult.source = .cloud(.claude)
-        let cloudModel = SpellingPanelModel(sourceBundleID: nil) { _, _ in }
+        let cloudModel = SpellingPanelModel(sourceBundleID: nil) { _, _, _ in }
         cloudModel.load(cloudResult)
         shoot("stavehjaelp-internet", size: nil, SpellingPanelView(model: cloudModel, onApply: {}, onCopy: {}, onClose: {}))
         var offlineResult = demoResult
         offlineResult.cloudProblem = .offline
-        let offlineModel = SpellingPanelModel(sourceBundleID: nil) { _, _ in }
+        let offlineModel = SpellingPanelModel(sourceBundleID: nil) { _, _, _ in }
         offlineModel.load(offlineResult)
         shoot("stavehjaelp-uden-internet", size: nil, SpellingPanelView(model: offlineModel, onApply: {}, onCopy: {}, onClose: {}))
         return failures == 0 ? 0 : 1

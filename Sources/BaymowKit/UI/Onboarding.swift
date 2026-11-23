@@ -62,7 +62,9 @@ final class OnboardingModel: ObservableObject {
     func stopWatching() {
         timer?.invalidate()
         timer = nil
+        playToken += 1
         sampleEngine.stop()
+        playing = nil
     }
 
     private func refresh() {
@@ -79,13 +81,35 @@ final class OnboardingModel: ObservableObject {
         TextCaptureService.openAccessibilitySettings()
     }
 
-    func playVoiceSample() {
+    /// Det, der bliver læst op lige nu, så knappen kan vise "Stop".
+    @Published private(set) var playing: String?
+    private var playToken = 0
+
+    /// Læser op, eller stopper, hvis det samme allerede bliver læst op.
+    private func toggle(_ id: String, text: String) {
+        let wasPlaying = playing == id
+        playToken += 1
+        sampleEngine.stop()
+        playing = nil
         // Prøven bruger Apples motor; er en anden motors stemme valgt, høres Apples bedste danske stemme.
         let voices = catalog.voices(for: .danish).filter { $0.engineID == sampleEngine.engineID }
-        guard let voice = voices.first(where: { $0.id == VoiceLibrary.mainDanishVoiceID }) ?? voices.first else { return }
-        sampleEngine.stop()
-        sampleEngine.speak(DanishTextNormalizer.normalize(Language.danish.sampleText), voice: voice, rate: settings.rate) { _ in }
+        guard !wasPlaying,
+              let voice = voices.first(where: { $0.id == VoiceLibrary.mainDanishVoiceID }) ?? voices.first else { return }
+        let token = playToken
+        playing = id
+        sampleEngine.speak(DanishTextNormalizer.normalize(text), voice: voice, rate: settings.rate) { [weak self] event in
+            switch event {
+            case .finished, .failed:
+                Task { @MainActor in
+                    guard let self, self.playToken == token else { return }
+                    self.playing = nil
+                }
+            default: break
+            }
+        }
     }
+
+    func playVoiceSample() { toggle("sample", text: Language.danish.sampleText) }
 
     /// Det, "Hør"-knappen læser op for det trin, brugeren er nået til.
     func explanation(shortcut: Shortcut) -> String {
@@ -101,13 +125,7 @@ final class OnboardingModel: ObservableObject {
         }
     }
 
-    func speakExplanation() {
-        let voices = catalog.voices(for: .danish).filter { $0.engineID == sampleEngine.engineID }
-        guard let voice = voices.first(where: { $0.id == VoiceLibrary.mainDanishVoiceID }) ?? voices.first else { return }
-        sampleEngine.stop()
-        sampleEngine.speak(DanishTextNormalizer.normalize(explanation(shortcut: settings.shortcut)), voice: voice,
-                           rate: settings.rate) { _ in }
-    }
+    func speakExplanation() { toggle("help", text: explanation(shortcut: settings.shortcut)) }
 
     func finish() {
         settings.hasCompletedOnboarding = true
@@ -131,7 +149,7 @@ struct OnboardingView: View {
                         .font(.title3).foregroundStyle(.secondary)
                 }
                 Spacer()
-                ListenButton { model.speakExplanation() }
+                ListenButton(isPlaying: model.playing == "help") { model.speakExplanation() }
             }
 
             StepCard(number: 1, symbol: "lock.open.fill", title: "Giv Baymow lov",
@@ -149,7 +167,10 @@ struct OnboardingView: View {
                      state: state(for: .voice)) {
                 if model.hasMainVoice {
                     Label("Sara (forbedret) er klar.", systemImage: "checkmark.circle.fill").foregroundStyle(.green)
-                    Button { model.playVoiceSample() } label: { Label("Hør stemmen", systemImage: "play.circle.fill") }
+                    Button { model.playVoiceSample() } label: {
+                        Label(model.playing == "sample" ? "Stop" : "Hør stemmen",
+                              systemImage: model.playing == "sample" ? "stop.circle.fill" : "play.circle.fill")
+                    }
                 } else {
                     Text("Sara (forbedret) er gratis.").foregroundStyle(.secondary)
                     GuideStep(number: 1, symbol: "gearshape.fill", text: "Tryk på Åbn Systemindstillinger.")

@@ -5,7 +5,7 @@ Sidst opdateret: 2026-11-23 af udfører (Claude Opus 5.5).
 
 ## Lige nu
 
-- **I gang:** AP-63 stavehjælp (I12), AP-65 og AP-66 forbrug af internet-hjælpen (med graf) – bygget, afventer brugerens afprøvning. AP-64 (internet-hjælpen) er godkendt.
+- **I gang:** AP-63 stavehjælp (I12), AP-65 og AP-66 forbrug (med graf) og AP-67 genveje og Stop – bygget, afventer brugerens afprøvning. AP-64 (internet-hjælpen) er godkendt.
 - **Færdige pakker:** AP-00, AP-01, AP-02, AP-10, AP-11, AP-12, AP-19 (hovedstemme: Apple Sara (Enhanced)),
   AP-20, AP-21, AP-22, AP-23, AP-30, AP-31, AP-32, AP-40, AP-50, AP-51, AP-60, AP-61, AP-62.
 - **Lukket/droppet af brugeren 22. november:** AP-03 (lytteskemaet), AP-15 (Plapre).
@@ -37,6 +37,8 @@ Sidst opdateret: 2026-11-23 af udfører (Claude Opus 5.5).
   Idéer til senere: I13 rigtige priser hentet hos firmaerne, I14 fælles nøgle mod betaling for ikke-tekniske brugere.
 - **AP-66 (forbrug over tid):** pris med 4 decimaler; "Vis graf over tid" (lukket som standard) med søjler pr. dag i
   30 dage og tal ved musen. Forbruget gemmes nu også pr. dag; dage før 23. november findes kun som månedstal.
+- **AP-67 (genveje og Stop):** begge genveje kan skiftes på siden Genvej (stavegenvejen er nu en indstilling og vises
+  ens alle steder); Start viser stavning, når den er slået til; alle "Hør"-knapper bliver til "Stop" under oplæsning.
 
 ## Venter på brugeren
 

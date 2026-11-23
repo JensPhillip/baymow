@@ -91,15 +91,19 @@ struct KeyCaps: View {
 
 /// "Hør"-knappen: læser en forklaring op, så den ikke skal læses.
 struct ListenButton: View {
+    /// Bliver der læst op lige nu? Så er knappen en stopknap.
+    var isPlaying = false
+    var help = "Læs forklaringen højt"
+    var controlSize: ControlSize = .large
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            Label("Hør", systemImage: "speaker.wave.2.fill")
+            Label(isPlaying ? "Stop" : "Hør", systemImage: isPlaying ? "stop.fill" : "speaker.wave.2.fill")
         }
         .buttonStyle(.bordered)
-        .controlSize(.large)
-        .help("Læs forklaringen højt")
+        .controlSize(controlSize)
+        .help(isPlaying ? "Stop oplæsningen" : help)
     }
 }
 

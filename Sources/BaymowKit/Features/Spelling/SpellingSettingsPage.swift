@@ -12,10 +12,10 @@ struct SpellingSettingsPage: View {
         Section {
             OptionRow(symbol: "textformat.abc.dottedunderline", color: .teal, title: "Stavehjælp",
                       subtitle: "Ret den tekst, du selv har skrevet.",
-                      help: "Markér din egen tekst, og tryk \(SpellingSettings.shortcut.displayString). Baymow viser rettelserne, og du vælger selv, om de skal bruges.",
+                      help: "Markér din egen tekst, og tryk \(settings.shortcut.displayString). Baymow viser rettelserne, og du vælger selv, om de skal bruges.",
                       isOn: $settings.isEnabled)
             if settings.isEnabled, settings.shortcutFailed {
-                Label("Tasterne \(SpellingSettings.shortcut.displayString) bruges af et andet program.",
+                Label("Tasterne \(settings.shortcut.displayString) bruges af et andet program.",
                       systemImage: "exclamationmark.triangle.fill")
                     .foregroundStyle(.orange)
             }
@@ -28,7 +28,7 @@ struct SpellingSettingsPage: View {
                     .frame(width: 20, height: 20).background(Color.accentColor, in: Circle())
                 Image(systemName: "keyboard").foregroundStyle(.secondary).frame(width: 20)
                 Text("Tryk")
-                KeyCaps(shortcut: SpellingSettings.shortcut, size: 26)
+                KeyCaps(shortcut: settings.shortcut, size: 26)
             }
             .accessibilityElement(children: .combine)
             GuideStep(number: 3, symbol: "hand.tap", text: "Tryk på et ord for at vælge det og høre det")
@@ -139,7 +139,7 @@ private struct CloudSettings: View {
                 .font(.callout).foregroundStyle(.secondary)
         }
 
-        Label("Når du trykker \(SpellingSettings.shortcut.displayString), sendes den markerede tekst til \(provider.company). Uden internet bruger Baymow Macens egen hjælp.",
+        Label("Når du trykker \(settings.shortcut.displayString), sendes den markerede tekst til \(provider.company). Uden internet bruger Baymow Macens egen hjælp.",
               systemImage: "paperplane.fill")
             .foregroundStyle(.secondary)
     }
@@ -176,11 +176,18 @@ private struct CloudSettings: View {
 }
 
 /// Forbruget denne måned pr. firma, og tidligere måneder. Et skøn ud fra priserne; kun tal er gemt.
-private struct UsageView: View {
+struct UsageView: View {
     @ObservedObject var usage: CloudUsageLog
     @State private var showEarlier = false
     /// Grafen er lukket, til brugeren selv åbner den.
-    @State private var showChart = false
+    @State private var showChart: Bool
+    @State private var measure: UsageChart.Measure = .price
+
+    /// `showChart` kun til skærmbilleder.
+    init(usage: CloudUsageLog, showChart: Bool = false) {
+        self.usage = usage
+        _showChart = State(initialValue: showChart)
+    }
     @State private var confirmReset = false
 
     var body: some View {
@@ -198,8 +205,20 @@ private struct UsageView: View {
             }
         }
 
-        DisclosureGroup("Vis graf over tid", isExpanded: $showChart) {
-            UsageChart(usage: usage)
+        DisclosureGroup(isExpanded: $showChart) {
+            UsageChart(usage: usage, measure: measure)
+        } label: {
+            // "Pris"/"Kontroller" står på samme linje, når grafen er åben: det sparer plads.
+            HStack {
+                Text("Vis graf over tid")
+                Spacer()
+                if showChart {
+                    Picker("Vis", selection: $measure) {
+                        ForEach(UsageChart.Measure.allCases) { Text($0.rawValue).tag($0) }
+                    }
+                    .pickerStyle(.segmented).labelsHidden().fixedSize()
+                }
+            }
         }
 
         HStack(alignment: .top) {
@@ -242,12 +261,13 @@ private struct UsageView: View {
 /// Søjler pr. dag de seneste 30 dage, ét firma pr. farve. Hold musen over en dag for at se tallene.
 struct UsageChart: View {
     @ObservedObject var usage: CloudUsageLog
-    @State private var measure: Measure = .price
+    let measure: Measure
     @State private var selectedDay: Date?
 
     /// `selectedDay` kun til skærmbilleder (som om musen holdes over dagen).
-    init(usage: CloudUsageLog, selectedDay: Date? = nil) {
+    init(usage: CloudUsageLog, measure: Measure = .price, selectedDay: Date? = nil) {
         self.usage = usage
+        self.measure = measure
         _selectedDay = State(initialValue: selectedDay)
     }
 
@@ -269,11 +289,6 @@ struct UsageChart: View {
     var body: some View {
         let points = usage.lastDays(30)
         VStack(alignment: .leading, spacing: 10) {
-            Picker("Vis", selection: $measure) {
-                ForEach(Measure.allCases) { Text($0.rawValue).tag($0) }
-            }
-            .pickerStyle(.segmented).labelsHidden().frame(width: 220)
-
             Chart {
                 ForEach(points) { point in
                     BarMark(x: .value("Dag", point.day, unit: .day),
