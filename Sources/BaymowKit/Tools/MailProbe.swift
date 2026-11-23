@@ -80,6 +80,67 @@ public enum MailProbe {
         AXUIElementIsAttributeSettable(focused, kAXValueAttribute as CFString, &settable)
         lines.append("hele værdien kan skrives: \(settable.boolValue)")
 
+        // 5. Webfelter (Apple Mail, browsere): hele teksten via tekstmarkører.
+        if let start = copy(focused, "AXStartTextMarker"), let end = copy(focused, "AXEndTextMarker") {
+            var markerRange: CFTypeRef?
+            let pair = [start, end] as CFArray
+            AXUIElementCopyParameterizedAttributeValue(focused, "AXTextMarkerRangeForUnorderedTextMarkers" as CFString, pair, &markerRange)
+            var whole: CFTypeRef?
+            if let markerRange {
+                AXUIElementCopyParameterizedAttributeValue(focused, "AXStringForTextMarkerRange" as CFString, markerRange, &whole)
+            }
+            lines.append("hele feltet via tekstmarkører: \((whole as? String).map { describeText($0) } ?? "kan ikke læses")")
+        } else {
+            lines.append("hele feltet via tekstmarkører: ingen markører")
+        }
+        if let marker = copy(focused, "AXSelectedTextMarkerRange") {
+            var before: CFTypeRef?
+            if let start = copy(focused, "AXStartTextMarker") {
+                var startOfSelection: CFTypeRef?
+                AXUIElementCopyParameterizedAttributeValue(focused, "AXStartTextMarkerForTextMarkerRange" as CFString, marker, &startOfSelection)
+                if let startOfSelection {
+                    var range: CFTypeRef?
+                    AXUIElementCopyParameterizedAttributeValue(focused, "AXTextMarkerRangeForUnorderedTextMarkers" as CFString,
+                                                               [start, startOfSelection] as CFArray, &range)
+                    if let range {
+                        AXUIElementCopyParameterizedAttributeValue(focused, "AXStringForTextMarkerRange" as CFString, range, &before)
+                    }
+                }
+            }
+            lines.append("markørens position (tegn før markøren): \((before as? String)?.count.description ?? "kan ikke læses")")
+        }
+
+        // 6. "Markér alt + Kopiér" i feltet. Markøren sættes øverst bagefter, og udklipsholderen lægges tilbage.
+        let pasteboard = NSPasteboard.general
+        let saved = (pasteboard.pasteboardItems ?? []).map { item in
+            item.types.compactMap { type in item.data(forType: type).map { (type, $0) } }
+        }
+        let changeBefore = pasteboard.changeCount
+        press(SelectionReplacer.keyCode(for: "a"))
+        Thread.sleep(forTimeInterval: 0.15)
+        press(SelectionReplacer.keyCode(for: "c"))
+        var waited = 0.0
+        while pasteboard.changeCount == changeBefore, waited < 1.0 { Thread.sleep(forTimeInterval: 0.05); waited += 0.05 }
+        if pasteboard.changeCount != changeBefore {
+            let types = (pasteboard.types ?? []).map(\.rawValue)
+            lines.append("kopi: typer \(types.filter { ["public.rtf", "public.html", "public.utf8-plain-text", "com.apple.webarchive"].contains($0) })")
+            lines.append("kopi som tekst: \(pasteboard.string(forType: .string).map { describeText($0) } ?? "ingen")")
+            if let rtf = pasteboard.data(forType: .rtf) {
+                let visible = RTFText.read(Array(rtf))
+                lines.append("kopi som RTF: \(describeText(String(utf16CodeUnits: visible.text, count: visible.text.count)))")
+            }
+        } else {
+            lines.append("kopi: intet blev kopieret")
+        }
+        press(0x7E) // pil op med ⌘: markøren øverst, markeringen væk
+        Thread.sleep(forTimeInterval: 0.2)
+        pasteboard.clearContents()
+        pasteboard.writeObjects(saved.map { entries -> NSPasteboardItem in
+            let item = NSPasteboardItem()
+            for (type, data) in entries { item.setData(data, forType: type) }
+            return item
+        })
+
         // 4. Hvordan ser trådens opbygning ud i webområdet (Apple Mail og browsere)? Kun roller og antal.
         var element: AXUIElement? = focused
         var depth = 0
@@ -104,6 +165,28 @@ public enum MailProbe {
         lines.append("elementer i feltet: \(visited)\(visited >= 3000 ? " (stoppet)" : "")")
         lines.append("citatblokke (blockquote): \(quoteGroups)")
         lines.append("roller: " + histogram.sorted { $0.value > $1.value }.prefix(12).map { "\($0.key)×\($0.value)" }.joined(separator: ", "))
+    }
+
+    /// Kun længde, linjer og om/hvor citatet begynder – aldrig selve teksten.
+    private static func describeText(_ text: String) -> String {
+        let list = text.components(separatedBy: .newlines)
+        let boundary = list.firstIndex { line in
+            line.contains("skrev:") || line.contains("wrote:") || line.hasPrefix("Fra:") || line.hasPrefix("From:")
+                || line.hasPrefix("-----Original")
+        }
+        let charsBefore = boundary.map { list[..<$0].joined(separator: "\n").count }
+        return "\(text.count) tegn, \(list.count) linjer, citat-overskrift \(boundary.map { "på linje \($0 + 1) (\(charsBefore ?? 0) tegn før)" } ?? "ikke fundet")"
+    }
+
+    /// ⌘ + en tast i det forreste program.
+    private static func press(_ key: CGKeyCode) {
+        let source = CGEventSource(stateID: .privateState)
+        let down = CGEvent(keyboardEventSource: source, virtualKey: key, keyDown: true)
+        let up = CGEvent(keyboardEventSource: source, virtualKey: key, keyDown: false)
+        down?.flags = .maskCommand
+        up?.flags = .maskCommand
+        down?.post(tap: .cgSessionEventTap)
+        up?.post(tap: .cgSessionEventTap)
     }
 
     private static func copy(_ element: AXUIElement, _ attribute: String) -> CFTypeRef? {
