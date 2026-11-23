@@ -1,15 +1,15 @@
 # Status
 
 Opdateres af den, der sidst har arbejdet på projektet. Kort og faktuelt.
-Sidst opdateret: 2026-11-22 af udfører (Claude Opus 5.5).
+Sidst opdateret: 2026-11-23 af udfører (Claude Opus 5.5).
 
 ## Lige nu
 
-- **I gang:** AP-63 stavehjælp (I12) – bygget og målt, afventer brugerens afprøvning.
+- **I gang:** AP-63 stavehjælp (I12) og AP-64 stavehjælp via internet – bygget og målt, afventer brugerens afprøvning.
 - **Færdige pakker:** AP-00, AP-01, AP-02, AP-10, AP-11, AP-12, AP-19 (hovedstemme: Apple Sara (Enhanced)),
   AP-20, AP-21, AP-22, AP-23, AP-30, AP-31, AP-32, AP-40, AP-50, AP-51, AP-60, AP-61, AP-62.
 - **Lukket/droppet af brugeren 22. november:** AP-03 (lytteskemaet), AP-15 (Plapre).
-- **Venter på brugeren:** afprøvning af stavehjælpen (AP-63), AP-41 (testperson – udskudt af brugeren 2026-11-18).
+- **Venter på brugeren:** afprøvning af stavehjælpen (AP-63, AP-64), AP-41 (testperson – udskudt af brugeren 2026-11-18).
 - **Delvist:** AP-24 – udtalelister pr. motor er bygget, men gav kun lidt (Piper 14 → 18 af 30, Apple uændret).
 - **Parkeret eller udskudt:** AP-13/14 (cloud-stemmer, B6), AP-16 (Røst – hovedstemmen er valgt).
 - **Beslutninger:** B6 cloud udskudt · B7 Sara (Enhanced) · B8 GPL-3.0-or-later · B9 Baymow, app-id
@@ -29,6 +29,9 @@ Sidst opdateret: 2026-11-22 af udfører (Claude Opus 5.5).
   små rettelser igennem; usikre ord markeres "tjek selv". Slået fra som standard (siden "Stavning"). Stavetest
   (`tools/stavetest/`): kontrolsæt 0 forkerte rettelser, 13 af 14 fejl rettet eller markeret, 0,5 s pr. sætning.
   Kernen: `GlobalShortcutManager` kan nu have flere genveje (`--hotkey-selftest`).
+- **AP-64 (stavehjælp via internet):** tilvalg på siden "Stavning": Claude (Sonnet 5.5) eller ChatGPT (GPT-6 Luna)
+  med brugerens egen nøgle i nøgleringen. Gennem vagten: 63 og 62 af 63 fejl, 0 forkerte rettelser (Macens: 46).
+  Uden internet eller med en nøgle, der ikke virker: Macens egen hjælp, og vinduet siger det. Netværkslisten har en ny fil.
 
 ## Venter på brugeren
 
@@ -37,6 +40,7 @@ Brugerens samlede tjekliste i almindeligt sprog: `docs/TJEKLISTE.md` (opdatér d
 | Hvad | Hvorfor | Blokerer |
 |---|---|---|
 | Prøv stavehjælpen (⌃⌥R) i et par programmer, og godkend vinduet | Udseende, lyd og indsætning kan kun prøves af brugeren | AP-63 |
+| Slå "Bedre hjælp via internet" til, gem nøglerne i Baymow, og prøv begge firmaer på egen tekst | Kun brugerens egne tekster viser, hvilken der er bedst | AP-64 |
 | Find en testperson til førstegangsopsætningen (udskudt af brugeren 2026-11-18) | Kun et nyt menneske kan vise, om den er til at forstå | AP-41 |
 | Meld dig ind i Apple Developer Program (Developer ID og notarisering) | Udgivelse til andre kræver det | AP-52 |
 

@@ -1,0 +1,552 @@
+{
+  "dato" : "2026-11-23T11:26:07Z",
+  "detaljer" : [
+    {
+      "baymow" : "Vi skal nok finde en løsning på det inden fredag.",
+      "facit" : "Vi skal nok finde en løsning på det inden fredag.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Vi skal nok finde en løsning på det inden fredag.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Vi skal nok vinde en løsning på det inden fredag.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Hvis vi bruger energien på det nu, så slipper vi senere.",
+      "facit" : "Hvis vi bruger energien på det nu, så slipper vi senere.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Hvis vi bruger energien på det nu, så slipper vi senere.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Hvis vi bruger ernagien på det nu, så slipper vi senere.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Jeg sender en opdatering til holdet, når mødet er færdigt.",
+      "facit" : "Jeg sender en opdatering til holdet, når mødet er færdigt.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Jeg sender en opdatering til holdet, når mødet er færdigt.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Jeg sender en opdatering til holdet når mødet er færdig.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Det er vigtigt, at vi får testet v2, før vi går videre.",
+      "facit" : "Det er vigtigt, at vi får testet v2, før vi går videre.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Det er vigtigt, at vi får testet v2, før vi går videre.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Det er vigtig at vi får testet v2 før vi går videre.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Kunden har spurgt, om vi kan levere hurtigere.",
+      "facit" : "Kunden har spurgt, om vi kan levere hurtigere.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Kunden har spurgt, om vi kan levere hurtigere.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Kunden har spurgt om vi kan levere hurtigre.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Jeg tror ikke, at de har læst mailen endnu.",
+      "facit" : "Jeg tror ikke, at de har læst mailen endnu.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Jeg tror ikke, at de har læst mailen endnu.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Jeg tror ikke at de har læst mailen endnu.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Vi måtte vente på, at serveren blev genstartet.",
+      "facit" : "Vi måtte vente på, at serveren blev genstartet.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Vi måtte vente på, at serveren blev genstartet.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Vi måtte vente på at serveren blev genstartet.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Han ved godt, hvad det handler om.",
+      "facit" : "Han ved godt, hvad det handler om.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Han ved godt, hvad det handler om.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Han ved godt hvad det handler om.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Jeg har lavet en aftale med dem i næste uge.",
+      "facit" : "Jeg har lavet en aftale med dem i næste uge.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Jeg har lavet en aftale med dem i næste uge.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Jeg har lavet en aftale med dem i næste uge.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Det var en god idé at spørge Kultunaut først.",
+      "facit" : "Det var en god idé at spørge Kultunaut først.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Det var en god idé at spørge Kultunaut først.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Det var en god ide at spørge Kultunaut først.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Vi kan godt fortsætte med API'et i morgen.",
+      "facit" : "Vi kan godt fortsætte med API'et i morgen.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Vi kan godt fortsætte med API'et i morgen.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Vi kan godt fortsætte med API'et i morgen.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Projektet er forsinket, fordi leverandøren ikke svarer.",
+      "facit" : "Projektet er forsinket, fordi leverandøren ikke svarer.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Projektet er forsinket, fordi leverandøren ikke svarer.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Projektet er forsinket fordi leverandøren ikke svare.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Jeg vil gerne høre din mening om forslaget.",
+      "facit" : "Jeg vil gerne høre din mening om forslaget.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Jeg vil gerne høre din mening om forslaget.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Jeg vil gerne høre din menning om forslaget.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Vi skal huske at opdatere dokumentationen.",
+      "facit" : "Vi skal huske at opdatere dokumentationen.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Vi skal huske at opdatere dokumentationen.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Vi skal hustle at opdatere dokumentationen.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Det er ikke nødvendigvis den bedste løsning.",
+      "facit" : "Det er ikke nødvendigvis den bedste løsning.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Det er ikke nødvendigvis den bedste løsning.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Det er ikke nødvendigvis den bedste lysning.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Budgettet er ikke stort nok til begge dele.",
+      "facit" : "Budgettet er ikke stort nok til begge dele.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Budgettet er ikke stort nok til begge dele.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Budgettet er ikke stort nok til begge dele.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Jeg kommer lidt for sent, da toget er aflyst.",
+      "facit" : "Jeg kommer lidt for sent, da toget er aflyst.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Jeg kommer lidt for sent, da toget er aflyst.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Jeg kommer lidt for sent, da toget er aflyst.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Kan du sende mig filen, så jeg kan kigge på den?",
+      "facit" : "Kan du sende mig filen, så jeg kan kigge på den?",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Kan du sende mig filen, så jeg kan kigge på den?",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Kan du sende mig filen så jeg kan kikke på den?",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "De har bestemt sig for at bruge en anden leverandør.",
+      "facit" : "De har bestemt sig for at bruge en anden leverandør.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "De har bestemt sig for at bruge en anden leverandør.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "De har bestemt sig for at bruge en anden leverandør.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Vi bliver nødt til at prioritere opgaverne.",
+      "facit" : "Vi bliver nødt til at prioritere opgaverne.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Vi bliver nødt til at prioritere opgaverne.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Vi bliver nød til at prioritere opgaverne.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Mødet er flyttet til torsdag kl. 14.",
+      "facit" : "Mødet er flyttet til torsdag kl. 14.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Mødet er flyttet til torsdag kl. 14.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Mødet er flytet til torsdag kl. 14.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Det kræver, at vi får adgang til databasen.",
+      "facit" : "Det kræver, at vi får adgang til databasen.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Det kræver, at vi får adgang til databasen.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Det kræver at vi får adgang til databasen.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Jeg har snakket med Mette, og hun er enig.",
+      "facit" : "Jeg har snakket med Mette, og hun er enig.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Jeg har snakket med Mette, og hun er enig.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Jeg har snakket med Mette og hun er enig.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Vi er nødt til at tage en beslutning snart.",
+      "facit" : "Vi er nødt til at tage en beslutning snart.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Vi er nødt til at tage en beslutning snart.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Vi er nød til at tage en beslutning snart.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Hun var meget tilfreds med resultatet.",
+      "facit" : "Hun var meget tilfreds med resultatet.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Hun var meget tilfreds med resultatet.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Hun var meget tilfreds med resultatet.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Kan vi bruge den samme skabelon som sidst?",
+      "facit" : "Kan vi bruge den samme skabelon som sidst?",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Kan vi bruge den samme skabelon som sidst?",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Kan vi bruge den samme skabelon som sidst?",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Jeg har sendt fakturaen til økonomiafdelingen.",
+      "facit" : "Jeg har sendt fakturaen til økonomiafdelingen.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Jeg har sendt fakturaen til økonomiafdelingen.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Jeg har sendt fakturaen til økonomi afdelingen.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Vi skal have styr på sikkerheden før lanceringen.",
+      "facit" : "Vi skal have styr på sikkerheden før lanceringen.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Vi skal have styr på sikkerheden før lanceringen.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Vi skal have styr på sikkerheden før lanceringen.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Det lyder som en fornuftig plan.",
+      "facit" : "Det lyder som en fornuftig plan.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Det lyder som en fornuftig plan.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Det lyder som en fornuftig plan.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Jeg forstår ikke helt, hvordan det skal virke.",
+      "facit" : "Jeg forstår ikke helt, hvordan det skal virke.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Jeg forstår ikke helt, hvordan det skal virke.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Jeg forstår ikke helt hvordan det skal virke.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Vi har brug for flere testbrugere.",
+      "facit" : "Vi har brug for flere testbrugere.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Vi har brug for flere testbrugere.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Vi har brug for flere test brugere.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Han har allerede godkendt tilbuddet.",
+      "facit" : "Han har allerede godkendt tilbuddet.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Han har allerede godkendt tilbuddet.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Han har allerede godkent tilbudet.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Vi ses på kontoret i morgen tidlig.",
+      "facit" : "Vi ses på kontoret i morgen tidlig.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Vi ses på kontoret i morgen tidlig.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Vi ses på kontoret i morgen tidlig.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Jeg er enig i, at vi skal vente med det.",
+      "facit" : "Jeg er enig i, at vi skal vente med det.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Jeg er enig i, at vi skal vente med det.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Jeg er enig i at vi skal vente med det.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Det bliver svært at nå det hele inden jul.",
+      "facit" : "Det bliver svært at nå det hele inden jul.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Det bliver svært at nå det hele inden jul.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Det bliver svært at nå det hele inden jul.",
+      "tjek_selv" : [
+
+      ]
+    }
+  ],
+  "fejlfri_saetninger" : 11,
+  "kun_model" : {
+    "falske_markeringer" : 0,
+    "fejl_i_alt" : 18,
+    "fejlfri_saetninger_aendret" : 0,
+    "forkerte_rettelser" : 0,
+    "markeret" : 0,
+    "overset" : 0,
+    "rettet" : 18
+  },
+  "med_vagt" : {
+    "falske_markeringer" : 0,
+    "fejl_i_alt" : 18,
+    "fejlfri_saetninger_aendret" : 0,
+    "forkerte_rettelser" : 0,
+    "markeret" : 0,
+    "overset" : 0,
+    "rettet" : 18
+  },
+  "model" : "claude-sonnet-5-5",
+  "saetninger" : 35,
+  "sekunder_pr_saetning" : 2.0800000000000001
+}

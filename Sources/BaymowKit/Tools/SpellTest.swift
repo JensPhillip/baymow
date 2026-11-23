@@ -12,7 +12,9 @@ public enum SpellTest {
         var errors = 0, fixed = 0, flagged = 0, wrong = 0, cleanChanged = 0, falseFlags = 0
     }
 
-    public static func run(sentencesFile: String, outputFile: String) -> Int32 {
+    /// `cloud`: "claude" eller "openai" måler internet-hjælpen (AP-64). Nøglen læses fra miljøvariablen
+    /// `BAYMOW_TEST_KEY`, så den ikke står på kommandolinjen.
+    public static func run(sentencesFile: String, outputFile: String, cloud: String? = nil) -> Int32 {
         guard let content = try? String(contentsOfFile: sentencesFile, encoding: .utf8) else {
             print("Kan ikke læse \(sentencesFile)"); return 1
         }
@@ -20,9 +22,18 @@ public enum SpellTest {
             let parts = line.split(separator: "\t", maxSplits: 1).map(String.init)
             return (written: parts[0], key: parts[1])
         }
-        let status = AppleSpellingModel.status()
+        var status = "\(AppleSpellingModel.status())"
+        var corrector = AppleSpellingModel.makeCorrector()
+        if let cloud {
+            guard let provider = CloudProvider(rawValue: cloud),
+                  let key = ProcessInfo.processInfo.environment["BAYMOW_TEST_KEY"], !key.isEmpty else {
+                print("Brug --cloud claude|openai og sæt BAYMOW_TEST_KEY"); return 1
+            }
+            corrector = CloudSpellingCorrector(provider: provider, key: key)
+            status = provider.model
+        }
         print("Model: \(status)")
-        let assistant = SpellingAssistant(corrector: AppleSpellingModel.makeCorrector(), checker: SystemWordChecker())
+        let assistant = SpellingAssistant(corrector: corrector, checker: SystemWordChecker())
 
         var raw = Count(), guarded = Count()
         var rows: [[String: Any]] = []

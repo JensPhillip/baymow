@@ -68,6 +68,13 @@ public enum ScreenshotTool {
                   MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
                            spelling: SpellingSettings(defaults: defaults), shortcutRegistrationFailed: false))
         }
+        // Siden Stavning med "Bedre hjælp via internet" slået til (AP-64).
+        defaults.set(true, forKey: "spellingCloudEnabled")
+        model.page = .spelling
+        shoot("hovedvindue-spelling-internet", size: NSSize(width: 780, height: 1000),
+              MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
+                       spelling: SpellingSettings(defaults: defaults), shortcutRegistrationFailed: false))
+        defaults.set(false, forKey: "spellingCloudEnabled")
         model.page = .start
         shoot("sidebjaelke", size: NSSize(width: 220, height: 300), MainSidebar(model: model, needsAttention: { $0 == .voices }))
         shoot("velkomst", size: nil, OnboardingView(model: onboarding, settings: settings) {})
@@ -81,8 +88,19 @@ public enum ScreenshotTool {
         let spellingModel = SpellingPanelModel(sourceBundleID: nil) { _, _ in }
         shoot("stavehjaelp-arbejder", size: nil, SpellingPanelView(model: spellingModel, onApply: {}, onCopy: {}, onClose: {}))
         let assistant = SpellingAssistant(corrector: AppleSpellingModel.makeCorrector(), checker: SystemWordChecker())
-        spellingModel.load(SpellTest.runBlocking { await assistant.check(spellingDemo) })
+        let demoResult = SpellTest.runBlocking { await assistant.check(spellingDemo) }
+        spellingModel.load(demoResult)
         shoot("stavehjaelp", size: nil, SpellingPanelView(model: spellingModel, onApply: {}, onCopy: {}, onClose: {}))
+        var cloudResult = demoResult
+        cloudResult.source = .cloud(.claude)
+        let cloudModel = SpellingPanelModel(sourceBundleID: nil) { _, _ in }
+        cloudModel.load(cloudResult)
+        shoot("stavehjaelp-internet", size: nil, SpellingPanelView(model: cloudModel, onApply: {}, onCopy: {}, onClose: {}))
+        var offlineResult = demoResult
+        offlineResult.cloudProblem = .offline
+        let offlineModel = SpellingPanelModel(sourceBundleID: nil) { _, _ in }
+        offlineModel.load(offlineResult)
+        shoot("stavehjaelp-uden-internet", size: nil, SpellingPanelView(model: offlineModel, onApply: {}, onCopy: {}, onClose: {}))
         return failures == 0 ? 0 : 1
     }
 

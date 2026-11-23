@@ -1,6 +1,6 @@
 # Tjekliste: det, du skal teste eller beslutte
 
-Opdateret 22. november 2026.
+Opdateret 23. november 2026.
 
 ## Afklaret 22. november
 - ✅ Afspilleren: alle 10 punkter virker.
@@ -29,11 +29,23 @@ Skriv fx dette i Noter eller en ny mail (fejlene er med vilje):
 
 Er du i tvivl om noget i vinduet, så skriv, hvad du så, eller tag et skærmbillede (⌘⇧4).
 
-## Beslut, når du har prøvet den
+## Test nu: Bedre hjælp via internet (ca. 10 min)
+Baymow bruger sine egne poster i nøgleringen, så nøglerne skal indsættes én gang til – nu direkte i Baymow.
+
+- [ ] 1. Baymow → siden **Stavning** → slå **Bedre hjælp via internet** til.
+- [ ] 2. Vælg **Claude**, indsæt din Claude-nøgle i feltet, og tryk **Gem**. Der står "Det virker" efter et øjeblik.
+- [ ] 3. Vælg **ChatGPT**, og gør det samme med ChatGPT-nøglen.
+- [ ] 4. Markér din egen tekst (fx beskeden med "ernagien" og "vinde"), og tryk ⌃⌥R. Nederst i vinduet står
+      "Rettet af … via internet". Er "energien" og "finde" rettet?
+- [ ] 5. Skift firma på siden Stavning, og prøv den samme tekst. Hvilken retter bedst? Skriv det til mig.
+- [ ] 6. Slå Wi-Fi fra, og tryk ⌃⌥R. Vinduet skriver "Intet internet" med orange og retter med Macens egen hjælp.
+- [ ] 7. Ændrer en af dem noget, så det betyder noget andet? Skriv ordet til mig.
+
 - [ ] **Kommaer:** Baymow sætter kommaer, hvor modellen mener, de skal være (fx "Jeg tror, at …"). Vil du have det,
       eller skal den kun rette stavning?
-- [ ] **AI-konto senere?** Skal en AI-konto (Claude eller ChatGPT) kunne slås til senere, som et tilvalg? Det kræver en
-      særskilt betalt API-konto (dit almindelige abonnement kan ikke bruges), og din tekst sendes ud af Macen.
+- ✅ **AI-konto:** besluttet 23. november – begge, du vælger selv (bygget som "Bedre hjælp via internet").
+- [ ] **Hvilken som standard?** Når du har prøvet begge: Claude eller ChatGPT?
+- [ ] **Testnøglerne** i nøgleringen (konto `baymow-test`) kan slettes, når vi ikke skal måle mere.
 
 ## Senere (ikke nu)
 - [ ] **En testperson**, der aldrig har set Baymow, prøver velkomstvinduet uden hjælp (AP-41).

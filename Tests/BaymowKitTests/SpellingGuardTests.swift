@@ -25,7 +25,8 @@ final class SpellingGuardTests: XCTestCase {
 
     let words: Set<String> = ["jeg", "har", "ikke", "tid", "tit", "til", "at", "skrive", "i", "dag", "kan", "du", "huske",
                               "købe", "mel", "mælk", "mægl", "på", "vej", "hjem", "han", "kom", "tilbage", "bage", "bageri",
-                              "fra", "ferie", "går", "ja", "selvfølgelig", "komme", "morgen", "vi", "ses", "kl"]
+                              "fra", "ferie", "går", "ja", "selvfølgelig", "komme", "morgen", "vi", "ses", "kl",
+                              "bruge", "ernagien", "energien", "det", "nu", "skal", "vinde", "finde", "en", "løsning"]
 
     func result(_ text: String, answers: [String: String], preferred: [String] = [],
                 guesses: [String: [String]] = [:]) async -> SpellingResult {
@@ -108,6 +109,94 @@ final class SpellingGuardTests: XCTestCase {
             let t = Tokens(text)
             XCTAssertEqual(t.separators.count, t.words.count + 1, text)
             XCTAssertEqual(zip(t.separators, t.words + [""]).map { $0 + $1 }.joined(), text)
+        }
+    }
+
+    // MARK: Internet-hjælpen (AP-64)
+
+    /// Opfører sig som Claude/ChatGPT: svarer med faste rettelser eller fejler som uden internet.
+    struct FakeCloud: SpellingCorrector {
+        var answers: [String: String] = [:]
+        var failure: CloudSpellingError?
+        var source: SpellingSource { .cloud(.claude) }
+        func correct(_ sentence: String, language: Language) async throws -> String {
+            if let failure { throw failure }
+            return answers[sentence] ?? sentence
+        }
+        func choose(in sentence: String, candidates: [String], language: Language) async throws -> String {
+            candidates.last!
+        }
+    }
+
+    func testCloudMayFixARealWordThatIsSpelledWrong() async {
+        // Macens stavekontrol godkender "ernagien" (målt). Macens model får ikke lov; internet-modellen gør.
+        let sentence = "Vi skal bruge ernagien nu."
+        let fix = ["Vi skal bruge ernagien nu.": "Vi skal bruge energien nu."]
+        let local = await result(sentence, answers: fix)
+        XCTAssertEqual(local.text, sentence)
+        let cloud = await SpellingAssistant(corrector: FakeCloud(answers: fix), checker: FakeChecker(words: words)).check(sentence)
+        XCTAssertEqual(cloud.text, "Vi skal bruge energien nu.")
+        XCTAssertEqual(cloud.source, .cloud(.claude))
+    }
+
+    func testCloudStillCannotAnswerTheText() async {
+        let cloud = SpellingAssistant(corrector: FakeCloud(answers: ["Kan du komme i morgen?": "Ja, selvfølgelig."]),
+                                      checker: FakeChecker(words: words))
+        let r = await cloud.check("Kan du komme i morgen?")
+        XCTAssertEqual(r.text, "Kan du komme i morgen?")
+    }
+
+    func testCloudCannotSwapForADifferentWord() async {
+        let cloud = SpellingAssistant(corrector: FakeCloud(answers: ["Han kom til bage fra ferie.": "Han kom til selvfølgelig fra ferie."]),
+                                      checker: FakeChecker(words: words))
+        let r = await cloud.check("Han kom til bage fra ferie.")
+        XCTAssertEqual(r.text, "Han kom til bage fra ferie.")
+    }
+
+    func testWithoutInternetTheMacHelpsAndSaysSo() async {
+        let local = FakeCorrector(answers: ["Jeg har ikke tit.": "Jeg har ikke tid."])
+        let assistant = SpellingAssistant(corrector: FakeCloud(failure: .offline), fallback: local,
+                                          checker: FakeChecker(words: words))
+        let r = await assistant.check("Jeg har ikke tit.")
+        XCTAssertEqual(r.text, "Jeg har ikke tid.")
+        XCTAssertEqual(r.source, .mac)
+        XCTAssertEqual(r.cloudProblem, .offline)
+    }
+
+    func testMacHelpNeverFallsBackToTheInternet() async {
+        // Omvendt: fejler Macens egen model, sendes teksten ikke videre.
+        struct FailingLocal: SpellingCorrector {
+            func correct(_ sentence: String, language: Language) async throws -> String { throw CloudSpellingError.failed }
+            func choose(in sentence: String, candidates: [String], language: Language) async throws -> String { "" }
+        }
+        let assistant = SpellingAssistant(corrector: FailingLocal(), fallback: FakeCloud(answers: ["Jeg har ikke tit.": "Jeg har ikke tid."]),
+                                          checker: FakeChecker(words: words))
+        let r = await assistant.check("Jeg har ikke tit.")
+        XCTAssertEqual(r.text, "Jeg har ikke tit.")
+        XCTAssertNil(r.cloudProblem)
+    }
+
+    func testAnswersAreReadFromBothCompanies() {
+        let claude = #"{"content":[{"type":"text","text":"Jeg har ikke tid."}],"stop_reason":"end_turn"}"#
+        XCTAssertEqual(CloudSpellingCorrector.text(from: Data(claude.utf8), provider: .claude), "Jeg har ikke tid.")
+        let refusal = #"{"content":[],"stop_reason":"refusal"}"#
+        XCTAssertNil(CloudSpellingCorrector.text(from: Data(refusal.utf8), provider: .claude))
+        let openai = #"{"output":[{"type":"reasoning","summary":[]},{"type":"message","content":[{"type":"output_text","text":"Jeg har ikke tid."}]}]}"#
+        XCTAssertEqual(CloudSpellingCorrector.text(from: Data(openai.utf8), provider: .openai), "Jeg har ikke tid.")
+        // Nogle modeller gentager opgaven først (målt med GPT-6.1).
+        XCTAssertEqual(CloudSpellingCorrector.cleanAnswer("Ret stavningen i denne tekst:\nJeg har ikke tid."), "Jeg har ikke tid.")
+    }
+
+    func testKeyGoesInAHeaderAndTextOnlyInTheBody() {
+        for provider in CloudProvider.allCases {
+            let request = CloudSpellingCorrector.request(provider: provider, key: "TESTKEY", instructions: "i", prompt: "Hemmelig tekst",
+                                                         maxTokens: 10)
+            XCTAssertEqual(request.url?.scheme, "https")
+            XCTAssertFalse(request.url!.absoluteString.contains("Hemmelig"))
+            XCTAssertFalse(request.url!.absoluteString.contains("TESTKEY"))
+            XCTAssertTrue((request.allHTTPHeaderFields ?? [:]).values.contains { $0.contains("TESTKEY") })
+            let body = String(decoding: request.httpBody ?? Data(), as: UTF8.self)
+            XCTAssertTrue(body.contains(provider.model))
         }
     }
 }

@@ -12,6 +12,10 @@ final class SpellingPanelModel: ObservableObject {
     /// Vises, hvis brugeren er skiftet til et andet program: teksten er kopieret i stedet.
     @Published var pasteHint = false
     private(set) var usedModel = true
+    private(set) var source: SpellingSource = .mac
+    private(set) var cloudProblem: CloudSpellingError?
+    /// Det firma, brugeren har valgt (til beskeder, når internet-hjælpen ikke virkede).
+    var chosenProvider: CloudProvider = .claude
     private(set) var language: Language = .danish
     /// Valgmulighederne for hvert ændret ord, i fast rækkefølge: det skrevne, Baymows rettelse, andre forslag.
     private(set) var options: [Int: [String]] = [:]
@@ -27,6 +31,8 @@ final class SpellingPanelModel: ObservableObject {
     func load(_ result: SpellingResult) {
         segments = result.segments
         usedModel = result.usedModel
+        source = result.source
+        cloudProblem = result.cloudProblem
         language = result.language
         for segment in result.changes {
             options[segment.id] = SpellingGuard.unique([segment.original, segment.text] + segment.suggestions, excluding: "")
@@ -128,7 +134,10 @@ struct SpellingPanelView: View {
 
     private var footer: some View {
         VStack(alignment: .leading, spacing: 10) {
-            if !model.usedModel {
+            if let problem = model.cloudProblem {
+                Label(Self.message(for: problem, provider: model.chosenProvider), systemImage: "wifi.exclamationmark")
+                    .font(.callout).foregroundStyle(.orange)
+            } else if !model.usedModel {
                 Label("Kun Macens stavekontrol. Slå Apple Intelligence til for bedre hjælp.", systemImage: "info.circle")
                     .font(.callout).foregroundStyle(.secondary)
             }
@@ -137,9 +146,7 @@ struct SpellingPanelView: View {
                     .font(.callout).foregroundStyle(.orange)
             }
             HStack(spacing: 10) {
-                Label("Rettet på din Mac", systemImage: "lock.fill")
-                    .font(.caption).foregroundStyle(.secondary)
-                    .help("Din tekst bliver på din Mac. Intet sendes væk.")
+                sourceLabel
                 Spacer()
                 Button(action: onCopy) {
                     Label(model.copied ? "Kopieret" : "Kopiér", systemImage: model.copied ? "checkmark" : "doc.on.doc")
@@ -152,6 +159,27 @@ struct SpellingPanelView: View {
                         .help("Skift din markerede tekst ud med den rettede")
                 }
             }
+        }
+    }
+
+    @ViewBuilder private var sourceLabel: some View {
+        if case .cloud(let provider) = model.source {
+            Label("Rettet af \(provider.title) via internet", systemImage: "cloud.fill")
+                .font(.caption).foregroundStyle(.secondary)
+                .help("Teksten blev sendt til \(provider.company), fordi du har slået \"Bedre hjælp via internet\" til.")
+        } else {
+            Label("Rettet på din Mac", systemImage: "lock.fill")
+                .font(.caption).foregroundStyle(.secondary)
+                .help("Din tekst bliver på din Mac. Intet sendes væk.")
+        }
+    }
+
+    static func message(for problem: CloudSpellingError, provider: CloudProvider) -> String {
+        switch problem {
+        case .offline: return "Intet internet. Rettet af Macens egen hjælp, som finder færre fejl."
+        case .badKey: return "Nøglen til \(provider.title) virker ikke. Rettet af Macens egen hjælp. Se siden Stavning i Baymow."
+        case .noKey: return "Der mangler en nøgle til \(provider.title). Rettet af Macens egen hjælp. Se siden Stavning i Baymow."
+        case .failed: return "\(provider.title) svarede ikke. Rettet af Macens egen hjælp, som finder færre fejl."
         }
     }
 

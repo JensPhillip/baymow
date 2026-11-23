@@ -1,0 +1,477 @@
+{
+  "dato" : "2026-11-23T11:26:18Z",
+  "detaljer" : [
+    {
+      "baymow" : "Jeg har købt nye sko til min datter.",
+      "facit" : "Jeg har købt nye sko til min datter.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Jeg har købt nye sko til min datter.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Jeg har købt nye sko til min dadder.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Vi skal huske at betale regningen.",
+      "facit" : "Vi skal huske at betale regningen.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Vi skal huske at betale regningen.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Vi skal husk at betale reningen.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Han ringede til mig i går aftes.",
+      "facit" : "Han ringede til mig i går aftes.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Han ringede til mig i går aftes.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Han ringede til mig i gor aftes.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Kan du sende mig adressen?",
+      "facit" : "Kan du sende mig adressen?",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Kan du sende mig adressen?",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Kan du sende mig adresen?",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Hun er god til at lave mad.",
+      "facit" : "Hun er god til at lave mad.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Hun er god til at lave mad.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Hun er god til at lave mad.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Det regner, så tag en paraply med.",
+      "facit" : "Det regner, så tag en paraply med.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Det regner, så tag en paraply med.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Det regner, så tag en paraply med.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Jeg forstår ikke, hvorfor han er sur.",
+      "facit" : "Jeg forstår ikke hvorfor han er sur.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Jeg forstår ikke, hvorfor han er sur.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Jeg forstår ikke hvorfor han er sur.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Vi skal holde fødselsdag for min søster.",
+      "facit" : "Vi skal holde fødselsdag for min søster.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Vi skal holde fødselsdag for min søster.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Vi skal holde fødselsdag for min søster.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Min bror arbejder som tømrer.",
+      "facit" : "Min bror arbejder som tømrer.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Min bror arbejder som tømrer.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Min bror arbejder som tømre.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Jeg har glemt min kode til computeren.",
+      "facit" : "Jeg har glemt min kode til computeren.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Jeg har glemt min kode til computeren.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Jeg har glemt min kode til compuren.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Hun skrev et brev til sin bedstemor.",
+      "facit" : "Hun skrev et brev til sin bedstemor.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Hun skrev et brev til sin bedstemor.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Hun skrev et brev til sin bedstemor.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Toget var forsinket i en halv time.",
+      "facit" : "Toget var forsinket i en halv time.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Toget var forsinket i en halv time.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Toget var forsingtet i en halv time.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Jeg vil gerne bestille et bord til fire.",
+      "facit" : "Jeg vil gerne bestille et bord til fire.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Jeg vil gerne bestille et bord til fire.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Jeg vil gerne bestile et bord til fire.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Hvornår åbner butikken i morgen?",
+      "facit" : "Hvornår åbner butikken i morgen?",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Hvornår åbner butikken i morgen?",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Hvornår åbner butikken i morgen?",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Vi gik en lang tur i skoven.",
+      "facit" : "Vi gik en lang tur i skoven.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Vi gik en lang tur i skoven.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Vi gik en lang tur i skoven.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Jeg skal have skiftet dækkene på bilen.",
+      "facit" : "Jeg skal have skiftet dækkene på bilen.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Jeg skal have skiftet dækkene på bilen.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Jeg skal have skiftet dækene på bilen.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Han har altid villet være pilot.",
+      "facit" : "Han har altid villet være pilot.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Han har altid villet være pilot.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Han har altid ville være pilot.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Lav en liste over alle byer i Danmark.",
+      "facit" : "Lav en liste over alle byer i Danmark.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Lav en liste over alle byer i Danmark.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Lav en liste over alle byer i Danmark.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Kaffen er blevet kold.",
+      "facit" : "Kaffen er blevet kold.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Kaffen er blevet kold.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Kaffen er blevet kold.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Jeg sender billederne i aften.",
+      "facit" : "Jeg sender billederne i aften.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Jeg sender billederne i aften.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Jeg sender billederne i aften.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Mit barn har feber og bliver hjemme.",
+      "facit" : "Mit barn har feber og bliver hjemme.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Mit barn har feber og bliver hjemme.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Mit barn har feber og bliver hjemme.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Vi mødes ved indgangen kl. 10.",
+      "facit" : "Vi mødes ved indgangen kl. 10.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Vi mødes ved indgangen kl. 10.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Vi mødes ved indgangen kl. 10.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Der er en fejl i fakturaen.",
+      "facit" : "Der er en fejl i fakturaen.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Der er en fejl i fakturaen.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Der er en fejl i fakturen.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Kan du anbefale en god bog?",
+      "facit" : "Kan du anbefale en god bog?",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Kan du anbefale en god bog?",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Kan du anbefale en god bog?",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Jeg har ikke nået at spise morgenmad.",
+      "facit" : "Jeg har ikke nået at spise morgenmad.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Jeg har ikke nået at spise morgenmad.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Jeg har ikke nået at spise morgenmad.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Hun sagde at hun ville komme senere.",
+      "facit" : "Hun sagde at hun ville komme senere.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Hun sagde at hun ville komme senere.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Hun sagde at hun ville kome senere.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Hunden løb efter bolden.",
+      "facit" : "Hunden løb efter bolden.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Hunden løb efter bolden.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Hunden løb efter bolden.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Vi har brug for flere stole til mødet.",
+      "facit" : "Vi har brug for flere stole til mødet.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Vi har brug for flere stole til mødet.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Vi har brug for flere stole til mødet.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Jeg glæder mig til ferien.",
+      "facit" : "Jeg glæder mig til ferien.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Jeg glæder mig til ferien.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Jeg glæder mig til ferjen.",
+      "tjek_selv" : [
+
+      ]
+    },
+    {
+      "baymow" : "Husk at slukke lyset, når du går.",
+      "facit" : "Husk at slukke lyset når du går.",
+      "forkerte_ord" : [
+
+      ],
+      "model" : "Husk at slukke lyset, når du går.",
+      "model_forkerte_ord" : [
+
+      ],
+      "skrevet" : "Husk at slukke lyset når du går.",
+      "tjek_selv" : [
+
+      ]
+    }
+  ],
+  "fejlfri_saetninger" : 17,
+  "kun_model" : {
+    "falske_markeringer" : 0,
+    "fejl_i_alt" : 14,
+    "fejlfri_saetninger_aendret" : 0,
+    "forkerte_rettelser" : 0,
+    "markeret" : 0,
+    "overset" : 0,
+    "rettet" : 14
+  },
+  "med_vagt" : {
+    "falske_markeringer" : 0,
+    "fejl_i_alt" : 14,
+    "fejlfri_saetninger_aendret" : 0,
+    "forkerte_rettelser" : 0,
+    "markeret" : 0,
+    "overset" : 0,
+    "rettet" : 14
+  },
+  "model" : "gpt-6-luna",
+  "saetninger" : 30,
+  "sekunder_pr_saetning" : 1.3200000000000001
+}

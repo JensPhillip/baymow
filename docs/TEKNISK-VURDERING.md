@@ -408,6 +408,32 @@ end modellens rettelse, vælger modellen blandt dem ud fra sætningen (svaret ka
 "mælg" → "mælk", "tenge" → "tegne". Målt på et kontrolsæt, skrevet efter vagten var indstillet: modellen alene 11
 forkerte rettelser, med vagten 0; 13 af 14 fejl rettet eller markeret. Detaljer i `docs/afleveringer/AP-63.md`.
 
+### Stavehjælp: lokal, Ollama eller internet? (AP-64, 23. november 2026)
+
+Brugerens egen tekst viste, at testsættet var for let: Macens danske stavekontrol godkender "ernagien", og Macens model
+fanger ikke rigtige ord brugt forkert ("vinde" for "finde"). Nyt testsæt `tools/stavetest/svaer.tsv` (35 sætninger i
+stil med en arbejdsbesked, 18 fejl). Alle tal: fejl fundet af 63 i alle tre sæt / forkerte rettelser.
+
+| Model | Fundet | Forkerte | Tid pr. sætning |
+|---|---|---|---|
+| Macens model + vagt (AP-63) | 46 | 2 | 0,5 s |
+| qwen3 14b via Ollama (lokalt, 9 GB hukommelse, 45 s opstart) | 46 | 11 | ca. 2 s |
+| Claude Haiku 5.5 | 58 | 5 | 0,9 s |
+| Claude Sonnet 5.5 | 62 | 0 | 1,2 s |
+| GPT-6 Luna | 63 | 0 | 1,4 s |
+| GPT-6.1 Terra | 59 | 0 | 2,0 s |
+| GPT-6.2 Sol | 61 | 0 | 1,4 s |
+
+Gennem Baymows vagt (`Baymow --spell-test … --cloud claude|openai`): Claude Sonnet 5.5 63 af 63, GPT-6 Luna 62 af 63,
+begge 0 forkerte rettelser og 0 ændrede fejlfri sætninger. Vagtens strenge grænse for rigtige ord (ét bogstav) ville
+have stoppet "ernagien" → "energien"; for internet-modellerne er grænsen derfor den almindelige afstand + 1.
+
+Andre muligheder: LanguageTool har dansk, men den danske del vedligeholdes ikke; ordblindeprogrammer (IntoWords,
+CD-ORD, AppWriter) er selvstændige programmer uden adgang udefra. Pris: Claude Sonnet 5.5 $2/$10 pr. million tokens
+(Anthropics egne tal), GPT-6 Luna ca. $0,10/$0,50 (fra prissider af andre end OpenAI). En kontrol af en sætning koster
+ca. 0,5 øre med Sonnet og under 0,1 øre med Luna. Testsættene er skrevet af en Claude-model; brugerens egne tekster er
+den rigtige prøve. Skriptene: `tools/stavetest/sammenlign_modeller.py` og `sammenlign_ollama.py`.
+
 ## 4. Udviklingsplan og godkendelse
 
 | Milepæl | Indhold | Godkendes ved |

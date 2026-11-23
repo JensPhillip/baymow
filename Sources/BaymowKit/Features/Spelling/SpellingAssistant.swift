@@ -5,9 +5,14 @@ import BaymowCore
 /// Resultatet af en stavekontrol: teksten delt i stykker, så rettelserne kan vises og vælges.
 struct SpellingResult: Equatable {
     var segments: [SpellingSegment]
-    /// `true`, hvis Macens sprogmodel blev brugt; ellers kun stavekontrollen.
-    var usedModel: Bool
+    /// Hvem der rettede. Ved en fejl på internettet er det Macens egen hjælp (se `cloudProblem`).
+    var source: SpellingSource
     var language: Language
+    /// Sat, hvis internet-hjælpen var slået til, men ikke kunne bruges.
+    var cloudProblem: CloudSpellingError?
+
+    /// `true`, hvis en sprogmodel blev brugt; ellers kun stavekontrollen.
+    var usedModel: Bool { source != .spellCheckerOnly }
 
     /// Teksten, som den bliver brugt.
     var text: String { segments.map(\.text).joined() }
@@ -21,10 +26,14 @@ final class SpellingAssistant {
     static let maximumLength = 4000
 
     private let corrector: SpellingCorrector?
+    /// Bruges, hvis internet-hjælpen fejler (fx intet internet). Aldrig omvendt: Macens egen hjælp sender aldrig
+    /// teksten videre af sig selv.
+    private let fallback: SpellingCorrector?
     private let checker: WordChecker
 
-    init(corrector: SpellingCorrector?, checker: WordChecker) {
+    init(corrector: SpellingCorrector?, fallback: SpellingCorrector? = nil, checker: WordChecker) {
         self.corrector = corrector
+        self.fallback = fallback
         self.checker = checker
     }
 
@@ -33,8 +42,9 @@ final class SpellingAssistant {
 
     func check(_ text: String, preferred: Language = .danish) async -> SpellingResult {
         let language = LanguageDetectionService().dominantLanguage(of: text, fallback: preferred)
-        let spellGuard = SpellingGuard(checker: checker)
         var segments: [SpellingSegment] = []
+        var active = corrector
+        var problem: CloudSpellingError?
         lastProposals = []
 
         for piece in Self.sentencePieces(of: text) {
@@ -43,20 +53,33 @@ final class SpellingAssistant {
                 continue
             }
             var proposal: String?
-            if let corrector {
-                proposal = try? await corrector.correct(piece.text, language: language)
+            if let current = active {
+                do {
+                    proposal = try await current.correct(piece.text, language: language)
+                } catch {
+                    if case .cloud = current.source {
+                        // Internettet svigtede: resten af teksten rettes af Macens egen hjælp, og vinduet siger det.
+                        problem = error as? CloudSpellingError ?? .failed
+                        active = fallback
+                        proposal = try? await active?.correct(piece.text, language: language)
+                    }
+                }
             }
             lastProposals.append(proposal ?? piece.text)
+            let trusted: Bool = { if case .cloud = active?.source { return true } else { return false } }()
+            let spellGuard = SpellingGuard(checker: checker, trusted: trusted)
             segments += await resolveChoices(spellGuard.review(piece.text, proposal: proposal, language: language),
-                                             language: language)
+                                             using: active, language: language)
         }
         for index in segments.indices { segments[index].id = index }
-        return SpellingResult(segments: segments, usedModel: corrector != nil, language: language)
+        return SpellingResult(segments: segments, source: active?.source ?? .spellCheckerOnly, language: language,
+                              cloudProblem: problem)
     }
 
     /// Ord, hvor stavekontrollen har flere bud: modellen vælger ud fra sætningen. Brugerens eget ord er også et valg
     /// ("ingen af dem passer"), så modellen ikke tvinges til at gætte. Uden model står ordet markeret med forslag.
-    private func resolveChoices(_ sentence: [SpellingSegment], language: Language) async -> [SpellingSegment] {
+    private func resolveChoices(_ sentence: [SpellingSegment], using corrector: SpellingCorrector?,
+                                language: Language) async -> [SpellingSegment] {
         var segments = sentence
         guard let corrector else { return segments }
         for index in segments.indices where !segments[index].candidates.isEmpty {

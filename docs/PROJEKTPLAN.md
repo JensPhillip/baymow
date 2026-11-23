@@ -439,6 +439,7 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 | AP-61 | Højere hastighed (idé I3): op til 3×, og tallet i afspilleren svarer til det reelle tempo | 6 | Udfører + bruger | MVP | Færdig (brugeren godkendte 2,5× og 3×, 21. november 2026) |
 | AP-62 | Nyt design efter designprincipperne: sidebjælke, ikoner, flag, "Hør"-knapper, nyt udseende af afspiller og velkomst | 6 | Udfører + bruger | MVP | Færdig (brugeren godkendte runde 2, 21. november 2026) |
 | AP-63 | Stavehjælp (idé I12): ret egen tekst med Macens indbyggede sprogmodel, vist og læst op, aldrig rettet i stilhed | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
+| AP-64 | Stavehjælp via internet: Claude eller ChatGPT med brugerens egen nøgle, tilvalg, Macens hjælp uden internet | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
 | AP-52 | Developer ID, notarisering og DMG | 5 | Udfører + bruger | AP-50, B9 | Forberedt: DMG og README; afventer certifikat, app-id og kodearkiv |
 
 ### Fase 0 – Grundlag
@@ -789,6 +790,20 @@ stavefejl, når de kan se og høre rettelsen, før den bruges.
 fejlfri sætninger; mindst 70 % af fejlene rettet eller markeret. Tests af vagten med en falsk model.
 Brugeren har prøvet genvejen i et par programmer og godkendt vinduet.
 **Netværk:** Intet. Apples model kører på Macen.
+
+#### AP-64 Stavehjælp via internet
+
+**Hvorfor:** Brugeren fandt 23. november 2026, at stavehjælpen sagde "ingen fejl" til en arbejdsbesked med "ernagien"
+og "vinde" (for "finde"). Målt: Macens model + vagt fandt 8 af 18 fejl i et nyt, svært testsæt; den bedste lokale model
+via Ollama 12. Claude Sonnet 5.5 og GPT-6 Luna fandt alle eller næsten alle, uden forkerte rettelser. Brugeren valgte
+"begge, jeg vælger".
+**Gør:** `CloudSpellingCorrector` bag `SpellingCorrector`; brugerens egen nøgle i nøgleringen; vagten stoler mere på
+internet-modellerne (`trusted`), men bruger stadig ikke omskrivninger, tilføjede ord eller svar. Uden internet eller med
+en nøgle, der ikke virker: Macens egen hjælp, og vinduet siger det. Aldrig omvendt.
+**Acceptkriterier:** Stavetesten gennem Baymow med begge firmaer: ingen forkerte rettelser, ingen ændringer i fejlfri
+sætninger. Tests af reserven og af, at teksten aldrig sendes, når kun Macens hjælp er valgt. Brugeren har prøvet begge.
+**Netværk:** `Features/Spelling/CloudSpellingCorrector.swift` står på netværkslisten (brugerens ja 23. november 2026).
+Kun når brugeren har slået det til, har en nøgle og trykker ⌃⌥R eller "Prøv"/"Gem".
 
 ## 7. Stemmeporten
 

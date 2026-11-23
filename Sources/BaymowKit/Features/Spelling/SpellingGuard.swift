@@ -60,6 +60,10 @@ struct SystemWordChecker: WordChecker {
 @MainActor
 struct SpellingGuard {
     let checker: WordChecker
+    /// Internet-modellerne (Claude, ChatGPT) må rette mere end Macens model: i stavetesten lavede de ingen forkerte
+    /// rettelser, og Macens stavekontrol godkender selv forkerte ord som "ernagien" (målt 23. november 2026).
+    /// Omskrivninger, tilføjede ord og svar på teksten bliver stadig ikke brugt.
+    var trusted = false
 
     /// Hvor stor en del af ordene, der skal gå igen i modellens svar, før svaret overhovedet bruges.
     static let minimumSharedWords = 0.6
@@ -148,6 +152,12 @@ struct SpellingGuard {
         let proposalDistance = proposal.map { Self.distance(lower, $0.lowercased()) }
         let proposalIsWord = proposal.map { !checker.isMisspelled($0, language: language) } ?? false
 
+        if trusted, let proposal, let proposalDistance, proposalDistance > 0 {
+            // Internet-modellen: dens rettelse bruges, hvis den ligner det skrevne. Ingen grænse på ét bogstav for
+            // rigtige ord ("vinde" → "finde", "ernagien" → "energien"), men stadig ingen udskiftning med et helt andet ord.
+            if proposalDistance <= Self.allowedDistance(for: written) + 1 { return .fix(proposal) }
+        }
+
         guard misspelled else {
             // Et rigtigt ord. Lange ord er undtaget fra grænsen på ét bogstav: stavekontrollen godkender mange forkert
             // stavede sammensatte ord ("restorangen").
@@ -179,7 +189,7 @@ struct SpellingGuard {
         let written = oldWords.map { original.words[$0] }.joined()
         let fixed = newWords.map { proposed.words[$0] }
         guard Self.distance(written.lowercased(), fixed.joined().lowercased()) <= 1,
-              fixed.allSatisfy({ !checker.isMisspelled($0, language: language) }) else { return nil }
+              trusted || fixed.allSatisfy({ !checker.isMisspelled($0, language: language) }) else { return nil }
         let originalText = oldWords.enumerated().map { k, i in
             original.words[i] + (k < oldWords.count - 1 ? original.separators[i + 1] : "")
         }.joined()

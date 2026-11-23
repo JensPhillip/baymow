@@ -50,7 +50,8 @@ MainActor.assumeIsolated {
                               outputDirectory: arguments[index + 3]))
     }
     if let index = arguments.firstIndex(of: "--spell-test"), arguments.count > index + 2 {
-        exit(SpellTest.run(sentencesFile: arguments[index + 1], outputFile: arguments[index + 2]))
+        let cloud = arguments.firstIndex(of: "--cloud").flatMap { $0 + 1 < arguments.count ? arguments[$0 + 1] : nil }
+        exit(SpellTest.run(sentencesFile: arguments[index + 1], outputFile: arguments[index + 2], cloud: cloud))
     }
     if let index = arguments.firstIndex(of: "--render-ui"), arguments.count > index + 1 {
         exit(ScreenshotTool.run(outputDirectory: arguments[index + 1]))

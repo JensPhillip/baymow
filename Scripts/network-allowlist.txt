@@ -1,3 +1,4 @@
 # Filer, der må bruge netværk. Én sti pr. linje.
 # En ny linje her er en beslutning, der kræver arkitektens og brugerens ja (docs/PROJEKTPLAN.md, regel 3).
 Sources/BaymowKit/Engines/ModelDownloader.swift
+Sources/BaymowKit/Features/Spelling/CloudSpellingCorrector.swift

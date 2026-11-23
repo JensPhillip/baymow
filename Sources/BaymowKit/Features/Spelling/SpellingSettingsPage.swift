@@ -41,10 +41,20 @@ struct SpellingSettingsPage: View {
 
         Section {
             modelStatus
-            Label("Din tekst bliver på din Mac. Intet sendes væk.", systemImage: "lock.fill")
-                .foregroundStyle(.secondary)
+            if !settings.cloudEnabled {
+                Label("Din tekst bliver på din Mac. Intet sendes væk.", systemImage: "lock.fill")
+                    .foregroundStyle(.secondary)
+            }
         }
-        .onAppear { settings.refreshModelStatus() }
+        .onAppear { settings.refreshModelStatus(); settings.refreshKeys() }
+
+        Section {
+            OptionRow(symbol: "cloud.fill", color: .blue, title: "Bedre hjælp via internet",
+                      subtitle: "Finder flere fejl, også rigtige ord brugt forkert.",
+                      help: "Claude eller ChatGPT retter din tekst. Det kræver internet og din egen nøgle fra firmaet. Uden internet bruger Baymow Macens egen hjælp.",
+                      isOn: $settings.cloudEnabled)
+            if settings.cloudEnabled { CloudSettings(settings: settings) }
+        }
     }
 
     @ViewBuilder private var modelStatus: some View {
@@ -85,5 +95,77 @@ private struct ColorRow: View {
         } icon: {
             Image(systemName: symbol).foregroundStyle(color)
         }
+    }
+}
+
+/// Vælg firma, gem nøglen, og prøv om den virker.
+private struct CloudSettings: View {
+    @ObservedObject var settings: SpellingSettings
+    @State private var newKey = ""
+
+    var body: some View {
+        Picker("Firma", selection: $settings.cloudProvider) {
+            ForEach(CloudProvider.allCases) { Text($0.title).tag($0) }
+        }
+        .pickerStyle(.segmented)
+
+        let provider = settings.cloudProvider
+        if settings.savedKeys.contains(provider) {
+            HStack(spacing: 10) {
+                Label("Nøgle til \(provider.title) er gemt", systemImage: "key.fill").foregroundStyle(.green)
+                Spacer()
+                Button { settings.testConnection() } label: { Label("Prøv", systemImage: "bolt.horizontal.circle") }
+                    .help("Sender en fast testsætning til \(provider.company) – ikke din tekst.")
+                Button(role: .destructive) { settings.deleteKey() } label: { Label("Slet", systemImage: "trash") }
+                    .help("Fjerner nøglen fra Macens nøglering.")
+            }
+            testStatus
+        } else {
+            HStack(spacing: 10) {
+                Image(systemName: "key").foregroundStyle(.secondary).frame(width: 20)
+                Text("Din nøgle fra \(provider.keySite)").fixedSize()
+                SecureField("Nøgle", text: $newKey, prompt: Text("Indsæt nøglen her"))
+                    .labelsHidden()
+                    .textFieldStyle(.roundedBorder)
+                    .onSubmit(save)
+                Button("Gem", action: save).disabled(newKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            }
+            Label("Nøglen gemmes i Macens nøglering og vises ikke igen.", systemImage: "lock.fill")
+                .font(.callout).foregroundStyle(.secondary)
+        }
+
+        Label("Når du trykker \(SpellingSettings.shortcut.displayString), sendes den markerede tekst til \(provider.company). Uden internet bruger Baymow Macens egen hjælp.",
+              systemImage: "paperplane.fill")
+            .foregroundStyle(.secondary)
+    }
+
+    @ViewBuilder private var testStatus: some View {
+        switch settings.testResult {
+        case nil: EmptyView()
+        case .testing:
+            HStack(spacing: 8) { ProgressView().controlSize(.small); Text("Prøver forbindelsen …").foregroundStyle(.secondary) }
+        case .ok:
+            Label("Det virker", systemImage: "checkmark.circle.fill").foregroundStyle(.green)
+        case .failed(let problem):
+            Label(Self.message(problem, settings.cloudProvider), systemImage: "exclamationmark.triangle.fill")
+                .foregroundStyle(.orange)
+        }
+    }
+
+    static func message(_ problem: CloudSpellingError, _ provider: CloudProvider) -> String {
+        switch problem {
+        case .badKey: return "\(provider.company) afviser nøglen. Lav en ny på \(provider.keySite), og gem den igen."
+        case .offline: return "Intet internet lige nu."
+        case .noKey: return "Der er ingen nøgle gemt."
+        case .failed: return "\(provider.title) svarede ikke. Tjek, at der er penge på kontoen hos \(provider.company)."
+        }
+    }
+
+    private func save() {
+        let key = newKey
+        newKey = ""
+        guard !key.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        settings.saveKey(key)
+        settings.testConnection()
     }
 }

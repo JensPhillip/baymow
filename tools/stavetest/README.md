@@ -14,3 +14,17 @@ Kun egne testsætninger – aldrig brugerens tekst.
 - Tal: `rettet`, `markeret` ("tjek selv"), `overset`, og vigtigst `forkerte_rettelser` (ord, der hverken stod i teksten
   eller i facit) og `fejlfri_saetninger_aendret`. Tegnsætning tæller ikke med.
 - `foerste-vagt.json` er første udgave af vagten, til sammenligning.
+
+## Internet-hjælpen (AP-64)
+
+- `svaer.tsv`: 35 sværere sætninger i stil med en arbejdsbesked (rigtige ord brugt forkert, fejl som Macens
+  stavekontrol godkender, navne og forkortelser). Skrevet 23. november 2026 efter brugerens eksempel.
+- Gennem Baymow: nøglen gives som miljøvariabel, så den ikke står på kommandolinjen.
+
+```bash
+BAYMOW_TEST_KEY="$(security find-generic-password -a baymow-test -s baymow-claude -w)" ./build/Baymow.app/Contents/MacOS/Baymow --spell-test tools/stavetest/svaer.tsv /tmp/sky.json --cloud claude
+```
+
+- Modellerne alene (uden Baymow): `sammenlign_modeller.py <model> low <filer…>` (nøgler fra nøgleringen,
+  `baymow-claude` / `baymow-openai`, konto `baymow-test`) og `sammenlign_ollama.py <model> <filer…>` (lokalt via Ollama).
+- `resultater/sky-*.json`: Claude Sonnet 5.5 og GPT-6 Luna gennem vagten.
