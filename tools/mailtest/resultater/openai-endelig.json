@@ -1,0 +1,75 @@
+{
+  "dato" : "2026-11-23T14:02:03Z",
+  "detaljer" : [
+    {
+      "felter" : [
+
+      ],
+      "navn" : "møde – stikord med tid",
+      "problemer" : [
+
+      ],
+      "sekunder" : 1,
+      "svar" : "Hej Mette,\n\nJa tak, torsdag passer. Kl. 10 er fint."
+    },
+    {
+      "felter" : [
+        "[gå videre med tilbuddet \/ ikke gå videre med tilbuddet]",
+        "[hvornår?]"
+      ],
+      "navn" : "tilbud – ingen stikord",
+      "problemer" : [
+
+      ],
+      "sekunder" : 1.2,
+      "svar" : "Hej Peter,\n\nTak for tilbuddet. Vi vil gerne [gå videre med tilbuddet \/ ikke gå videre med tilbuddet]. Licenserne skal leveres [hvornår?]."
+    },
+    {
+      "felter" : [
+
+      ],
+      "navn" : "pris – vi skal tjekke",
+      "problemer" : [
+
+      ],
+      "sekunder" : 0.90000000000000002,
+      "svar" : "Hej Lise,\n\nTak for din mail. Vi skal lige tjekke budgettet og vender tilbage i næste uge."
+    },
+    {
+      "felter" : [
+
+      ],
+      "navn" : "ordre i tråden",
+      "problemer" : [
+
+      ],
+      "sekunder" : 1,
+      "svar" : "Hej,\n\nTak for tilbuddet, men vi takker nej."
+    },
+    {
+      "felter" : [
+
+      ],
+      "navn" : "engelsk tråd",
+      "problemer" : [
+
+      ],
+      "sekunder" : 1,
+      "svar" : "Hi Sarah,\n\nThanks. I’ll send the file tomorrow."
+    },
+    {
+      "felter" : [
+
+      ],
+      "navn" : "ingen signatur",
+      "problemer" : [
+
+      ],
+      "sekunder" : 1.5,
+      "svar" : "Hej Anna,\n\nFint, vi ses.\n\nVenlig hilsen"
+    }
+  ],
+  "model" : "gpt-6-luna",
+  "traade" : 6,
+  "uden_problemer" : 6
+}

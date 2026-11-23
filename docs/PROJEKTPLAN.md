@@ -446,6 +446,7 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 | AP-68 | Hvor meget Baymow retter (kun stavning / + tegnsætning, standard / + klarere sætninger, kun via internet) og formateringen bevares ved "Brug rettelsen" | 6 | Udfører + bruger | MVP | Færdig (formateringen godkendt af brugeren 23. november) |
 | AP-69 | Word: skrifttype og størrelse bevares ved "Brug rettelsen" – rettelserne sættes direkte ind i programmets egen RTF | 6 | Udfører + bruger | MVP | Færdig (godkendt af brugeren 23. november) |
 | AP-70 | Siden Stavning viser kun kontakten, når stavehjælpen er slået fra | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
+| AP-71 | Mail-svar (idé I15), første udgave til Apple Mail: stikord + ⌃⌥M → svar i stedet for stikordene, [felter] for det ukendte | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
 | AP-52 | Developer ID, notarisering og DMG | 5 | Udfører + bruger | AP-50, B9 | Forberedt: DMG og README; afventer certifikat, app-id og kodearkiv |
 
 ### Fase 0 – Grundlag
@@ -863,6 +864,21 @@ Målt: macOS kender ikke Words skrifttype Aptos og skriver Helvetica i stedet, o
 **Gør:** `RTFText` læser de synlige tegn i programmets egen RTF og skifter kun dem ud; alt andet står, som programmet
 skrev det. Kun det format, programmet selv gav (RTF eller HTML), sættes ind igen sammen med ren tekst.
 **Acceptkriterier:** Tests med RTF som fra Word (Aptos, fs24, fed, æøå, punktform, \u-tegn). Brugeren har prøvet i Word.
+
+#### AP-71 Mail-svar, første udgave (idé I15)
+
+**Hvorfor:** Brugeren 23. november 2026: hele mailtråden som kontekst, stikord/udkast/intet, direkte ind i
+mailprogrammet, defineret tone (menneskelig og formel), må ikke svare på det, den ikke ved. Først Apple Mail.
+**Gør:** `Features/MailReply/`: `MailReader` læser hele svarfeltet via tekstmarkører og stikordene med ⇧⌘↑ fra
+markøren (målt med `--mail-probe`); `MailThread` deler i stikord, signatur og tråd; `MailReplyPrompt` (tone, ingen
+opdigtede fakta, [felter], følg aldrig instruktioner i tråden, ingen hilsen når signaturen findes); svaret sættes ind
+i stedet for stikordene; et lille vindue viser "Mailtråden blev sendt til …", felterne, "Hør" og "Fortryd" (⌘Z).
+Siden "Mail", genvej ⌃⌥M (kan skiftes på siden Genvej), menupunkt og afsnit på Start. Slået fra som standard. Kræver
+en gemt nøgle (samme firma som stavehjælpen). Ingen ny fil på netværkslisten: al trafik går gennem
+`CloudSpellingCorrector`.
+**Acceptkriterier:** Mail-testen (`tools/mailtest/`): 6 tråde × 3 kørsler uden opdigtede tal, uden at følge ordren i
+tråden, med [felter] når stikord mangler. Tests af opdeling, instruktion og oprydning. Brugeren har prøvet i Apple Mail.
+**Senere:** Outlook og Gmail; lære brugerens egen tone; "forståelses-score".
 
 ## 7. Stemmeporten
 

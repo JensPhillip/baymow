@@ -66,7 +66,7 @@ public enum ScreenshotTool {
             model.page = page
             shoot("hovedvindue-\(page.rawValue)", size: NSSize(width: 780, height: 600),
                   MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
-                           spelling: SpellingSettings(defaults: defaults), shortcutRegistrationFailed: false))
+                           spelling: SpellingSettings(defaults: defaults), mail: MailReplySettings(defaults: defaults), shortcutRegistrationFailed: false))
         }
         // Siden Stavning med "Bedre hjælp via internet" slået til (AP-64).
         defaults.set(true, forKey: "spellingCloudEnabled")
@@ -80,7 +80,7 @@ public enum ScreenshotTool {
         model.page = .spelling
         shoot("hovedvindue-spelling-internet", size: NSSize(width: 780, height: 1250),
               MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
-                       spelling: SpellingSettings(defaults: defaults), shortcutRegistrationFailed: false))
+                       spelling: SpellingSettings(defaults: defaults), mail: MailReplySettings(defaults: defaults), shortcutRegistrationFailed: false))
         defaults.set(false, forKey: "spellingCloudEnabled")
         defaults.set(false, forKey: "spellingHelpEnabled")
         // Start og Genvej med stavehjælpen slået til.
@@ -89,7 +89,7 @@ public enum ScreenshotTool {
             model.page = page
             shoot("hovedvindue-\(page.rawValue)-stavning", size: NSSize(width: 780, height: 760),
                   MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
-                           spelling: SpellingSettings(defaults: defaults), shortcutRegistrationFailed: false))
+                           spelling: SpellingSettings(defaults: defaults), mail: MailReplySettings(defaults: defaults), shortcutRegistrationFailed: false))
         }
         defaults.set(false, forKey: "spellingHelpEnabled")
 
@@ -140,6 +140,19 @@ public enum ScreenshotTool {
         let clarityModel = SpellingPanelModel(sourceBundleID: nil) { _, _, _ in }
         clarityModel.load(SpellingResult(segments: claritySegments, source: .cloud(.openai), language: .danish))
         shoot("stavehjaelp-klarere", size: nil, SpellingPanelView(model: clarityModel, onApply: {}, onCopy: {}, onClose: {}))
+        // Mail-svar (AP-71): siden med mail-svar slået til og vinduet med et svar fra testtrådene.
+        defaults.set(true, forKey: "mailReplyEnabled")
+        model.page = .mail
+        shoot("hovedvindue-mail", size: NSSize(width: 780, height: 900),
+              MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
+                       spelling: SpellingSettings(defaults: defaults), mail: MailReplySettings(defaults: defaults),
+                       shortcutRegistrationFailed: false))
+        defaults.set(false, forKey: "mailReplyEnabled")
+        model.page = .start
+        let mailModel = MailReplyPanelModel(speak: { _, _, _ in })
+        mailModel.inserted = true
+        mailModel.state = .done("Hej Peter,\n\nTak for tilbuddet. Vi vil gerne [gå videre / vente]. Licenserne skal leveres [hvornår?].")
+        shoot("mailsvar", size: nil, MailReplyPanelView(model: mailModel, onUndo: {}, onClose: {}, onSettings: {}))
         var offlineResult = demoResult
         offlineResult.cloudProblem = .offline
         let offlineModel = SpellingPanelModel(sourceBundleID: nil) { _, _, _ in }

@@ -37,6 +37,16 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
         onFailure: { [weak self] notice in self?.present(notice) })
     private var spellingMenuItem: NSMenuItem?
 
+    // Mail-svar (AP-71, idé I15).
+    private let mailSettings = MailReplySettings()
+    private let mailShortcut = GlobalShortcutManager()
+    private lazy var mailReply = MailReplyController(
+        settings: mailSettings, spelling: spellingSettings,
+        speak: { [weak self] text, language, done in self?.speakSpelling(text, language: language, done: done) },
+        stopSpeaking: { [weak self] in self?.spellingVoices.forEach { $0.stop() } },
+        openSettings: { [weak self] in self?.openMainWindow(on: .mail) })
+    private var mailMenuItem: NSMenuItem?
+
     private lazy var onboarding = OnboardingWindowController(
         model: OnboardingModel(settings: settings, catalog: catalog, sampleEngine: AppleSpeechEngine()))
 
@@ -81,6 +91,15 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
         spellingShortcut.onTrigger = { [weak self] in self?.spelling.run() }
         spellingSettings.$isEnabled.removeDuplicates().sink { [weak self] enabled in
             self?.setSpellingEnabled(enabled)
+        }.store(in: &cancellables)
+        mailShortcut.onTrigger = { [weak self] in self?.mailReply.run() }
+        mailSettings.$isEnabled.removeDuplicates().sink { [weak self] enabled in
+            self?.setMailEnabled(enabled)
+        }.store(in: &cancellables)
+        mailSettings.$shortcut.removeDuplicates().dropFirst().sink { [weak self] shortcut in
+            guard let self else { return }
+            self.mailMenuItem?.title = "Svar på mail (\(shortcut.displayString))"
+            if self.mailSettings.isEnabled { self.setMailEnabled(true, shortcut: shortcut) }
         }.store(in: &cancellables)
         // Ny stavegenvej: registrér den igen og ret menuen. Siderne læser selv den samme værdi.
         spellingSettings.$shortcut.removeDuplicates().dropFirst().sink { [weak self] shortcut in
@@ -173,6 +192,22 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
         spellingSettings.shortcutFailed = !ok
     }
 
+    /// Mail-svarets genvej er kun registreret, når brugeren har slået det til.
+    private func setMailEnabled(_ enabled: Bool, shortcut: Shortcut? = nil) {
+        mailMenuItem?.isHidden = !enabled
+        guard enabled else {
+            mailShortcut.unregister()
+            mailSettings.shortcutFailed = false
+            mailReply.close()
+            return
+        }
+        let ok = mailShortcut.register(shortcut ?? mailSettings.shortcut)
+        if !ok { diagnostics.record(.hotkeyRegistrationFailed) }
+        mailSettings.shortcutFailed = !ok
+    }
+
+    @objc private func mailReplyFromMenu() { mailReply.run() }
+
     /// Læser et ord eller den rettede tekst op med den valgte stemme for sproget.
     private func speakSpelling(_ text: String, language: Language, done: @escaping @MainActor () -> Void) {
         spellingVoices.forEach { $0.stop() }
@@ -205,6 +240,11 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     // MARK: - Vinduer og menuer
 
+    private func openMainWindow(on page: MainPage) {
+        windowModel.page = page
+        showMainWindow()
+    }
+
     @objc public func showMainWindow() {
         if mainWindow == nil {
             let window = NSWindow(
@@ -227,7 +267,7 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private func refreshMainWindowContent() {
         mainWindow?.contentView = NSHostingView(rootView: MainView(
             model: windowModel, settings: settings, catalog: catalog, downloader: downloader,
-            spelling: spellingSettings, shortcutRegistrationFailed: shortcutRegistrationFailed
+            spelling: spellingSettings, mail: mailSettings, shortcutRegistrationFailed: shortcutRegistrationFailed
         ))
     }
 
@@ -252,6 +292,12 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
         spell.isHidden = !spellingSettings.isEnabled
         menu.addItem(spell)
         spellingMenuItem = spell
+        let mailItem = NSMenuItem(title: "Svar på mail (\(mailSettings.shortcut.displayString))",
+                                  action: #selector(mailReplyFromMenu), keyEquivalent: "")
+        mailItem.target = self
+        mailItem.isHidden = !mailSettings.isEnabled
+        menu.addItem(mailItem)
+        mailMenuItem = mailItem
         menu.addItem(.separator())
         let open = NSMenuItem(title: "Åbn Baymow", action: #selector(showMainWindow), keyEquivalent: "")
         open.target = self

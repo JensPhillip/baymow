@@ -80,6 +80,13 @@ final class SpellingSettings: ObservableObject {
         return corrector(key: key)
     }
 
+    /// Til mail-svar (AP-71): det valgte firma med den gemte nøgle – uafhængigt af, om stavehjælpen bruger internet.
+    /// Brugerens samtykke er, at mail-svar er slået til, og at vinduet siger det hver gang.
+    func cloudCorrectorForWriting() -> CloudSpellingCorrector? {
+        guard let key = CloudKeyStore.key(for: cloudProvider) else { return nil }
+        return corrector(key: key)
+    }
+
     /// Forbruget af internet-hjælpen (kun tal).
     let usage: CloudUsageLog
 

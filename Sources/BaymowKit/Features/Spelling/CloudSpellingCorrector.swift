@@ -78,7 +78,7 @@ struct CloudSpellingCorrector: SpellingCorrector {
 
     private static let session: URLSession = {
         let configuration = URLSessionConfiguration.ephemeral // intet gemmes på disken
-        configuration.timeoutIntervalForRequest = 20
+        configuration.timeoutIntervalForRequest = 60 // et mail-svar kan tage lidt tid at skrive
         configuration.urlCache = nil
         return URLSession(configuration: configuration)
     }()
@@ -110,7 +110,9 @@ struct CloudSpellingCorrector: SpellingCorrector {
 
     // MARK: Forespørgsel og svar
 
-    private func send(instructions: String, prompt: String, maxTokens: Int) async throws -> String {
+    /// Sender én opgave og returnerer svaret. Bruges også af mail-svar (AP-71), så al netværkstrafik til firmaerne
+    /// ligger i denne ene fil.
+    func send(instructions: String, prompt: String, maxTokens: Int) async throws -> String {
         let request = Self.request(provider: provider, key: key, instructions: instructions, prompt: prompt, maxTokens: maxTokens)
         let data: Data
         let response: URLResponse

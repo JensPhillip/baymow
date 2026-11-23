@@ -11,7 +11,7 @@ final class MainWindowModel: ObservableObject {
     @Published var shortcutError: (target: ShortcutTarget, text: String)?
     var isRecordingShortcut: Bool { recording != nil }
 
-    enum ShortcutTarget: Equatable { case read, spelling }
+    enum ShortcutTarget: Equatable { case read, spelling, mail }
     /// Siden, der vises i hovedvinduet.
     @Published var page: MainPage = .start
 
@@ -130,7 +130,7 @@ final class MainWindowModel: ObservableObject {
 
 /// Siderne i hovedvinduet: én ting pr. side, hver med sit ikon (designprincip 4).
 enum MainPage: String, CaseIterable, Identifiable {
-    case start, reading, display, voices, spelling, shortcut
+    case start, reading, display, voices, spelling, mail, shortcut
     var id: String { rawValue }
 
     var title: String {
@@ -140,6 +140,7 @@ enum MainPage: String, CaseIterable, Identifiable {
         case .display: return "Visning"
         case .voices: return "Stemmer"
         case .spelling: return "Stavning"
+        case .mail: return "Mail"
         case .shortcut: return "Genvej"
         }
     }
@@ -151,6 +152,7 @@ enum MainPage: String, CaseIterable, Identifiable {
         case .display: return "eye.fill"
         case .voices: return "person.wave.2.fill"
         case .spelling: return "textformat.abc.dottedunderline"
+        case .mail: return "envelope.fill"
         case .shortcut: return "keyboard.fill"
         }
     }
@@ -162,6 +164,7 @@ enum MainPage: String, CaseIterable, Identifiable {
         case .display: return .purple
         case .voices: return .green
         case .spelling: return .teal
+        case .mail: return .indigo
         case .shortcut: return .gray
         }
     }
@@ -174,13 +177,14 @@ enum MainPage: String, CaseIterable, Identifiable {
         case .display: return "Se ordet, der bliver læst."
         case .voices: return "Vælg, hvem der læser for dig."
         case .spelling: return "Få rettet det, du selv skriver."
+        case .mail: return "Få et forslag til svar på en mail."
         case .shortcut: return "Tasterne, der starter Baymow."
         }
     }
 
     /// Det, "Hør"-knappen læser op. Almindeligt dansk uden forkortelser.
     @MainActor
-    func explanation(shortcut: Shortcut, spelling: SpellingSettings) -> String {
+    func explanation(shortcut: Shortcut, spelling: SpellingSettings, mail: MailReplySettings? = nil) -> String {
         switch self {
         case .start:
             let read = "Markér en tekst i et hvilket som helst program. Tryk så på \(shortcut.spokenKeys) på samme tid. Så læser Baymow teksten højt for dig."
@@ -194,8 +198,11 @@ enum MainPage: String, CaseIterable, Identifiable {
             return "Her vælger du en stemme til hvert sprog. Tryk på afspil for at høre en stemme. Tryk på vælg for at bruge den."
         case .spelling:
             return "Stavehjælpen retter den tekst, du selv har skrevet. Markér teksten, og tryk på \(spelling.shortcut.spokenKeys) på samme tid. Baymow viser rettelserne med farver. Grøn er rettet. Orange skal du selv tjekke. Tryk på et ord for at vælge det og høre det. Tryk til sidst på Brug rettelsen." + (spelling.cloudEnabled ? " Du har slået bedre hjælp via internet til, så teksten bliver sendt til \(spelling.cloudProvider.title)." : " Din tekst bliver på din Mac.")
+        case .mail:
+            let keys = (mail?.shortcut ?? MailReplySettings.standardShortcut).spokenKeys
+            return "Mail svar skriver et forslag til et svar på en mail. Tryk på Svar i Apple Mail, og skriv nogle stikord øverst. Tryk så på \(keys) med markøren lige efter stikordene. Baymow sender stikordene og mailtråden til \(spelling.cloudProvider.title) og sætter svaret ind i stedet for stikordene. Står der noget i firkantede klammer, skal du selv udfylde det. Læs altid svaret igennem, før du sender det."
         case .shortcut:
-            return "En genvej er de taster, du trykker på samtidig. Den ene får den markerede tekst læst op. Den anden retter stavningen i din egen tekst. Du kan skifte til andre taster, hvis du vil."
+            return "En genvej er de taster, du trykker på samtidig. Den ene får den markerede tekst læst op. De andre retter stavningen i din egen tekst og skriver svar på mails. Du kan skifte til andre taster, hvis du vil."
         }
     }
 }
@@ -206,6 +213,7 @@ struct MainView: View {
     @ObservedObject var catalog: VoiceCatalog
     @ObservedObject var downloader: ModelDownloader
     @ObservedObject var spelling: SpellingSettings
+    @ObservedObject var mail: MailReplySettings
     /// Sat af AppShell, hvis den valgte genvej ikke kunne registreres.
     let shortcutRegistrationFailed: Bool
 
@@ -216,7 +224,7 @@ struct MainView: View {
         } detail: {
             VStack(alignment: .leading, spacing: 0) {
                 PageHeader(page: model.page, isPlaying: model.playing == "help:\(model.page.rawValue)", onListen: {
-                    model.speakHelp(model.page.explanation(shortcut: settings.shortcut, spelling: spelling),
+                    model.speakHelp(model.page.explanation(shortcut: settings.shortcut, spelling: spelling, mail: mail),
                                     id: "help:\(model.page.rawValue)")
                 })
                     .padding(.horizontal, 28)
@@ -237,6 +245,7 @@ struct MainView: View {
         case .voices: return VoiceLibrary.needsMainVoiceGuide(installed: catalog.voices)
         case .shortcut: return shortcutRegistrationFailed
         case .spelling: return spelling.isEnabled && spelling.shortcutFailed
+        case .mail: return mail.isEnabled && (mail.shortcutFailed || !spelling.savedKeys.contains(spelling.cloudProvider))
         case .reading, .display: return false
         }
     }
@@ -248,6 +257,7 @@ struct MainView: View {
         case .display: displayPage
         case .voices: voicesPage
         case .spelling: SpellingSettingsPage(settings: spelling, speak: { model.speakHelp($0) })
+        case .mail: MailSettingsPage(settings: mail, cloud: spelling)
         case .shortcut: shortcutPage
         }
     }
@@ -283,7 +293,7 @@ struct MainView: View {
             .padding(.vertical, 6)
         }
 
-        Section(spelling.isEnabled ? "Læs op" : "Sådan gør du") {
+        Section(spelling.isEnabled || mail.isEnabled ? "Læs op" : "Sådan gør du") {
             HStack(alignment: .top, spacing: 0) {
                 HowToStep(number: 1, title: "Markér") {
                     Image(systemName: "character.cursor.ibeam").font(.system(size: 30, weight: .medium))
@@ -313,6 +323,23 @@ struct MainView: View {
                     HowToStep(number: 3, title: "Ret") {
                         Image(systemName: "textformat.abc.dottedunderline").font(.system(size: 30, weight: .medium))
                             .foregroundStyle(.teal)
+                    }
+                }
+                .padding(.vertical, 10)
+            }
+        }
+
+        if mail.isEnabled {
+            Section("Svar på en mail") {
+                HStack(alignment: .top, spacing: 0) {
+                    HowToStep(number: 1, title: "Stikord") {
+                        Image(systemName: "list.bullet").font(.system(size: 30, weight: .medium)).foregroundStyle(.indigo)
+                    }
+                    arrow
+                    HowToStep(number: 2, title: "Tryk") { KeyCaps(shortcut: mail.shortcut, size: 30) }
+                    arrow
+                    HowToStep(number: 3, title: "Svar") {
+                        Image(systemName: "envelope.fill").font(.system(size: 30, weight: .medium)).foregroundStyle(.indigo)
                     }
                 }
                 .padding(.vertical, 10)
@@ -473,7 +500,7 @@ struct MainView: View {
         Section {
             shortcutEditor(.read, title: "Læs op", symbol: "speaker.wave.2.fill", color: .blue,
                            shortcut: settings.shortcut, failed: shortcutRegistrationFailed) { new in
-                if new == spelling.shortcut { return "De taster bruges allerede til at rette stavning." }
+                if let taken = taken(new, except: .read) { return taken }
                 settings.shortcut = new
                 return nil
             }
@@ -481,7 +508,7 @@ struct MainView: View {
         Section {
             shortcutEditor(.spelling, title: "Ret stavning", symbol: "textformat.abc.dottedunderline", color: .teal,
                            shortcut: spelling.shortcut, failed: spelling.isEnabled && spelling.shortcutFailed) { new in
-                if new == settings.shortcut { return "De taster bruges allerede til at læse op." }
+                if let taken = taken(new, except: .spelling) { return taken }
                 spelling.shortcut = new
                 return nil
             }
@@ -490,6 +517,26 @@ struct MainView: View {
                     .foregroundStyle(.secondary)
             }
         }
+        Section {
+            shortcutEditor(.mail, title: "Svar på mail", symbol: "envelope.fill", color: .indigo,
+                           shortcut: mail.shortcut, failed: mail.isEnabled && mail.shortcutFailed) { new in
+                if let taken = taken(new, except: .mail) { return taken }
+                mail.shortcut = new
+                return nil
+            }
+            if !mail.isEnabled {
+                Label("Mail-svar er slået fra. Slå det til på siden Mail.", systemImage: "info.circle")
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    /// Bruges tasterne allerede af en af Baymows andre genveje?
+    private func taken(_ shortcut: Shortcut, except target: MainWindowModel.ShortcutTarget) -> String? {
+        if target != .read, shortcut == settings.shortcut { return "De taster bruges allerede til at læse op." }
+        if target != .spelling, shortcut == spelling.shortcut { return "De taster bruges allerede til at rette stavning." }
+        if target != .mail, shortcut == mail.shortcut { return "De taster bruges allerede til mail-svar." }
+        return nil
     }
 
     /// Én genvej: hvad den gør, tasterne, og "Skift genvej".

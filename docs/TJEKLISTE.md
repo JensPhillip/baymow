@@ -19,6 +19,16 @@ Opdateret 23. november 2026.
 - ✅ Formateringen (også skrifttype og størrelse i Word) er godkendt 23. november.
 - [ ] Siden **Stavning**: slå stavehjælpen fra. Kun kontakten står tilbage.
 
+## Test nu: Mail-svar i Apple Mail (ca. 10 min)
+- [ ] 1. Baymow → siden **Mail** → slå **Mail-svar** til. Under "Hvem skriver svaret" står "Nøgle til ChatGPT er gemt".
+- [ ] 2. Åbn en mail i Apple Mail, og tryk **Svar**. Skriv stikord øverst, fx "ja tak, torsdag kl. 10 passer".
+- [ ] 3. Lad markøren stå lige efter stikordene, og tryk **⌃⌥M**. Efter et par sekunder står svaret i stedet for
+      stikordene. Din signatur og tråden nedenunder er urørt.
+- [ ] 4. Vinduet øverst til højre siger "Mailtråden blev sendt til OpenAI". Tryk **Hør**. Tryk **Fortryd**: dine
+      stikord kommer tilbage.
+- [ ] 5. Prøv uden stikord: Tryk Svar og straks ⌃⌥M. Der kommer [felter] i klammer, som du selv udfylder.
+- [ ] 6. Står der noget i svaret, som hverken stod i dine stikord eller i tråden? Skriv det til mig.
+
 ## Beslut, når du har prøvet den
 - ✅ **AI-konto:** besluttet 23. november – begge, du vælger selv. **Standard:** ChatGPT.
 - [ ] **Testnøglerne** i nøgleringen (konto `baymow-test`) kan slettes, når vi ikke skal måle mere.

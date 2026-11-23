@@ -113,8 +113,10 @@ private struct ColorRow: View {
 }
 
 /// Vælg firma, gem nøglen, og prøv om den virker.
-private struct CloudSettings: View {
+struct CloudSettings: View {
     @ObservedObject var settings: SpellingSettings
+    /// Linjen om, hvad stavehjælpen sender (skjules på siden Mail, der har sin egen).
+    var showsSpellingNote = true
     @State private var newKey = ""
 
     var body: some View {
@@ -148,9 +150,11 @@ private struct CloudSettings: View {
                 .font(.callout).foregroundStyle(.secondary)
         }
 
-        Label("Når du trykker \(settings.shortcut.displayString), sendes den markerede tekst til \(provider.company). Uden internet bruger Baymow Macens egen hjælp.",
-              systemImage: "paperplane.fill")
-            .foregroundStyle(.secondary)
+        if showsSpellingNote {
+            Label("Når du trykker \(settings.shortcut.displayString), sendes den markerede tekst til \(provider.company). Uden internet bruger Baymow Macens egen hjælp.",
+                  systemImage: "paperplane.fill")
+                .foregroundStyle(.secondary)
+        }
     }
 
     @ViewBuilder private var testStatus: some View {
