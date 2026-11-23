@@ -143,37 +143,8 @@ public enum MailProbe {
             lines.append("markør via AXIndexForTextMarker(markering): \(err == .success ? "\(index as? Int ?? -1)" : "fejl \(err.rawValue)")")
         }
 
-        // 9. Markér præcis brugerens del: find positionen trin for trin (halvering), så teksten passer.
-        if let start = copy(focused, "AXStartTextMarker"), let end = copy(focused, "AXEndTextMarker"),
-           let whole = text(start, end),
-           let header = whole.components(separatedBy: .newlines).firstIndex(where: {
-               $0.contains("skrev:") || $0.contains("wrote:") || $0.hasPrefix("Fra:") || $0.hasPrefix("From:") }) {
-            let target = whole.components(separatedBy: .newlines)[..<header].joined(separator: "\n").utf16.count
-            var low = 0, high = target * 2 + 50, steps = 0
-            while low < high, steps < 30 {
-                let middle = (low + high) / 2
-                let length = marker(middle).flatMap { text(start, $0) }?.utf16.count ?? Int.max
-                if length < target { low = middle + 1 } else { high = middle }
-                steps += 1
-            }
-            let found = marker(low).flatMap { text(start, $0) }?.utf16.count
-            lines.append("halvering: indeks \(low) giver \(found.map(String.init) ?? "?") af \(target) tegn efter \(steps) trin")
-            if let m = marker(low) {
-                var part: CFTypeRef?
-                AXUIElementCopyParameterizedAttributeValue(focused, "AXTextMarkerRangeForUnorderedTextMarkers" as CFString,
-                                                           [start, m] as CFArray, &part)
-                if let part {
-                    let setErr = AXUIElementSetAttributeValue(focused, "AXSelectedTextMarkerRange" as CFString, part)
-                    Thread.sleep(forTimeInterval: 0.3)
-                    var selectedText: CFTypeRef?
-                    if let selected = copy(focused, "AXSelectedTextMarkerRange") {
-                        AXUIElementCopyParameterizedAttributeValue(focused, "AXStringForTextMarkerRange" as CFString, selected, &selectedText)
-                    }
-                    let got = (selectedText as? String)?.utf16.count
-                    lines.append("markér kun dine ord: sæt=\(setErr.rawValue), markeret \(got.map(String.init) ?? "?") af \(target) tegn\(got == target ? " ✓" : "")")
-                }
-            }
-        }
+        // 9. (Målt 23. november: positionen kan findes præcist, men Mail markerer kun 682 af 1048 tegn, når Baymow
+        // sætter markeringen – signaturen standser den. Derfor prøves ⇧⌘↑ i stedet.)
 
         // 10. ⇧⌘↑ fra markøren: markerer brugerens stikord (alt over markøren). Kopiér, og mål længden; → fjerner
         // markeringen igen, så markøren står, hvor den stod.
