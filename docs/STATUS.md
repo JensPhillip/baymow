@@ -54,6 +54,8 @@ Sidst opdateret: 2026-11-23 af udfører (Claude Opus 5.5).
   Mail-testen: 8 af 8 i tre kørsler.
 - **AP-73 (sidebjælken):** øverst Start, Oplæsning, Visning, Stavning, Mail; fast nederst "Indstillinger" med Genveje,
   Stemmer og AI og nøgler (vælger øverst på siden). Start linker til Genveje, Oplæsning til Stemmer.
+  Rettet 23. november efter brugerens ønske: "Skift genveje" er en selvstændig knap nederst på Start; "Farverne" står
+  lige under "Sådan gør du" på Stavning; overskriften ved fanerne i Indstillinger er fjernet.
 
 ## Venter på brugeren
 

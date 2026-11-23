@@ -333,11 +333,6 @@ struct MainView: View {
                 }
             }
             .padding(.vertical, 10)
-            HStack {
-                Spacer()
-                Button { model.page = .shortcut } label: { Label("Skift genveje", systemImage: "keyboard") }
-                    .help("Åbner Indstillinger → Genveje")
-            }
         }
 
         if spelling.isEnabled {
@@ -389,6 +384,16 @@ struct MainView: View {
                         .controlSize(.large)
                 }
                 .padding(.vertical, 4)
+            }
+        }
+
+        // Selvstændig knap nederst på siden (brugerens ønske), uden for boksene.
+        Section {} footer: {
+            HStack {
+                Spacer()
+                Button { model.page = .shortcut } label: { Label("Skift genveje", systemImage: "keyboard") }
+                    .controlSize(.large)
+                    .help("Åbner Indstillinger → Genveje")
             }
         }
     }
@@ -688,7 +693,6 @@ private struct SettingsTabs: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Label("Indstillinger", systemImage: "gearshape.fill").font(.headline).foregroundStyle(.secondary)
             Picker("Indstillinger", selection: $model.page) {
                 ForEach(MainPage.settingsPages) { page in
                     Label(page.title, systemImage: page.symbol).tag(page)

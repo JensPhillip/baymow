@@ -42,13 +42,13 @@ struct SpellingSettingsPage: View {
             GuideStep(number: 4, symbol: "checkmark.circle", text: "Tryk på \"Brug rettelsen\"")
         }
 
-        Section("Hvor meget skal Baymow rette?") {
-            LevelPicker(settings: settings)
-        }
-
         Section("Farverne") {
             ColorRow(color: SpellingPanelView.corrected, symbol: "checkmark.circle.fill", text: "Grøn: rettet af Baymow")
             ColorRow(color: SpellingPanelView.uncertain, symbol: "questionmark.circle.fill", text: "Orange: tjek selv")
+        }
+
+        Section("Hvor meget skal Baymow rette?") {
+            LevelPicker(settings: settings)
         }
 
         Section {
