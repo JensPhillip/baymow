@@ -448,6 +448,7 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 | AP-70 | Siden Stavning viser kun kontakten, når stavehjælpen er slået fra | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
 | AP-71 | Mail-svar (idé I15), første udgave til Apple Mail: stikord + ⌃⌥M → svar i stedet for stikordene, [felter] for det ukendte | 6 | Udfører + bruger | MVP | Færdig (afprøvet af brugeren 23. november; forbedringer i AP-72) |
 | AP-72 | Mail-svar bedre (opfølgning på egen mail, antagelser vises, aldrig hilsen/navn) og siden "AI og nøgler" (nøgler, firma pr. funktion, forbrug pr. funktion) | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
+| AP-73 | Sidebjælken: "Indstillinger" fast nederst med Genveje, Stemmer og AI og nøgler; link fra Start til Genveje og fra Oplæsning til Stemmer | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
 | AP-52 | Developer ID, notarisering og DMG | 5 | Udfører + bruger | AP-50, B9 | Forberedt: DMG og README; afventer certifikat, app-id og kodearkiv |
 
 ### Fase 0 – Grundlag

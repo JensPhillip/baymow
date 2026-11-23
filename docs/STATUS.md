@@ -5,7 +5,7 @@ Sidst opdateret: 2026-11-23 af udfører (Claude Opus 5.5).
 
 ## Lige nu
 
-- **I gang:** AP-72 (mail-svar bedre, siden "AI og nøgler") – bygget, afventer brugerens afprøvning. AP-71 er afprøvet af brugeren.
+- **I gang:** AP-72 (mail-svar bedre, siden "AI og nøgler") og AP-73 (sidebjælken) – bygget, afventer brugerens afprøvning. AP-71 er afprøvet af brugeren.
 - **Til drøftelse:** login på mailkontoen (proaktiv hjælp, sparring) – brugerens idé 23. november.
 - **Mail-svar (I15):** Brugerens svar 23. november: hele tråden som kontekst, udkast/stikord/intet, direkte ind i mailprogrammet, defineret menneskelig og formel tone, alle programmer (først Apple Mail). AP-64 (internet-hjælpen) er godkendt.
 - **Færdige pakker:** AP-00, AP-01, AP-02, AP-10, AP-11, AP-12, AP-19 (hovedstemme: Apple Sara (Enhanced)),
@@ -52,6 +52,8 @@ Sidst opdateret: 2026-11-23 af udfører (Claude Opus 5.5).
 - **AP-72:** mail-svar kender brugerens navn (opfølgning på egen mail), viser antagelser og skriver aldrig hilsen/navn
   over den faste signatur. Ny side "AI og nøgler": begge nøgler, firma pr. funktion, forbrug pr. funktion med graf.
   Mail-testen: 8 af 8 i tre kørsler.
+- **AP-73 (sidebjælken):** øverst Start, Oplæsning, Visning, Stavning, Mail; fast nederst "Indstillinger" med Genveje,
+  Stemmer og AI og nøgler (vælger øverst på siden). Start linker til Genveje, Oplæsning til Stemmer.
 
 ## Venter på brugeren
 

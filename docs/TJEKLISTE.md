@@ -27,9 +27,13 @@ Opdateret 23. november 2026.
       modtageren, og vinduet siger "Den nyeste mail var din egen".
 - [ ] 3. Prøv en mail, hvor Baymow skal gætte noget (fx et mødetidspunkt). Står det under "Baymow har antaget"?
 - [ ] 4. Kommer der stadig hilsen eller navn over din signatur? Skriv det til mig, hvis ja.
-- [ ] 5. Siden **AI og nøgler**: begge nøgler står der. Vælg fx Claude til Mail og ChatGPT til Stavning.
+- [ ] 5. **Indstillinger → AI og nøgler**: begge nøgler står der. Vælg fx Claude til Mail og ChatGPT til Stavning.
 - [ ] 6. Forbruget viser Stavning og Mail hver for sig. På siderne Stavning og Mail står månedens forbrug med
       "Se forbrug og nøgler", som åbner siden.
+
+## Test nu: Sidebjælken (2 min)
+- [ ] 1. Nederst i sidebjælken står **Indstillinger**. Den åbner Genveje, Stemmer og AI og nøgler med en vælger øverst.
+- [ ] 2. **Start** → "Skift genveje" åbner Genveje. **Oplæsning** → "Vælg stemme" åbner Stemmer.
 
 ## Beslut, når du har prøvet den
 - ✅ **AI-konto:** besluttet 23. november – begge, du vælger selv. **Standard:** ChatGPT.

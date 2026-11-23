@@ -13,7 +13,11 @@ final class MainWindowModel: ObservableObject {
 
     enum ShortcutTarget: Equatable { case read, spelling, mail }
     /// Siden, der vises i hovedvinduet.
-    @Published var page: MainPage = .start
+    @Published var page: MainPage = .start {
+        didSet { if page.isSetting { lastSettingsPage = page } }
+    }
+    /// Den indstillingsside, "Indstillinger" nederst i sidebjælken åbner (den, brugeren sidst var på).
+    private(set) var lastSettingsPage: MainPage = .shortcut
 
     let settings: SettingsStore
     let catalog: VoiceCatalog
@@ -133,6 +137,12 @@ enum MainPage: String, CaseIterable, Identifiable {
     case start, reading, display, voices, spelling, mail, ai, shortcut
     var id: String { rawValue }
 
+    /// Siderne under "Indstillinger" nederst i sidebjælken (brugerens ønske 23. november 2026).
+    static let settingsPages: [MainPage] = [.shortcut, .voices, .ai]
+    /// Siderne øverst i sidebjælken.
+    static let mainPages: [MainPage] = allCases.filter { !$0.isSetting }
+    var isSetting: Bool { Self.settingsPages.contains(self) }
+
     var title: String {
         switch self {
         case .start: return "Start"
@@ -142,7 +152,7 @@ enum MainPage: String, CaseIterable, Identifiable {
         case .spelling: return "Stavning"
         case .mail: return "Mail"
         case .ai: return "AI og nøgler"
-        case .shortcut: return "Genvej"
+        case .shortcut: return "Genveje"
         }
     }
 
@@ -230,6 +240,11 @@ struct MainView: View {
             .navigationSplitViewColumnWidth(min: 180, ideal: 200, max: 240)
         } detail: {
             VStack(alignment: .leading, spacing: 0) {
+                if model.page.isSetting {
+                    SettingsTabs(model: model, needsAttention: needsAttention)
+                        .padding(.horizontal, 28)
+                        .padding(.top, 18)
+                }
                 PageHeader(page: model.page, isPlaying: model.playing == "help:\(model.page.rawValue)", onListen: {
                     model.speakHelp(model.page.explanation(shortcut: settings.shortcut, spelling: spelling, mail: mail),
                                     id: "help:\(model.page.rawValue)")
@@ -318,6 +333,11 @@ struct MainView: View {
                 }
             }
             .padding(.vertical, 10)
+            HStack {
+                Spacer()
+                Button { model.page = .shortcut } label: { Label("Skift genveje", systemImage: "keyboard") }
+                    .help("Åbner Indstillinger → Genveje")
+            }
         }
 
         if spelling.isEnabled {
@@ -381,6 +401,22 @@ struct MainView: View {
     // MARK: Oplæsning
 
     @ViewBuilder private var readingPage: some View {
+        Section {
+            HStack(spacing: 12) {
+                IconTile(symbol: MainPage.voices.symbol, color: MainPage.voices.color, size: 32)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Stemme").font(.headline)
+                    Text(catalog.voice(for: .danish).map { "Dansk: \($0.name)" } ?? "Ingen dansk stemme valgt")
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+                Button { model.page = .voices } label: { Label("Vælg stemme", systemImage: "arrow.right") }
+                    .controlSize(.large)
+                    .help("Åbner Indstillinger → Stemmer")
+            }
+            .padding(.vertical, 4)
+        }
+
         Section {
             VStack(alignment: .leading, spacing: 10) {
                 HStack {
@@ -600,7 +636,8 @@ struct MainSidebar: View {
     let needsAttention: (MainPage) -> Bool
 
     var body: some View {
-        List(MainPage.allCases, selection: Binding(get: { model.page }, set: { if let page = $0 { model.page = page } })) { page in
+        List(MainPage.mainPages, selection: Binding(get: { model.page.isSetting ? nil : model.page },
+                                                    set: { if let page = $0 { model.page = page } })) { page in
             HStack(spacing: 10) {
                 IconTile(symbol: page.symbol, color: page.color, size: 26)
                 Text(page.title).font(.system(size: 15))
@@ -614,6 +651,54 @@ struct MainSidebar: View {
             .tag(page)
         }
         .listStyle(.sidebar)
+        // "Indstillinger" står fast nederst: genveje, stemmer og AI og nøgler.
+        .safeAreaInset(edge: .bottom) { settingsButton }
+    }
+
+    private var settingsButton: some View {
+        let chosen = model.page.isSetting
+        let attention = MainPage.settingsPages.contains(where: needsAttention)
+        return Button { model.page = model.lastSettingsPage } label: {
+            HStack(spacing: 10) {
+                IconTile(symbol: "gearshape.fill", color: .gray, size: 26)
+                Text("Indstillinger").font(.system(size: 15))
+                Spacer(minLength: 0)
+                if attention {
+                    Image(systemName: "exclamationmark.circle.fill").foregroundStyle(.orange)
+                        .accessibilityLabel("Mangler noget")
+                }
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(chosen ? Color.primary.opacity(0.1) : .clear, in: RoundedRectangle(cornerRadius: 8))
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal, 10)
+        .padding(.bottom, 10)
+        .accessibilityAddTraits(chosen ? .isSelected : [])
+        .help("Genveje, stemmer og AI og nøgler")
+    }
+}
+
+/// Øverst på indstillingssiderne: skift mellem Genveje, Stemmer og AI og nøgler.
+private struct SettingsTabs: View {
+    @ObservedObject var model: MainWindowModel
+    let needsAttention: (MainPage) -> Bool
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Label("Indstillinger", systemImage: "gearshape.fill").font(.headline).foregroundStyle(.secondary)
+            Picker("Indstillinger", selection: $model.page) {
+                ForEach(MainPage.settingsPages) { page in
+                    Label(page.title, systemImage: page.symbol).tag(page)
+                }
+            }
+            .pickerStyle(.segmented)
+            .labelsHidden()
+            .fixedSize()
+            Spacer()
+        }
     }
 }
 

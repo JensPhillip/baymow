@@ -113,7 +113,7 @@ public enum ScreenshotTool {
               Form { Section("Forbrug") { UsageView(usage: chartLog, showChart: true) } }.formStyle(.grouped))
         chartLog.reset()
         model.page = .start
-        shoot("sidebjaelke", size: NSSize(width: 220, height: 300), MainSidebar(model: model, needsAttention: { $0 == .voices }))
+        shoot("sidebjaelke", size: NSSize(width: 220, height: 420), MainSidebar(model: model, needsAttention: { $0 == .voices }))
         shoot("velkomst", size: nil, OnboardingView(model: onboarding, settings: settings) {})
         _ = sessions.start(text: demoText, sourceAppName: "Safari")
         shoot("afspiller", size: nil, PlayerView(sessions: sessions, settings: settings) {})
