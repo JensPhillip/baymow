@@ -444,6 +444,7 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 | AP-66 | Forbrug: pris med 4 decimaler og en graf over de seneste 30 dage (lukket som standard, hold musen over en dag) | 6 | Udfører + bruger | MVP | Færdig (godkendt af brugeren 23. november) |
 | AP-67 | Genveje og Stop: stavegenvejen kan ændres på siden Genvej og vises rigtigt alle steder; stavning på Start; "Hør" bliver til "Stop"; Pris/Kontroller på grafens linje | 6 | Udfører + bruger | MVP | Færdig (godkendt af brugeren 23. november) |
 | AP-68 | Hvor meget Baymow retter (kun stavning / + tegnsætning, standard / + klarere sætninger, kun via internet) og formateringen bevares ved "Brug rettelsen" | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
+| AP-69 | Word: skrifttype og størrelse bevares ved "Brug rettelsen" – rettelserne sættes direkte ind i programmets egen RTF | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
 | AP-52 | Developer ID, notarisering og DMG | 5 | Udfører + bruger | AP-50, B9 | Forberedt: DMG og README; afventer certifikat, app-id og kodearkiv |
 
 ### Fase 0 – Grundlag
@@ -852,6 +853,14 @@ sætter rettelserne ind i den og indsætter RTF, HTML og ren tekst; kan stykkern
 ord, "kun stavning" ændrer ingen tegn. Tests af niveauerne og af formateringen. Brugeren har prøvet niveauerne og
 formateringen i Word, Google Docs og Mail.
 **Senere (brugerens idé):** en "forståelses-score" for sætninger og mail-hjælp – drøftes med brugeren først.
+
+#### AP-69 Skrifttype og størrelse i Word
+
+**Hvorfor:** Brugeren 23. november 2026: formateringen blev bevaret, men Word skiftede skrifttype og størrelse.
+Målt: macOS kender ikke Words skrifttype Aptos og skriver Helvetica i stedet, og størrelsen blev i HTML skrevet i pixel.
+**Gør:** `RTFText` læser de synlige tegn i programmets egen RTF og skifter kun dem ud; alt andet står, som programmet
+skrev det. Kun det format, programmet selv gav (RTF eller HTML), sættes ind igen sammen med ren tekst.
+**Acceptkriterier:** Tests med RTF som fra Word (Aptos, fs24, fed, æøå, punktform, \u-tegn). Brugeren har prøvet i Word.
 
 ## 7. Stemmeporten
 

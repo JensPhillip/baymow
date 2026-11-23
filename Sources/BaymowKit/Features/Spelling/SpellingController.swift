@@ -237,20 +237,20 @@ enum SelectionReplacer {
 
         // Formateringen (AP-68): kopiér markeringen med formatering, og sæt rettelserne ind i den kopi. Lykkes det
         // ikke, sættes ren tekst ind som før.
-        var rich: NSAttributedString?
+        var formatted: RichReplacement.Formatted?
         if !segments.isEmpty {
             let before = pasteboard.changeCount
             press("c")
             for _ in 0..<10 where pasteboard.changeCount == before {
                 try? await Task.sleep(nanoseconds: 50_000_000)
             }
-            if pasteboard.changeCount != before, let copied = RichReplacement.richText(from: pasteboard) {
-                rich = RichReplacement.apply(segments, to: copied)
+            if pasteboard.changeCount != before {
+                formatted = RichReplacement.formatted(from: pasteboard, segments: segments)
             }
         }
 
         pasteboard.clearContents()
-        pasteboard.writeObjects([RichReplacement.pasteboardItem(rich: rich, plain: text)])
+        pasteboard.writeObjects([RichReplacement.pasteboardItem(formatted: formatted, plain: text)])
         let changeAfterWrite = pasteboard.changeCount
         press("v")
 

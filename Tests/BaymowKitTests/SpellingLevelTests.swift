@@ -89,10 +89,60 @@ final class SpellingLevelTests: XCTestCase {
         XCTAssertNil(RichReplacement.apply(segments("Jeg har ikke tit", "Jeg har ikke tid"), to: rich))
     }
 
-    func testPasteboardItemHasFormattedAndPlainText() {
-        let item = RichReplacement.pasteboardItem(rich: NSAttributedString(string: "Hej"), plain: "Hej")
-        XCTAssertNotNil(item.data(forType: .rtf))
-        XCTAssertEqual(item.string(forType: .string), "Hej")
-        XCTAssertNotNil(item.string(forType: NSPasteboard.PasteboardType("org.nspasteboard.TransientType")))
+    func testPasteboardItemHasOnlyTheAppsOwnFormatAndPlainText() {
+        let rtf = RichReplacement.pasteboardItem(formatted: .rtf(Data("{\\rtf1 Hej}".utf8)), plain: "Hej")
+        XCTAssertNotNil(rtf.data(forType: .rtf))
+        XCTAssertNil(rtf.data(forType: .html), "Word skal kun have sin egen RTF tilbage")
+        XCTAssertEqual(rtf.string(forType: .string), "Hej")
+        XCTAssertNotNil(rtf.string(forType: NSPasteboard.PasteboardType("org.nspasteboard.TransientType")))
+        let plain = RichReplacement.pasteboardItem(formatted: nil, plain: "Hej")
+        XCTAssertNil(plain.data(forType: .rtf))
+    }
+
+    // MARK: Word's egen RTF (AP-69)
+
+    /// Som Word skriver det: Aptos, størrelse 12 (fs24), fed, æøå som \'xx, en skrifttabel og en generator.
+    static let wordRTF = #"{\rtf1\adeflang1025\ansi\ansicpg1252\uc1\deff0{\fonttbl{\f0\froman Times New Roman;}{\f39\fswiss\fcharset0 Aptos;}}{\*\generator Microsoft Word 16.0;}\pard\plain \f39\fs24\lang1030 {\f39\fs24 Jeg har ikke }{\b\f39\fs24 tit}{\f39\fs24  til at k\'f8be m\'e6lg.}\par }"#
+
+    func testWordsFontSizeAndBoldAreUntouched() throws {
+        let segs = segments("Jeg har ikke tit til at købe mælg.", "Jeg har ikke tid til at købe mælk.")
+        let out = try XCTUnwrap(RTFText.apply(segs, to: Data(Self.wordRTF.utf8)))
+        let rtf = String(decoding: out, as: UTF8.self)
+        // Kun bogstaverne er ændret: skrifttabel, Aptos og størrelse står som før.
+        XCTAssertTrue(rtf.contains("{\\f39\\fswiss\\fcharset0 Aptos;}"))
+        XCTAssertTrue(rtf.contains("{\\b\\f39\\fs24 tid}"))
+        XCTAssertFalse(rtf.contains("Helvetica"))
+        // Og RTF'en kan stadig læses, med den rigtige tekst.
+        let read = RTFText.read(Array(out))
+        XCTAssertEqual(String(utf16CodeUnits: read.text, count: read.text.count), "Jeg har ikke tid til at købe mælk.\n")
+        XCTAssertNotNil(NSAttributedString(rtf: out, documentAttributes: nil))
+    }
+
+    func testCommaIsAddedWithTheFormattingOfTheWordBefore() throws {
+        let rtf = #"{\rtf1\ansi{\fonttbl{\f0 Aptos;}}\f0\fs24 Jeg tror at han kommer\par}"#
+        let out = try XCTUnwrap(RTFText.apply(segments("Jeg tror at han kommer", "Jeg tror, at han kommer."), to: Data(rtf.utf8)))
+        let read = RTFText.read(Array(out))
+        XCTAssertEqual(String(utf16CodeUnits: read.text, count: read.text.count), "Jeg tror, at han kommer.\n")
+        XCTAssertTrue(String(decoding: out, as: UTF8.self).contains("\\f0\\fs24 Jeg tror, at"))
+    }
+
+    func testUnicodeAndBulletsInWordsRTF() throws {
+        // Punktform: Word skriver punkttegnet i \listtext, som ikke er en del af teksten. \u med reserve-tegn.
+        let rtf = #"{\rtf1\ansi\uc1{\fonttbl{\f0 Aptos;}}{\listtext\f3 \u-3913\'b7\tab}\ls1 Jeg har ikke tit\u8230\'85\par{\listtext\f3 \u-3913\'b7\tab}\ls1 Vi ses\par}"#
+        let read = RTFText.read(Array(rtf.utf8))
+        XCTAssertEqual(String(utf16CodeUnits: read.text, count: read.text.count), "Jeg har ikke tit…\nVi ses\n")
+        let out = try XCTUnwrap(RTFText.apply(segments("Jeg har ikke tit…\nVi ses", "Jeg har ikke tid…\nVi ses"), to: Data(rtf.utf8)))
+        let fixed = RTFText.read(Array(out))
+        XCTAssertEqual(String(utf16CodeUnits: fixed.text, count: fixed.text.count), "Jeg har ikke tid…\nVi ses\n")
+        XCTAssertTrue(String(decoding: out, as: UTF8.self).contains("{\\listtext\\f3 \\u-3913\\'b7\\tab}"))
+    }
+
+    func testNewSpecialCharactersAreEscaped() {
+        XCTAssertEqual(RTFText.escape("æ{"), "{\\uc1\\u230?}\\{")
+    }
+
+    func testNotRTFOrMissingWordsGiveNil() {
+        XCTAssertNil(RTFText.apply(segments("Jeg har ikke tit", "Jeg har ikke tid"), to: Data("<html>".utf8)))
+        XCTAssertNil(RTFText.apply(segments("Jeg har ikke tit", "Jeg har ikke tid"), to: Data(#"{\rtf1 Noget andet}"#.utf8)))
     }
 }
