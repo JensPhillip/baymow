@@ -7,11 +7,11 @@ import BaymowCore
 ///
 /// Rapporten indeholder kun roller, længder, antal og ja/nej – aldrig mailens tekst. Den skrives til
 /// `~/Library/Logs/Baymow/mail-probe.txt` (én blok pr. kørsel). Køres med
-/// `open -n Baymow.app --args --mail-probe`; brugeren har så 10 sekunder til at klikke i svarfeltet. Et bip, når den
+/// `open -n Baymow.app --args --mail-probe`; brugeren har så 15 sekunder (eller tallet efter `--mail-probe`) til at klikke i svarfeltet. Et bip, når den
 /// starter, og to, når den har målt.
 @MainActor
 public enum MailProbe {
-    public static func run(delay: Double = 10) {
+    public static func run(delay: Double = 15) {
         NSSound.beep()
         Thread.sleep(forTimeInterval: delay)
         var lines: [String] = ["== \(ISO8601DateFormatter().string(from: Date()))", "trusted: \(AXIsProcessTrusted())"]

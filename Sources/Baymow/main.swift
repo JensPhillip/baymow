@@ -11,7 +11,9 @@ MainActor.assumeIsolated {
     }
 
     if CommandLine.arguments.contains("--mail-probe") {
-        MainActor.assumeIsolated { MailProbe.run() }
+        let delay = CommandLine.arguments.firstIndex(of: "--mail-probe").flatMap {
+            $0 + 1 < CommandLine.arguments.count ? Double(CommandLine.arguments[$0 + 1]) : nil } ?? 15
+        MainActor.assumeIsolated { MailProbe.run(delay: delay) }
         exit(0)
     }
 
