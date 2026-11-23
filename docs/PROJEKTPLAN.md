@@ -441,6 +441,7 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 | AP-63 | Stavehjælp (idé I12): ret egen tekst med Macens indbyggede sprogmodel, vist og læst op, aldrig rettet i stilhed | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
 | AP-64 | Stavehjælp via internet: Claude eller ChatGPT med brugerens egen nøgle, tilvalg, Macens hjælp uden internet | 6 | Udfører + bruger | MVP | Færdig (brugeren har gemt begge nøgler og godkendt 23. november) |
 | AP-65 | Forbrug af internet-hjælpen: kontroller og skønnet pris pr. firma og måned på siden Stavning; ChatGPT som standard | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
+| AP-66 | Forbrug: pris med 4 decimaler og en graf over de seneste 30 dage (lukket som standard, hold musen over en dag) | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
 | AP-52 | Developer ID, notarisering og DMG | 5 | Udfører + bruger | AP-50, B9 | Forberedt: DMG og README; afventer certifikat, app-id og kodearkiv |
 
 ### Fase 0 – Grundlag
@@ -816,6 +817,14 @@ Kun når brugeren har slået det til, har en nøgle og trykker ⌃⌥R eller "Pr
 tekst). Afsnittet "Forbrug" på siden Stavning viser denne måned og tidligere måneder med en skønnet pris i kroner.
 **Acceptkriterier:** Tests af tælling, måneder, pris og gemning. Ingen tekst gemmes. Brugeren har set afsnittet.
 **Senere:** I13 (rigtige priser og forbrug hentet hos firmaerne) og I14 (fælles nøgle mod betaling).
+
+#### AP-66 Forbrug over tid
+
+**Hvorfor:** Brugeren kunne ikke se et beløb med 2 decimaler, og vil gerne kunne åbne en graf over tid (23. november 2026).
+**Gør:** Prisen vises med 4 decimaler. Forbruget gemmes også pr. dag (kun tal). "Vis graf over tid" under Forbrug er
+lukket som standard: søjler pr. dag de seneste 30 dage, ét firma pr. farve (palet kontrolleret for farveblindhed i lys
+og mørk), "Pris"/"Kontroller", og et lille felt med dagens tal, når musen holdes over en dag.
+**Acceptkriterier:** Tests af tal pr. dag. Brugeren har åbnet grafen og holdt musen over en dag.
 
 ## 7. Stemmeporten
 

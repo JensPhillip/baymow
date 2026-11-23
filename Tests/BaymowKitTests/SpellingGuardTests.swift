@@ -228,11 +228,19 @@ final class SpellingGuardTests: XCTestCase {
         XCTAssertEqual(log.earlierMonths, ["2026-11"])
         XCTAssertEqual(CloudUsageLog.monthName("2026-11"), "november 2026")
 
+        // Pr. dag til grafen: 30 dage × 2 firmaer, også dage uden forbrug.
+        let points = log.lastDays(30)
+        XCTAssertEqual(points.count, 60)
+        XCTAssertEqual(points.filter { $0.entry.checks > 0 }.map(\.provider), [.openai, .claude])
+        XCTAssertEqual(CloudUsageLog.dayKey(points.last!.day), "2026-12-02")
+
         // Gemt og læst igen.
         let again = CloudUsageLog(defaults: defaults, now: { date })
         XCTAssertEqual(again.entry(.openai, month: "2026-11").inputTokens, 1_000_000)
+        XCTAssertEqual(again.days["2026-11-23"]?["openai"]?.checks, 1)
         again.reset()
         XCTAssertTrue(CloudUsageLog(defaults: defaults).months.isEmpty)
+        XCTAssertTrue(CloudUsageLog(defaults: defaults).days.isEmpty)
         defaults.removePersistentDomain(forName: "baymow-usage-test")
     }
 }

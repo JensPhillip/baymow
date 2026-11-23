@@ -81,6 +81,23 @@ public enum ScreenshotTool {
               MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
                        spelling: SpellingSettings(defaults: defaults), shortcutRegistrationFailed: false))
         defaults.set(false, forKey: "spellingCloudEnabled")
+
+        // Grafen over forbruget (AP-66) med opdigtede tal for 30 dage og musen over en dag.
+        var demoDate = Calendar(identifier: .gregorian).startOfDay(for: Date()).addingTimeInterval(-29 * 86_400 + 43_200)
+        let chartLog = CloudUsageLog(defaults: defaults, now: { demoDate })
+        chartLog.reset()
+        for day in 0..<30 {
+            let checks = [0, 3, 8, 5, 0, 0, 12, 6, 4, 9, 2, 0, 7, 11, 5, 3, 0, 0, 6, 14, 8, 4, 10, 3, 0, 5, 9, 13, 7, 6][day]
+            for _ in 0..<checks { chartLog.addCheck(.openai) }
+            chartLog.addTokens(.openai, input: checks * 420, output: checks * 160)
+            if day % 6 == 2 { chartLog.addCheck(.claude); chartLog.addTokens(.claude, input: 380, output: 40) }
+            demoDate = demoDate.addingTimeInterval(86_400)
+        }
+        demoDate = demoDate.addingTimeInterval(-86_400)
+        let selected = chartLog.lastDays(30).max { $0.entry.checks < $1.entry.checks }?.day
+        shoot("forbrug-graf", size: NSSize(width: 640, height: 330),
+              UsageChart(usage: chartLog, selectedDay: selected).padding(20))
+        chartLog.reset()
         model.page = .start
         shoot("sidebjaelke", size: NSSize(width: 220, height: 300), MainSidebar(model: model, needsAttention: { $0 == .voices }))
         shoot("velkomst", size: nil, OnboardingView(model: onboarding, settings: settings) {})

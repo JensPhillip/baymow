@@ -35,6 +35,8 @@ Er du i tvivl om noget i vinduet, så skriv, hvad du så, eller tag et skærmbil
       Tallet "kontroller" går op for hver kontrol, og prisen er et lille beløb (få øre).
 - [ ] 2. Giver tallene mening? Sammenlign gerne senere med regningen hos OpenAI.
 - [ ] 3. Prøv gerne at slå Wi-Fi fra og trykke ⌃⌥R: vinduet skriver "Intet internet" med orange.
+- [ ] 4. Tryk **Vis graf over tid** under Forbrug. Hold musen over dagens søjle: et lille felt viser kontroller og pris.
+      Skift mellem **Pris** og **Kontroller**. (Grafen har kun tal fra i dag og frem.)
 
 ## Beslut, når du har prøvet den
 - [ ] **Kommaer:** Baymow sætter kommaer, hvor modellen mener, de skal være (fx "Jeg tror, at …"). Vil du have det,

@@ -5,7 +5,7 @@ Sidst opdateret: 2026-11-23 af udfører (Claude Opus 5.5).
 
 ## Lige nu
 
-- **I gang:** AP-63 stavehjælp (I12) og AP-65 forbrug af internet-hjælpen – bygget, afventer brugerens afprøvning. AP-64 (internet-hjælpen) er godkendt.
+- **I gang:** AP-63 stavehjælp (I12), AP-65 og AP-66 forbrug af internet-hjælpen (med graf) – bygget, afventer brugerens afprøvning. AP-64 (internet-hjælpen) er godkendt.
 - **Færdige pakker:** AP-00, AP-01, AP-02, AP-10, AP-11, AP-12, AP-19 (hovedstemme: Apple Sara (Enhanced)),
   AP-20, AP-21, AP-22, AP-23, AP-30, AP-31, AP-32, AP-40, AP-50, AP-51, AP-60, AP-61, AP-62.
 - **Lukket/droppet af brugeren 22. november:** AP-03 (lytteskemaet), AP-15 (Plapre).
@@ -35,6 +35,8 @@ Sidst opdateret: 2026-11-23 af udfører (Claude Opus 5.5).
 - **AP-65 (forbrug):** afsnittet "Forbrug" på siden Stavning: kontroller og skønnet pris pr. firma og måned
   (priser tjekket 23. november: GPT-6 Luna $0,10/$0,50, Sonnet 5.5 $2/$10; kurs 6,45 kr.). ChatGPT er standard.
   Idéer til senere: I13 rigtige priser hentet hos firmaerne, I14 fælles nøgle mod betaling for ikke-tekniske brugere.
+- **AP-66 (forbrug over tid):** pris med 4 decimaler; "Vis graf over tid" (lukket som standard) med søjler pr. dag i
+  30 dage og tal ved musen. Forbruget gemmes nu også pr. dag; dage før 23. november findes kun som månedstal.
 
 ## Venter på brugeren
 

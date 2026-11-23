@@ -1,5 +1,6 @@
 import AppKit
 import SwiftUI
+import Charts
 import BaymowCore
 
 /// Siden "Stavning" i hovedvinduet: slå stavehjælpen til, se hvordan den bruges, og om Macens sprogmodel er klar.
@@ -178,6 +179,8 @@ private struct CloudSettings: View {
 private struct UsageView: View {
     @ObservedObject var usage: CloudUsageLog
     @State private var showEarlier = false
+    /// Grafen er lukket, til brugeren selv åbner den.
+    @State private var showChart = false
     @State private var confirmReset = false
 
     var body: some View {
@@ -193,6 +196,10 @@ private struct UsageView: View {
                     }
                 }
             }
+        }
+
+        DisclosureGroup("Vis graf over tid", isExpanded: $showChart) {
+            UsageChart(usage: usage)
         }
 
         HStack(alignment: .top) {
@@ -215,7 +222,7 @@ private struct UsageView: View {
             Text(provider.title)
             Spacer()
             Text(entry.checks == 1 ? "1 kontrol" : "\(entry.checks) kontroller").foregroundStyle(.secondary).monospacedDigit()
-            Text("ca. " + Self.kroner(usage.kroner(provider, month: month), decimals: 2))
+            Text("ca. " + Self.kroner(usage.kroner(provider, month: month), decimals: 4))
                 .monospacedDigit().frame(minWidth: 90, alignment: .trailing)
         }
         .accessibilityElement(children: .combine)
@@ -229,5 +236,136 @@ private struct UsageView: View {
         formatter.minimumFractionDigits = decimals
         formatter.maximumFractionDigits = decimals
         return (formatter.string(from: NSNumber(value: value)) ?? "\(value)") + " kr."
+    }
+}
+
+/// Søjler pr. dag de seneste 30 dage, ét firma pr. farve. Hold musen over en dag for at se tallene.
+struct UsageChart: View {
+    @ObservedObject var usage: CloudUsageLog
+    @State private var measure: Measure = .price
+    @State private var selectedDay: Date?
+
+    /// `selectedDay` kun til skærmbilleder (som om musen holdes over dagen).
+    init(usage: CloudUsageLog, selectedDay: Date? = nil) {
+        self.usage = usage
+        _selectedDay = State(initialValue: selectedDay)
+    }
+
+    enum Measure: String, CaseIterable, Identifiable {
+        case price = "Pris", checks = "Kontroller"
+        var id: String { rawValue }
+    }
+
+    /// Farver fra en palet, der er kontrolleret for farveblindhed (lys og mørk).
+    static func color(_ provider: CloudProvider) -> Color {
+        let (light, dark): (UInt32, UInt32) = provider == .openai ? (0x2a78d6, 0x3987e5) : (0xeb6834, 0xd95926)
+        return Color(nsColor: NSColor(name: nil) { appearance in
+            let hex = appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua ? dark : light
+            return NSColor(srgbRed: CGFloat((hex >> 16) & 0xff) / 255, green: CGFloat((hex >> 8) & 0xff) / 255,
+                           blue: CGFloat(hex & 0xff) / 255, alpha: 1)
+        })
+    }
+
+    var body: some View {
+        let points = usage.lastDays(30)
+        VStack(alignment: .leading, spacing: 10) {
+            Picker("Vis", selection: $measure) {
+                ForEach(Measure.allCases) { Text($0.rawValue).tag($0) }
+            }
+            .pickerStyle(.segmented).labelsHidden().frame(width: 220)
+
+            Chart {
+                ForEach(points) { point in
+                    BarMark(x: .value("Dag", point.day, unit: .day),
+                            y: .value(measure.rawValue, value(point)))
+                        .foregroundStyle(by: .value("Firma", point.provider.title))
+                        .cornerRadius(3)
+                }
+                if let selectedDay {
+                    RuleMark(x: .value("Dag", selectedDay, unit: .day))
+                        .foregroundStyle(.secondary.opacity(0.35))
+                        .annotation(position: .top, overflowResolution: .init(x: .fit(to: .chart), y: .disabled)) {
+                            tooltip(for: selectedDay, points: points)
+                        }
+                }
+            }
+            .chartForegroundStyleScale(domain: CloudProvider.allCases.map(\.title),
+                                       range: CloudProvider.allCases.map(Self.color))
+            .chartLegend(position: .bottom, alignment: .leading)
+            .chartXAxis {
+                AxisMarks(values: .stride(by: .day, count: 7)) { _ in
+                    AxisGridLine().foregroundStyle(.secondary.opacity(0.15))
+                    AxisValueLabel(format: .dateTime.day().month(.twoDigits).locale(Locale(identifier: "da_DK")))
+                }
+            }
+            .chartYAxis {
+                AxisMarks(position: .leading) { value in
+                    AxisGridLine().foregroundStyle(.secondary.opacity(0.15))
+                    AxisValueLabel {
+                        if let number = value.as(Double.self) {
+                            Text(measure == .price ? UsageView.kroner(number, decimals: axisDecimals(points)) : "\(Int(number))")
+                        }
+                    }
+                }
+            }
+            .chartOverlay { proxy in
+                GeometryReader { geometry in
+                    Rectangle().fill(.clear).contentShape(Rectangle())
+                        .onContinuousHover { phase in
+                            switch phase {
+                            case .active(let location):
+                                guard let frame = proxy.plotFrame else { return }
+                                let x = location.x - geometry[frame].origin.x
+                                if let date: Date = proxy.value(atX: x) {
+                                    selectedDay = Calendar(identifier: .gregorian).startOfDay(for: date)
+                                }
+                            case .ended:
+                                selectedDay = nil
+                            }
+                        }
+                }
+            }
+            .frame(height: 200)
+            .padding(.top, 34) // plads til tallene over søjlerne
+
+            if points.allSatisfy({ $0.entry.checks == 0 && $0.entry.inputTokens == 0 }) {
+                Text("Intet forbrug de seneste 30 dage endnu.").foregroundStyle(.secondary)
+            }
+        }
+        .padding(.vertical, 6)
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Graf over forbruget de seneste 30 dage")
+    }
+
+    /// Små beløb får flere decimaler, så akserne ikke alle hedder "0,00 kr.".
+    private func axisDecimals(_ points: [CloudUsageLog.DayPoint]) -> Int {
+        let largest = points.map(\.kroner).max() ?? 0
+        return largest >= 1 ? 2 : largest >= 0.1 ? 3 : 4
+    }
+
+    private func value(_ point: CloudUsageLog.DayPoint) -> Double {
+        measure == .price ? point.kroner : Double(point.entry.checks)
+    }
+
+    private func tooltip(for day: Date, points: [CloudUsageLog.DayPoint]) -> some View {
+        let today = points.filter { Calendar(identifier: .gregorian).isDate($0.day, inSameDayAs: day) }
+        return VStack(alignment: .leading, spacing: 4) {
+            Text(day.formatted(.dateTime.weekday(.wide).day().month(.wide).locale(Locale(identifier: "da_DK"))))
+                .font(.caption.weight(.semibold))
+            ForEach(today) { point in
+                HStack(spacing: 6) {
+                    RoundedRectangle(cornerRadius: 2).fill(Self.color(point.provider)).frame(width: 8, height: 8)
+                    Text(point.provider.title)
+                    Spacer(minLength: 12)
+                    Text(point.entry.checks == 1 ? "1 kontrol" : "\(point.entry.checks) kontroller").foregroundStyle(.secondary)
+                    Text(UsageView.kroner(point.kroner, decimals: 4)).monospacedDigit()
+                }
+                .font(.caption)
+            }
+        }
+        .padding(8)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8))
+        .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(.primary.opacity(0.1)))
+        .frame(minWidth: 220)
     }
 }
