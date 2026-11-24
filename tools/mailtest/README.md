@@ -21,3 +21,6 @@ BAYMOW_TEST_KEY="$(security find-generic-password -a baymow-test -s baymow-opena
 
 Hver tråd får de fire faste spørgsmål og "Hvad er afsenderens telefonnummer?" (står ingen steder). Tjekker længde,
 "står ikke i mailen" og at brugerens egen mail genkendes. `resultater/sparring-openai.json`: GPT-6 Luna, 40 af 40.
+
+> Testnøglerne (konto `baymow-test`) blev slettet 24. november 2026. Skal der måles igen, gemmes de først på ny med
+> `security add-generic-password -U -a baymow-test -s <baymow-openai|baymow-claude> -w`.

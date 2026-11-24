@@ -1,6 +1,6 @@
 # Tjekliste: det, du skal teste eller beslutte
 
-Opdateret 23. november 2026.
+Opdateret 24. november 2026.
 
 ## Afklaret 22. november
 - ✅ Afspilleren: alle 10 punkter virker.
@@ -35,28 +35,21 @@ Opdateret 23. november 2026.
 - [ ] 1. Nederst i sidebjælken står **Indstillinger**. Den åbner Genveje, Stemmer og AI og nøgler med en vælger øverst.
 - [ ] 2. **Start** → "Skift genveje" åbner Genveje. **Oplæsning** → "Vælg stemme" åbner Stemmer.
 
-## Test nu: Sparring om mailen (ca. 5 min)
-- [ ] 1. Siden **Mail** → slå **Sparring om mailen** til.
-- [ ] 2. Åbn en mail i Apple Mail (læs den, eller tryk Svar), og tryk **⌃⌥K**. Et vindue åbner med mailens emne.
-      Nederst står "Intet er sendt endnu".
-- [ ] 3. Tryk **Hvad vil afsenderen?** og **Opsummér**. Er svarene korte og rigtige? Tryk **Hør** ved et svar.
-- [ ] 4. Skriv dit eget spørgsmål, fx "Hvad er fristen?". Står det ikke i mailen, skal den sige det.
-- [ ] 5. Virker det både, når du læser en mail, og når du er i gang med et svar?
+## Afklaret 24. november
+- ✅ Sparring om mailen virker; svarene vises nu pænt (fed skrift og punkter).
+- ✅ Tekst fra skærmen virker. "Giv lov" sætter Baymow på listen, og hovedvinduet hopper ikke længere frem.
+- ✅ Outlook og Gmail er parkeret (idé I17).
+- ✅ Testnøglerne (konto `baymow-test`) er slettet. Dine egne nøgler i Baymow er urørte.
 
-## Test nu: Tekst fra skærmen (ca. 5 min)
-- [ ] 1. Siden **Oplæsning** → slå **Læs tekst fra skærmen** til. Tryk **Giv lov**, og slå Baymow til under
-      Systemindstillinger → Anonymitet & sikkerhed → Skærm- og systemlydoptagelse. (macOS beder måske om at genstarte Baymow.)
-- [ ] 2. Åbn et billede med tekst (fx et skærmbillede) eller en indscannet PDF. Tryk **⌃⌥T**: skærmen bliver mørkere.
-- [ ] 3. Træk en firkant om teksten. Afspilleren læser teksten op. Er den rigtig – også æ, ø og å?
-- [ ] 4. Tryk ⌃⌥T, og tryk **Esc**: intet sker, og du er tilbage, hvor du var.
-- [ ] 5. Prøv med to skærme, hvis du har det.
+## Test nu: Ny besked uden markering (1 min)
+- [ ] Tryk **⌃⌥S** uden at have markeret noget. Beskeden skal nu nævne "Tekst fra skærmen" i stedet for at sige,
+      at billeder ikke kan læses op.
 
-## Beslut, når du har prøvet den
+## Besluttet
 - ✅ **AI-konto:** besluttet 23. november – begge, du vælger selv. **Standard:** ChatGPT.
-- [ ] **Testnøglerne** i nøgleringen (konto `baymow-test`) kan slettes, når vi ikke skal måle mere.
 
 ## Senere (ikke nu)
 - [ ] **En testperson**, der aldrig har set Baymow, prøver velkomstvinduet uden hjælp (AP-41).
 - [ ] **Apple Developer Program** (koster et årligt gebyr), når du vil dele Baymow med andre (AP-52).
 - Idéer, der venter: I13 hent rigtige priser og forbrug, I14 fælles nøgle mod betaling for ikke-tekniske brugere, I9 engelske ord i dansk tekst, I10 ret selv et ord, I11 skrivehjælp,
-  I5 hele filer.
+  I5 hele filer, I17 mail i Outlook og Gmail.

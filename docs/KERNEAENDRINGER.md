@@ -204,3 +204,11 @@ installerede tog dem alle – så ⌃⌥R ville have startet oplæsningen.
 Kontrakt: Ingen tests ændret. Dækket af selvtesten `--hotkey-selftest` (trykker ⌃⌥S, ⌃⌥R, ⌃⌥S): før ændringen "R R R"
 (stavehjælpen tog også ⌃⌥S), efter "S R S".
 Godkendt af: brugeren (valgte stavehjælpen 2026-11-22).
+
+## 2026-11-24 · AP-76 · Beskeden ved ingen markering nævner "Tekst fra skærmen"
+Hvad: `Notice.noSelection` i `Models.swift` sagde, at billeder og indscannede sider ikke kan læses op endnu. Nu henviser
+den til "Tekst fra skærmen" (AP-75), som slås til under Oplæsning. Kun teksten er ændret; ingen adfærd.
+Hvorfor: Beskeden vises af kernen, når der ikke er markeret noget. Den var blevet forkert, efter at AP-75 kan læse billeder.
+Beskeden nævner ikke tasterne, fordi genvejen kan skiftes og funktionen er slået fra som standard.
+Kontrakt: Ingen tests ændret.
+Godkendt af: brugeren (bad om oprydningen 2026-11-24).

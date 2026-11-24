@@ -35,3 +35,6 @@ BAYMOW_TEST_KEY="$(security find-generic-password -a baymow-test -s baymow-claud
 - `klarhed.tsv`: 8 tunge sætninger til "klarere sætninger" – læses igennem af et menneske; der er ikke ét facit.
 - `--level spelling|punctuation|clarity` vælger niveauet; testen skriver også "Tegnsætning: … helt som facit".
 - `resultater/niveau-*.json`: GPT-6 Luna på de tre niveauer.
+
+> Testnøglerne (konto `baymow-test`) blev slettet 24. november 2026. Skal der måles igen, gemmes de først på ny med
+> `security add-generic-password -U -a baymow-test -s <baymow-openai|baymow-claude> -w`.

@@ -784,6 +784,7 @@ Rækkefølgen er arkitektens bud på nytten for en ordblind bruger.
 | I14 | **Fælles nøgle mod betaling** (brugerens idé 23. november 2026). For brugere uden teknisk kendskab: brugeren (ejeren) stiller en fælles nøgle til rådighed mod et abonnement eller betaling pr. forbrug, så de slipper for selv at oprette en konto. Egen nøgle skal altid kunne bruges ved siden af | Et nemt valg for dem, der bare vil betale for et nemt setup | Kræver en lille tjeneste (server), der holder nøglen hemmelig, kender brugerne og tager betaling; nøglen må aldrig ligge i appen. Juridisk: databehandleraftale, privatlivspolitik og firmaernes vilkår for videresalg | Ja: server, betaling, konti – brugerens beslutning |
 | I15 | **Mail-svar** (brugerens idé 23. november 2026, drøftes før der bygges). Hele mailkorrespondancen er kontekst; brugeren har et udkast, stikord eller intet og får et forslag til svar, der sættes direkte ind i mailprogrammet. Må ikke svare på det, den ikke ved, medmindre det er klart angivet. Tone: en defineret tone, menneskelig og formel; senere evt. lære brugerens egen tone. Alle mailprogrammer, først Apple Mail | Hurtigere og tryggere mails for ordblinde | `Features/MailReply/`; kræver hjælp via internet (hele tråden sendes til firmaet – skal stå tydeligt hver gang) | Nej, hvis den bruger den eksisterende indfangning og indsættelse |
 | I16 | **Proaktiv mail-hjælp med app på telefonen** (brugerens idé 23. november 2026 – venter, til mail-svar og sparring virker godt). Størst gevinst, hvis man også kan bruge det fra telefonen og svare på farten. Skal kende brugerens kontekst (hvem man er, hvad man laver) for bedre udkast, og skal kunne stille spørgsmål og gøre det let at forstå, hvad der spørges om, og hvad der skal svares på | Svar på farten, lettere arbejdsdag | Kræver en telefon-app og sandsynligvis en server eller login på mailkontoen (se I14 og AP-71-vurderingen); mails sendes løbende til AI – bryder "intet netværk uden et tryk" og kræver brugerens bevidste valg | Ja: ny app, konti, server |
+| I17 | **Mail-svar og sparring i Outlook og Gmail** – *parkeret af brugeren 24. november 2026; nævnes kun, når brugeren beder om forslag til forbedringer* | Mail-hjælpen i flere mailprogrammer end Apple Mail | `Features/MailReply/`: ny læser pr. program (Gmail kører i browseren); start med en prøve som `--mail-probe` | Nej |
 
 Fælles for alle: slået fra som standard eller uden virkning, før brugeren tager dem i brug; de må ikke gøre
 genvejen langsommere; og kernekontrakten skal bestå uændret, medmindre idéen udtrykkeligt ændrer den.
@@ -883,7 +884,7 @@ en gemt nøgle (samme firma som stavehjælpen). Ingen ny fil på netværkslisten
 `CloudSpellingCorrector`.
 **Acceptkriterier:** Mail-testen (`tools/mailtest/`): 6 tråde × 3 kørsler uden opdigtede tal, uden at følge ordren i
 tråden, med [felter] når stikord mangler. Tests af opdeling, instruktion og oprydning. Brugeren har prøvet i Apple Mail.
-**Senere:** Outlook og Gmail; lære brugerens egen tone; "forståelses-score".
+**Senere:** lære brugerens egen tone; "forståelses-score". Outlook og Gmail er parkeret (idé I17).
 
 #### AP-72 Mail-svar bedre og siden "AI og nøgler"
 

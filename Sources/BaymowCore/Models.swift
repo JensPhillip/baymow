@@ -89,7 +89,7 @@ public enum Notice: Equatable, Sendable {
     public var message: String {
         switch self {
         case .noSelection:
-            return "Ingen tekst markeret. Markér den tekst, du vil have læst op, og prøv igen. Er det et billede eller en indscannet side, kan teksten ikke markeres – så kan Baymow ikke læse den op endnu."
+            return "Ingen tekst markeret. Markér den tekst, du vil have læst op, og prøv igen. Er det et billede eller en indscannet side, kan teksten ikke markeres. Brug så \"Tekst fra skærmen\" i Baymow (slås til under Oplæsning), og træk en firkant om teksten."
         case .noPermission:
             return "Baymow mangler tilladelse til at læse markeret tekst. Giv adgang under Tilgængelighed i Systemindstillinger."
         case .unsupported:
