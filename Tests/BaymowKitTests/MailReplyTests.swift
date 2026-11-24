@@ -166,4 +166,15 @@ final class MailReplyTests: XCTestCase {
         XCTAssertEqual(bold, ["Frist:", "Beløb:"])
         XCTAssertEqual(MailSparringFormat.plain("Ingen formatering her."), "Ingen formatering her.")
     }
+
+    // MARK: Valg som knapper (brugerens afprøvning 24. november)
+
+    func testChoicesAreFoundInFields() {
+        XCTAssertEqual(MailReplyPrompt.choices(in: "[works for us / doesn’t work for us]"), ["works for us", "doesn’t work for us"])
+        XCTAssertEqual(MailReplyPrompt.choices(in: "[gå videre / vente / takke nej]"), ["gå videre", "vente", "takke nej"])
+        XCTAssertEqual(MailReplyPrompt.choices(in: "[ja eller nej?]"), ["ja", "nej"])
+        XCTAssertNil(MailReplyPrompt.choices(in: "[hvilken dato?]"))
+        XCTAssertNil(MailReplyPrompt.choices(in: "[dato eller tid for mødet?]"))
+        XCTAssertNil(MailReplyPrompt.choices(in: "[https://eksempel.dk/side]"))
+    }
 }

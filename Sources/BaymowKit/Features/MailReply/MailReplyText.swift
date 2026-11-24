@@ -166,6 +166,19 @@ enum MailReplyPrompt {
     }
 
     /// Pladserne i [klammer], som brugeren selv skal udfylde.
+    /// Valgene i et felt: "[works for us / doesn't work for us]" → to valg; "[ja eller nej?]" → "ja", "nej".
+    /// Et åbent felt som "[hvilken dato?]" har ingen valg (nil).
+    static func choices(in field: String) -> [String]? {
+        guard field.hasPrefix("["), field.hasSuffix("]") else { return nil }
+        let inner = String(field.dropFirst().dropLast()).trimmingCharacters(in: .whitespaces)
+        let trimmed = { (part: Substring) in part.trimmingCharacters(in: .whitespaces) }
+        let slash = inner.components(separatedBy: "/").map { trimmed(Substring($0)) }
+        if slash.count >= 2, slash.allSatisfy({ !$0.isEmpty }), !inner.contains("://") { return slash }
+        let words = inner.trimmingCharacters(in: CharacterSet(charactersIn: "?")).components(separatedBy: " eller ")
+        if words.count == 2, words.allSatisfy({ !$0.isEmpty && !$0.contains(" ") }) { return words }
+        return nil
+    }
+
     static func placeholders(in reply: String) -> [String] {
         var found: [String] = []
         var current: String?

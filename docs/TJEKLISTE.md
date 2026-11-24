@@ -30,6 +30,13 @@ Opdateret 24. november 2026.
   Én gang kom der hilsen eller navn over signaturen. Valgfelter som "[works for us / doesn't work for us]" kunne være bedre.
 - ✅ Testnøglerne (konto `baymow-test`) er slettet. Dine egne nøgler i Baymow er urørte.
 
+## Test nu: Valg som knapper i mail-svar (3 min)
+- [ ] 1. Svar på en mail med et spørgsmål (fx et mødetidspunkt), uden stikord, og tryk **⌃⌥M**.
+- [ ] 2. Står der et felt med valg, fx "[passer / passer ikke]", viser vinduet valgene som knapper. Tryk på ét.
+      Feltet i mailen skal blive erstattet af dit valg – og intet andet må ændre sig.
+- [ ] 3. Prøv igen, men ret selv lidt i feltet i mailen, før du trykker en knap. Så skal Baymow skrive, at valget
+      er kopieret, og ikke røre mailen.
+
 ## Test nu: Ny besked uden markering (1 min)
 - [ ] Tryk **⌃⌥S** uden at have markeret noget. Beskeden skal nu nævne "Tekst fra skærmen" i stedet for at sige,
       at billeder ikke kan læses op.

@@ -27,6 +27,12 @@ final class MailReplyPanelModel: ObservableObject {
     /// Den nyeste mail var brugerens egen: svaret er en opfølgning.
     var followUp = false
     var sourceBundleID: String?
+    /// Et valg bliver sat ind lige nu.
+    @Published var isChoosing = false
+    /// Hvor mange valg der er sat ind i mailen. Derefter kan "Fortryd" ikke længere give stikordene tilbage med ét ⌘Z.
+    @Published var choicesMade = 0
+    /// Besked, hvis et valg ikke kunne sættes ind.
+    @Published var choiceNote: String?
     private let speak: SpellingPanelModel.Speak
     private let stop: () -> Void
     private var listenToken = 0
@@ -56,6 +62,7 @@ final class MailReplyPanelModel: ObservableObject {
 struct MailReplyPanelView: View {
     @ObservedObject var model: MailReplyPanelModel
     let onUndo: () -> Void
+    var onChoose: (String, String) -> Void = { _, _ in }
     let onClose: () -> Void
     let onSettings: () -> Void
 
@@ -113,19 +120,30 @@ struct MailReplyPanelView: View {
                 Label("Læs svaret igennem, før du sender det.", systemImage: "eye").foregroundStyle(.secondary)
             } else if !fields.isEmpty {
                 VStack(alignment: .leading, spacing: 6) {
-                    Label(fields.count == 1 ? "Udfyld 1 felt i [klammer]:" : "Udfyld \(fields.count) felter i [klammer]:",
+                    let canChoose = model.inserted && fields.contains { MailReplyPrompt.choices(in: $0) != nil }
+                    Label((fields.count == 1 ? "Udfyld 1 felt i [klammer]" : "Udfyld \(fields.count) felter i [klammer]")
+                          + (canChoose ? ". Tryk på et valg, så står det i mailen:" : ":"),
                           systemImage: "exclamationmark.bubble.fill")
                         .foregroundStyle(.orange).font(.headline)
                     ForEach(Array(fields.enumerated()), id: \.offset) { _, field in
-                        Text(field).padding(.horizontal, 8).padding(.vertical, 3)
-                            .background(Color.orange.opacity(0.22), in: RoundedRectangle(cornerRadius: 6))
+                        if model.inserted, let choices = MailReplyPrompt.choices(in: field) {
+                            // Billede før ord: et tryk på et valg sætter det ind i mailen i stedet for feltet.
+                            ChoiceRow(choices: choices, disabled: model.isChoosing) { onChoose(field, $0) }
+                        } else {
+                            Text(field).padding(.horizontal, 8).padding(.vertical, 3)
+                                .background(Color.orange.opacity(0.22), in: RoundedRectangle(cornerRadius: 6))
+                        }
+                    }
+                    if let note = model.choiceNote {
+                        Label(note, systemImage: "doc.on.clipboard").font(.callout).foregroundStyle(.orange)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
                 }
             }
             HStack {
                 sentLabel
                 Spacer()
-                if model.inserted {
+                if model.inserted, model.choicesMade == 0 {
                     Button(action: onUndo) { Label("Fortryd", systemImage: "arrow.uturn.backward") }
                         .controlSize(.large)
                         .help("Fjerner svaret og giver dig dine stikord tilbage (⌘Z i mailen).")
@@ -160,6 +178,32 @@ struct MailReplyPanelView: View {
             case .badKey, .noKey: return "Nøglen til \(provider.title) virker ikke. Se siden Mail i Baymow."
             case .failed: return "\(provider.title) svarede ikke. Prøv igen om lidt."
             }
+        }
+    }
+}
+
+/// Valgene i ét felt som knapper, fx "works for us" og "doesn't work for us".
+private struct ChoiceRow: View {
+    let choices: [String]
+    let disabled: Bool
+    let choose: (String) -> Void
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "hand.tap.fill").foregroundStyle(.orange).frame(width: 20)
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 8) { buttons }
+                VStack(alignment: .leading, spacing: 6) { buttons }
+            }
+        }
+        .disabled(disabled)
+    }
+
+    @ViewBuilder private var buttons: some View {
+        ForEach(choices, id: \.self) { choice in
+            Button { choose(choice) } label: { Text(choice).lineLimit(2) }
+                .buttonStyle(.bordered).tint(.orange).controlSize(.large)
+                .help("Sætter \"\(choice)\" ind i mailen i stedet for feltet.")
         }
     }
 }

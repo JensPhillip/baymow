@@ -136,6 +136,52 @@ enum MailReader {
         return text as? String
     }
 
+    /// Markerer `field` i det fokuserede felt i programmet `pid` – kun hvis det står der præcis sådan. Kører ikke på
+    /// hovedtråden. Svarer, om markeringen bagefter er netop feltet (ellers rører Baymow intet).
+    nonisolated static func select(_ field: String, pid: pid_t) -> Bool {
+        let app = AXUIElementCreateApplication(pid)
+        AXUIElementSetMessagingTimeout(app, 2.0)
+        var ref: CFTypeRef?
+        guard AXUIElementCopyAttributeValue(app, kAXFocusedUIElementAttribute as CFString, &ref) == .success,
+              let ref, CFGetTypeID(ref) == AXUIElementGetTypeID() else { return false }
+        let element = ref as! AXUIElement
+        guard let whole = wholeTextOff(element) else { return false }
+        let found = (whole as NSString).range(of: field)
+        guard found.location != NSNotFound,
+              (whole as NSString).range(of: field, range: NSRange(location: NSMaxRange(found),
+                                                                  length: (whole as NSString).length - NSMaxRange(found))).location == NSNotFound
+        else { return false } // feltet skal stå der præcis én gang
+        func marker(_ index: Int) -> CFTypeRef? {
+            var value: CFTypeRef?
+            AXUIElementCopyParameterizedAttributeValue(element, "AXTextMarkerForIndex" as CFString, index as CFNumber, &value)
+            return value
+        }
+        guard let start = marker(found.location), let end = marker(NSMaxRange(found)) else { return false }
+        var range: CFTypeRef?
+        AXUIElementCopyParameterizedAttributeValue(element, "AXTextMarkerRangeForUnorderedTextMarkers" as CFString,
+                                                   [start, end] as CFArray, &range)
+        guard let range,
+              AXUIElementSetAttributeValue(element, "AXSelectedTextMarkerRange" as CFString, range) == .success else { return false }
+        var selected: CFTypeRef?
+        AXUIElementCopyAttributeValue(element, kAXSelectedTextAttribute as CFString, &selected)
+        return (selected as? String) == field
+    }
+
+    /// Som `wholeText(of:)`, men uden for hovedtråden.
+    nonisolated private static func wholeTextOff(_ element: AXUIElement) -> String? {
+        var start: CFTypeRef?, end: CFTypeRef?
+        guard AXUIElementCopyAttributeValue(element, "AXStartTextMarker" as CFString, &start) == .success,
+              AXUIElementCopyAttributeValue(element, "AXEndTextMarker" as CFString, &end) == .success,
+              let start, let end else { return nil }
+        var range: CFTypeRef?
+        AXUIElementCopyParameterizedAttributeValue(element, "AXTextMarkerRangeForUnorderedTextMarkers" as CFString,
+                                                   [start, end] as CFArray, &range)
+        guard let range else { return nil }
+        var text: CFTypeRef?
+        AXUIElementCopyParameterizedAttributeValue(element, "AXStringForTextMarkerRange" as CFString, range, &text)
+        return text as? String
+    }
+
     static func press(_ key: CGKeyCode, _ flags: CGEventFlags) {
         let source = CGEventSource(stateID: .privateState)
         let down = CGEvent(keyboardEventSource: source, virtualKey: key, keyDown: true)
@@ -238,6 +284,7 @@ final class MailReplyController {
     private func show(_ model: MailReplyPanelModel) {
         self.model = model
         let view = MailReplyPanelView(model: model, onUndo: { [weak self] in self?.undo() },
+                                      onChoose: { [weak self] field, choice in self?.choose(choice, for: field) },
                                       onClose: { [weak self] in self?.close() },
                                       onSettings: { [weak self] in self?.close(); self?.openSettings() })
         let panel = FloatingPanel.make(content: view)
@@ -254,6 +301,36 @@ final class MailReplyController {
         let top = panel.isVisible ? panel.frame.maxY : visible.maxY - 90
         let x = panel.isVisible ? panel.frame.minX : visible.maxX - size.width - 24
         panel.setFrame(NSRect(x: x, y: top - size.height, width: size.width, height: size.height), display: true)
+    }
+
+    /// Et valg i vinduet ("works for us") erstatter feltet i mailen. Kun hvis feltet står uændret i mailen; ellers
+    /// bliver valget kopieret, så brugeren selv kan sætte det ind.
+    private func choose(_ choice: String, for field: String) {
+        guard let model, let reply = model.reply, !model.isChoosing else { return }
+        model.isChoosing = true
+        Task {
+            defer { model.isChoosing = false }
+            var replaced = false
+            if model.inserted, let app = NSWorkspace.shared.frontmostApplication,
+               app.bundleIdentifier == model.sourceBundleID {
+                let pid = app.processIdentifier
+                if await Task.detached(operation: { MailReader.select(field, pid: pid) }).value {
+                    await SelectionReplacer.replace(with: choice)
+                    replaced = true
+                }
+            }
+            if !replaced {
+                NSPasteboard.general.clearContents()
+                NSPasteboard.general.setString(choice, forType: .string)
+            }
+            guard self.model === model else { return }
+            model.choiceNote = replaced ? nil : "Baymow kunne ikke finde feltet i mailen. Valget er kopieret: markér feltet, og tryk ⌘V."
+            if replaced {
+                model.choicesMade += 1
+                if let range = reply.range(of: field) { model.state = .done(reply.replacingCharacters(in: range, with: choice)) }
+            }
+            resize()
+        }
     }
 
     /// Fortryd: ⌘Z i mailprogrammet giver stikordene tilbage.
