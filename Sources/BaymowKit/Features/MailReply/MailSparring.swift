@@ -367,7 +367,7 @@ final class MailSparringController {
         close()
         let view = MailSparringView(model: model, onSettings: { [weak self] in self?.close(); self?.openSettings() })
         let panel = NSPanel(contentRect: NSRect(x: 0, y: 0, width: 500, height: 560),
-                            styleMask: [.titled, .closable, .resizable, .utilityWindow],
+                            styleMask: [.titled, .closable, .resizable, .utilityWindow, .nonactivatingPanel],
                             backing: .buffered, defer: false)
         panel.title = "Sparring om mailen"
         panel.contentView = NSHostingView(rootView: view)
@@ -381,8 +381,9 @@ final class MailSparringController {
             panel.setFrameOrigin(NSPoint(x: visible.maxX - 500 - 24, y: visible.maxY - 560 - 24))
         }
         window = panel
-        NSApp.activate(ignoringOtherApps: true)
-        panel.makeKeyAndOrderFront(nil)
+        // Vækker ikke hele Baymow (så kom hovedvinduet med frem); panelet kan stadig skrives i.
+        panel.orderFrontRegardless()
+        panel.makeKey()
     }
 
     func close() {

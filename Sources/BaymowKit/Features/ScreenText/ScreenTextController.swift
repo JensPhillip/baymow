@@ -161,23 +161,21 @@ final class SelectionOverlay {
     private var windows: [NSWindow] = []
     private let completion: (CGRect?) -> Void
     private var finished = false
-    /// Programmet, brugeren kom fra: får fokus igen bagefter.
-    private var previous: NSRunningApplication?
 
     init(completion: @escaping (CGRect?) -> Void) {
         self.completion = completion
     }
 
     func show() {
-        previous = NSWorkspace.shared.frontmostApplication
         for screen in NSScreen.screens {
-            let window = OverlayWindow(contentRect: screen.frame, styleMask: .borderless, backing: .buffered, defer: false)
+            let window = OverlayWindow(contentRect: screen.frame, styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false)
             window.level = .screenSaver
             window.backgroundColor = .clear
             window.isOpaque = false
             window.hasShadow = false
             window.ignoresMouseEvents = false
             window.isReleasedWhenClosed = false
+            window.hidesOnDeactivate = false
             window.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
             let view = SelectionView(frame: NSRect(origin: .zero, size: screen.frame.size))
             view.screenOrigin = screen.frame.origin
@@ -187,7 +185,7 @@ final class SelectionOverlay {
             windows.append(window)
             window.orderFrontRegardless()
         }
-        NSApp.activate(ignoringOtherApps: true)
+        // Vækker ikke hele Baymow (så kom hovedvinduet med frem); laget får tasterne alligevel, så Esc virker.
         let mouseScreen = windows.first { $0.frame.contains(NSEvent.mouseLocation) } ?? windows.first
         mouseScreen?.makeKey()
         mouseScreen?.makeFirstResponder(mouseScreen?.contentView)
@@ -203,12 +201,10 @@ final class SelectionOverlay {
     func close() {
         windows.forEach { $0.orderOut(nil) }
         windows = []
-        if previous?.bundleIdentifier != Bundle.main.bundleIdentifier { previous?.activate() }
-        previous = nil
     }
 }
 
-private final class OverlayWindow: NSWindow {
+private final class OverlayWindow: NSPanel {
     override var canBecomeKey: Bool { true }
 }
 
