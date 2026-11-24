@@ -5,7 +5,7 @@ Sidst opdateret: 2026-11-24 af udfører (Claude Opus 5.5).
 
 ## Lige nu
 
-- **I gang:** AP-72 og AP-73 (afventer brugerens afprøvning). AP-76 (oprydning 24. november): beskeden ved ingen
+- **AP-72 og AP-73 afprøvet og godkendt af brugeren 24. november** (én gang hilsen over signaturen; valgfelter kan blive bedre). AP-76 (oprydning 24. november): beskeden ved ingen
   markering nævner "Tekst fra skærmen" (kerneændring), testnøglerne i `baymow-test` er slettet, Outlook og Gmail parkeret som I17. – bygget, afventer brugerens afprøvning. AP-71 er afprøvet af brugeren.
 - **Mail – plan aftalt 23. november:** 1) sparring på den åbne mail (færdig), 2) Outlook og Gmail – parkeret af brugeren 24. november (I17; nævnes kun ved forslag til forbedringer), 3) senere: proaktiv hjælp med
   app på telefonen, brugerens kontekst og opklarende spørgsmål (I16), og login på kontoen. Proaktiv del venter, til
@@ -14,7 +14,7 @@ Sidst opdateret: 2026-11-24 af udfører (Claude Opus 5.5).
 - **Færdige pakker:** AP-00, AP-01, AP-02, AP-10, AP-11, AP-12, AP-19 (hovedstemme: Apple Sara (Enhanced)),
   AP-20, AP-21, AP-22, AP-23, AP-30, AP-31, AP-32, AP-40, AP-50, AP-51, AP-60, AP-61, AP-62.
 - **Lukket/droppet af brugeren 22. november:** AP-03 (lytteskemaet), AP-15 (Plapre).
-- **Venter på brugeren:** afprøvning af AP-70, AP-72 og AP-73, AP-41 (testperson – udskudt af brugeren 2026-11-18).
+- **Venter på brugeren:** afprøvning af AP-70 og AP-76, AP-41 (testperson – udskudt af brugeren 2026-11-18).
 - **Delvist:** AP-24 – udtalelister pr. motor er bygget, men gav kun lidt (Piper 14 → 18 af 30, Apple uændret).
 - **Parkeret eller udskudt:** AP-13/14 (cloud-stemmer, B6), AP-16 (Røst – hovedstemmen er valgt).
 - **Beslutninger:** B6 cloud udskudt · B7 Sara (Enhanced) · B8 GPL-3.0-or-later · B9 Baymow, app-id

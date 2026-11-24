@@ -21,24 +21,13 @@ Opdateret 24. november 2026.
 
 - ✅ Mail-svar virker i Apple Mail (23. nov.). Rettet efter din afprøvning: opfølgning på egen mail, antagelser og signatur.
 
-## Test nu: Mail-svar igen og siden "AI og nøgler" (ca. 10 min)
-- [ ] 1. Siden **Mail** → "Om dig": står dit navn rigtigt? "Jeg har en fast signatur" er slået til.
-- [ ] 2. Svar på **din egen** mail (en opfølgning), med stikord som "rykker venligt for svar". Svaret skal gå til
-      modtageren, og vinduet siger "Den nyeste mail var din egen".
-- [ ] 3. Prøv en mail, hvor Baymow skal gætte noget (fx et mødetidspunkt). Står det under "Baymow har antaget"?
-- [ ] 4. Kommer der stadig hilsen eller navn over din signatur? Skriv det til mig, hvis ja.
-- [ ] 5. **Indstillinger → AI og nøgler**: begge nøgler står der. Vælg fx Claude til Mail og ChatGPT til Stavning.
-- [ ] 6. Forbruget viser Stavning og Mail hver for sig. På siderne Stavning og Mail står månedens forbrug med
-      "Se forbrug og nøgler", som åbner siden.
-
-## Test nu: Sidebjælken (2 min)
-- [ ] 1. Nederst i sidebjælken står **Indstillinger**. Den åbner Genveje, Stemmer og AI og nøgler med en vælger øverst.
-- [ ] 2. **Start** → "Skift genveje" åbner Genveje. **Oplæsning** → "Vælg stemme" åbner Stemmer.
-
 ## Afklaret 24. november
 - ✅ Sparring om mailen virker; svarene vises nu pænt (fed skrift og punkter).
 - ✅ Tekst fra skærmen virker. "Giv lov" sætter Baymow på listen, og hovedvinduet hopper ikke længere frem.
 - ✅ Outlook og Gmail er parkeret (idé I17).
+- ✅ Sidebjælken og menuen Indstillinger er godkendt.
+- ✅ Mail-svar: navn, opfølgning på egen mail, antagelser, signatur, siden "AI og nøgler" og forbruget virker.
+  Én gang kom der hilsen eller navn over signaturen. Valgfelter som "[works for us / doesn't work for us]" kunne være bedre.
 - ✅ Testnøglerne (konto `baymow-test`) er slettet. Dine egne nøgler i Baymow er urørte.
 
 ## Test nu: Ny besked uden markering (1 min)
