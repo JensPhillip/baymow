@@ -18,13 +18,16 @@ public enum MailTest {
         let felter_forventet: Bool
         /// Forventes det, at modellen skriver en opfølgning (den nyeste mail er brugerens egen)?
         var opfoelgning: Bool? = nil
+        /// Forventes et felt med valg (fx "[passer / passer ikke]") i stedet for et gæt?
+        var valg_forventet: Bool? = nil
     }
 
     public static func run(casesFile: String, outputFile: String, cloud: String?) -> Int32 {
         guard let data = FileManager.default.contents(atPath: casesFile),
               let cases = try? JSONDecoder().decode([Case].self, from: data) else { print("Kan ikke læse \(casesFile)"); return 1 }
         guard let provider = cloud.flatMap(CloudProvider.init(rawValue:)),
-              let key = ProcessInfo.processInfo.environment["BAYMOW_TEST_KEY"], !key.isEmpty else {
+              let key = ProcessInfo.processInfo.environment["BAYMOW_TEST_KEY"].flatMap({ $0.isEmpty ? nil : $0 })
+                ?? CloudKeyStore.key(for: provider) else {
             print("Brug --cloud openai|claude og sæt BAYMOW_TEST_KEY"); return 1
         }
         let model = CloudSpellingCorrector(provider: provider, key: key)
@@ -58,6 +61,18 @@ public enum MailTest {
             for word in item.skal_indeholde where !reply.lowercased().contains(word.lowercased()) { problems.append("mangler: \(word)") }
             let fields = MailReplyPrompt.placeholders(in: reply)
             if item.felter_forventet && fields.isEmpty { problems.append("ingen [felter], selv om der mangler svar") }
+            if item.valg_forventet == true && !fields.contains(where: { MailReplyPrompt.choices(in: $0) != nil }) {
+                problems.append("gættede i stedet for at give valg")
+            }
+            // Valget erstatter klammerne: "Jeg kommer [ja / nej]" giver "Jeg kommer ja".
+            for field in fields {
+                if let choices = MailReplyPrompt.choices(in: field),
+                   choices.contains(where: { ["ja", "nej", "yes", "no"].contains($0.lowercased()) }),
+                   let range = reply.range(of: field), reply[..<range.lowerBound].last?.isLetter == false,
+                   reply[..<range.lowerBound].dropLast().last?.isLetter == true {
+                    problems.append("valg, der ikke passer ind i sætningen: \(field)")
+                }
+            }
             if parts.hasSignature, reply.components(separatedBy: "\n").last?.contains("Jens") == true {
                 problems.append("navn til sidst, selv om signaturen findes")
             }
@@ -89,7 +104,8 @@ public enum SparringTest {
         guard let data = FileManager.default.contents(atPath: casesFile),
               let cases = try? JSONDecoder().decode([MailTest.Case].self, from: data) else { print("Kan ikke læse \(casesFile)"); return 1 }
         guard let provider = cloud.flatMap(CloudProvider.init(rawValue:)),
-              let key = ProcessInfo.processInfo.environment["BAYMOW_TEST_KEY"], !key.isEmpty else {
+              let key = ProcessInfo.processInfo.environment["BAYMOW_TEST_KEY"].flatMap({ $0.isEmpty ? nil : $0 })
+                ?? CloudKeyStore.key(for: provider) else {
             print("Brug --cloud openai|claude og sæt BAYMOW_TEST_KEY"); return 1
         }
         let model = CloudSpellingCorrector(provider: provider, key: key)

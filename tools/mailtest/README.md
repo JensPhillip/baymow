@@ -24,3 +24,7 @@ Hver tråd får de fire faste spørgsmål og "Hvad er afsenderens telefonnummer?
 
 > Testnøglerne (konto `baymow-test`) blev slettet 24. november 2026. Skal der måles igen, gemmes de først på ny med
 > `security add-generic-password -U -a baymow-test -s <baymow-openai|baymow-claude> -w`.
+
+> Uden `BAYMOW_TEST_KEY` bruger testen den nøgle, der er gemt i Baymow (siden "AI og nøgler").
+> 24. november 2026: to nye tråde, hvor svaret skal gives som valg ("[passer / passer ikke]") i stedet for et gæt.
+> 10 af 10 i fem kørsler (`resultater/2026-11-24-valg-openai-*.json`).

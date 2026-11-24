@@ -6,7 +6,9 @@ Sidst opdateret: 2026-11-24 af udfører (Claude Opus 5.5).
 ## Lige nu
 
 - **AP-72 og AP-73 afprøvet og godkendt af brugeren 24. november** (én gang hilsen over signaturen). Valgfelter som "[passer / passer ikke]" vises nu som knapper i
-  mail-svarets vindue; et tryk erstatter feltet i mailen, kun hvis det står uændret (ellers kopieres valget). Afventer afprøvning. AP-76 (oprydning 24. november): beskeden ved ingen
+  mail-svarets vindue; et tryk erstatter feltet i mailen, kun hvis det står uændret (ellers kopieres valget). Brugerens afprøvning samme dag: modellen gættede "13:00 works well" i stedet for
+  at give valg; instruktionen kræver nu valg, når personen selv skal sige ja eller nej. Mail-testen (10 tråde): 10 af 10
+  i fem kørsler. Afventer afprøvning. AP-76 (oprydning 24. november): beskeden ved ingen
   markering nævner "Tekst fra skærmen" (kerneændring), testnøglerne i `baymow-test` er slettet, Outlook og Gmail parkeret som I17. – bygget, afventer brugerens afprøvning. AP-71 er afprøvet af brugeren.
 - **Mail – plan aftalt 23. november:** 1) sparring på den åbne mail (færdig), 2) Outlook og Gmail – parkeret af brugeren 24. november (I17; nævnes kun ved forslag til forbedringer), 3) senere: proaktiv hjælp med
   app på telefonen, brugerens kontekst og opklarende spørgsmål (I16), og login på kontoen. Proaktiv del venter, til

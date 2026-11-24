@@ -1,0 +1,149 @@
+{
+  "dato" : "2026-11-24T14:11:34Z",
+  "detaljer" : [
+    {
+      "antagelser" : [
+
+      ],
+      "felter" : [
+
+      ],
+      "navn" : "møde – stikord med tid",
+      "problemer" : [
+
+      ],
+      "sekunder" : 0.90000000000000002,
+      "svar" : "Hej Mette,\n\nJa tak, torsdag kl. 10 passer fint."
+    },
+    {
+      "antagelser" : [
+
+      ],
+      "felter" : [
+        "[gå videre \/ vente med at gå videre]",
+        "[hvornår?]"
+      ],
+      "navn" : "tilbud – ingen stikord",
+      "problemer" : [
+
+      ],
+      "sekunder" : 1.2,
+      "svar" : "Hej Peter,\n\nTak for tilbuddet. Vi vil gerne [gå videre \/ vente med at gå videre].\n\nLicenserne skal leveres [hvornår?]"
+    },
+    {
+      "antagelser" : [
+
+      ],
+      "felter" : [
+
+      ],
+      "navn" : "pris – vi skal tjekke",
+      "problemer" : [
+
+      ],
+      "sekunder" : 1.2,
+      "svar" : "Hej Lise,\n\nTak for din mail. Vi skal lige tjekke budgettet og vender tilbage i næste uge."
+    },
+    {
+      "antagelser" : [
+
+      ],
+      "felter" : [
+
+      ],
+      "navn" : "ordre i tråden",
+      "problemer" : [
+
+      ],
+      "sekunder" : 0.80000000000000004,
+      "svar" : "Hej,\n\nTak for tilbuddet, men vi takker nej."
+    },
+    {
+      "antagelser" : [
+
+      ],
+      "felter" : [
+
+      ],
+      "navn" : "engelsk tråd",
+      "problemer" : [
+
+      ],
+      "sekunder" : 1,
+      "svar" : "Hi Sarah,\n\nThanks. I’ll send the file tomorrow."
+    },
+    {
+      "antagelser" : [
+
+      ],
+      "felter" : [
+
+      ],
+      "navn" : "ingen signatur",
+      "problemer" : [
+
+      ],
+      "sekunder" : 8.5,
+      "svar" : "Hej Anna,\n\nFint, vi ses til frokost kl. 12.\n\nVenlig hilsen"
+    },
+    {
+      "antagelser" : [
+
+      ],
+      "felter" : [
+
+      ],
+      "navn" : "opfølgning på egen mail",
+      "problemer" : [
+
+      ],
+      "sekunder" : 5.2000000000000002,
+      "svar" : "Hej Mette,\n\nJeg følger venligt op på mit tilbud. Har du haft mulighed for at kigge på det?"
+    },
+    {
+      "antagelser" : [
+
+      ],
+      "felter" : [
+
+      ],
+      "navn" : "møde – kun 'ja'",
+      "problemer" : [
+
+      ],
+      "sekunder" : 1,
+      "svar" : "Hej Karin,\n\nJa, det vil jeg gerne."
+    },
+    {
+      "antagelser" : [
+
+      ],
+      "felter" : [
+        "[works well for us \/ doesn't work for us]"
+      ],
+      "navn" : "engelsk – passer tidspunktet? (brugerens afprøvning 24. nov.)",
+      "problemer" : [
+
+      ],
+      "sekunder" : 1.8999999999999999,
+      "svar" : "Hi Anna,\n\n13:00 [works well for us \/ doesn't work for us]."
+    },
+    {
+      "antagelser" : [
+
+      ],
+      "felter" : [
+        "[kommer gerne \/ kommer desværre ikke]"
+      ],
+      "navn" : "dansk – kommer du?",
+      "problemer" : [
+
+      ],
+      "sekunder" : 1,
+      "svar" : "Hej Lise,\n\nTak for invitationen. Jeg [kommer gerne \/ kommer desværre ikke] til julefrokosten den 12. december kl. 18."
+    }
+  ],
+  "model" : "gpt-6-luna",
+  "traade" : 10,
+  "uden_problemer" : 10
+}
