@@ -110,10 +110,17 @@ enum ScreenCapture {
     static var hasPermission: Bool { CGPreflightScreenCaptureAccess() }
 
     /// Spørger macOS om lov (viser systemets dialog første gang) og åbner Systemindstillinger.
+    /// Nyere macOS viser kun dialogen én gang og sætter ikke altid Baymow på listen. Et forsøg på at se skærmens
+    /// vinduer (uden at tage billeder) får macOS til at skrive Baymow på listen, så kontakten kan slås til.
     static func requestPermission() {
-        if !CGRequestScreenCaptureAccess(),
-           let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture") {
-            NSWorkspace.shared.open(url)
+        if CGRequestScreenCaptureAccess() { return }
+        Task {
+            _ = try? await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
+            await MainActor.run {
+                if !hasPermission, let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture") {
+                    NSWorkspace.shared.open(url)
+                }
+            }
         }
     }
 

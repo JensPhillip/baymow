@@ -466,6 +466,8 @@ struct MainView: View {
                         Button { ScreenCapture.requestPermission() } label: { Label("Giv lov", systemImage: "lock.open.fill") }
                             .help("Åbner Systemindstillinger → Anonymitet & sikkerhed → Skærm- og systemlydoptagelse. Slå Baymow til.")
                     }
+                    Text("Står Baymow ikke på listen, så tryk + under listen, og vælg Baymow i Programmer. Slå kontakten til, og start Baymow igen.")
+                        .font(.callout).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
                 }
                 if screenText.shortcutFailed {
                     Label("Tasterne \(screenText.shortcut.displayString) bruges af et andet program.",
@@ -474,6 +476,9 @@ struct MainView: View {
             }
         }
         .onAppear { screenText.refreshPermission() }
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+            screenText.refreshPermission()
+        }
 
         Section {
             VStack(alignment: .leading, spacing: 10) {
