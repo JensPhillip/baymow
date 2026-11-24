@@ -156,4 +156,14 @@ final class MailReplyTests: XCTestCase {
         XCTAssertEqual(Set(all.map(\.displayString)).count, 4)
         defaults.removePersistentDomain(forName: "baymow-sparring-test")
     }
+
+    func testSparringAnswersAreShownFormattedAndReadWithoutMarks() {
+        let answer = "- **Frist:** Ingen frist.\n- **Beløb:** 175,75 timer.\n## Næste skridt\nSvar Jan."
+        XCTAssertEqual(MailSparringFormat.plain(answer), "• Frist: Ingen frist.\n• Beløb: 175,75 timer.\nNæste skridt\nSvar Jan.")
+        let shown = MailSparringFormat.attributed(answer)
+        let bold = shown.runs.filter { $0.inlinePresentationIntent?.contains(.stronglyEmphasized) == true }
+            .map { String(shown[$0.range].characters) }
+        XCTAssertEqual(bold, ["Frist:", "Beløb:"])
+        XCTAssertEqual(MailSparringFormat.plain("Ingen formatering her."), "Ingen formatering her.")
+    }
 }

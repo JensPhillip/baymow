@@ -162,7 +162,7 @@ public enum ScreenshotTool {
             subject: "Tilbud på licenser", provider: .openai, name: "Jens",
             corrector: CloudSpellingCorrector(provider: .openai, key: "skærmbillede"), speak: { _, _, _ in })
         sparringModel.addForPreview(question: "Hvad vil afsenderen?",
-                                    answer: "Peter vil gerne vide to ting:\n- Om I vil gå videre med tilbuddet på 120 licenser.\n- Hvornår licenserne skal leveres.")
+                                    answer: "Peter vil gerne vide to ting:\n- **Videre?** Om I vil gå videre med tilbuddet på 120 licenser.\n- **Levering:** Hvornår licenserne skal leveres.")
         sparringModel.addForPreview(question: "Hvad er prisen?", answer: "Det står ikke i mailen. Prisen står måske i det vedhæftede tilbud.")
         shoot("sparring", size: NSSize(width: 500, height: 560), MailSparringView(model: sparringModel, onSettings: {}))
         let assumedModel = MailReplyPanelModel(speak: { _, _, _ in })

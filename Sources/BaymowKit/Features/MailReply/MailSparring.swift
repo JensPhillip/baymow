@@ -58,6 +58,33 @@ enum MailSparringPrompt {
     }
 }
 
+/// Svarene kommer med lidt formatering (**fed**, punkter med "- "). Vinduet viser den; oplæsning og kopi får ren tekst.
+enum MailSparringFormat {
+    /// Linjer, der starter med "- " eller "* ", bliver til punkter med "•".
+    static func bullets(_ text: String) -> String {
+        text.components(separatedBy: "\n").map { line in
+            let trimmed = line.drop { $0 == " " }
+            let indent = String(line.prefix(line.count - trimmed.count))
+            if trimmed.hasPrefix("- ") || trimmed.hasPrefix("* ") { return indent + "• " + trimmed.dropFirst(2) }
+            if trimmed.hasPrefix("#") { return indent + trimmed.drop { $0 == "#" }.drop { $0 == " " } } // overskrifter
+            return line
+        }.joined(separator: "\n")
+    }
+
+    /// Til vinduet: fed og kursiv vises, linjeskift bevares.
+    static func attributed(_ text: String) -> AttributedString {
+        let prepared = bullets(text)
+        return (try? AttributedString(markdown: prepared,
+                                      options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)))
+            ?? AttributedString(prepared)
+    }
+
+    /// Til oplæsning og kopi: ingen stjerner eller andre formateringstegn.
+    static func plain(_ text: String) -> String {
+        String(attributed(text).characters)
+    }
+}
+
 extension MailReader {
     /// Den åbne mail: teksten i alle webfelter i det forreste vindue (i Apple Mail: beskeden eller svaret) og vinduets
     /// titel (emnet). Kun læsning. `nil`, hvis der ikke er noget at læse.
@@ -161,7 +188,7 @@ final class MailSparringModel: ObservableObject {
         if listening == turn.id { stop(); listening = nil; return }
         let token = listenToken
         listening = turn.id
-        speak(answer, .danish) { [weak self] in
+        speak(MailSparringFormat.plain(answer), .danish) { [weak self] in
             guard let self, self.listenToken == token else { return }
             self.listening = nil
         }
@@ -170,7 +197,7 @@ final class MailSparringModel: ObservableObject {
     func copy(_ turn: Turn) {
         guard let answer = turn.answer else { return }
         NSPasteboard.general.clearContents()
-        NSPasteboard.general.setString(answer, forType: .string)
+        NSPasteboard.general.setString(MailSparringFormat.plain(answer), forType: .string)
     }
 }
 
@@ -285,7 +312,7 @@ private struct TurnView: View {
                     .background(Color.accentColor.opacity(0.15), in: RoundedRectangle(cornerRadius: 10))
             }
             if let answer = turn.answer {
-                Text(answer)
+                Text(MailSparringFormat.attributed(answer))
                     .textSelection(.enabled)
                     .font(.system(size: 15))
                     .lineSpacing(3)
