@@ -450,6 +450,7 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 | AP-72 | Mail-svar bedre (opfølgning på egen mail, antagelser vises, aldrig hilsen/navn) og siden "AI og nøgler" (nøgler, firma pr. funktion, forbrug pr. funktion) | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
 | AP-73 | Sidebjælken: "Indstillinger" fast nederst med Genveje, Stemmer og AI og nøgler; link fra Start til Genveje og fra Oplæsning til Stemmer | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
 | AP-74 | Sparring om den åbne mail: faste spørgsmål, eget spørgsmål, Hør, Kopiér; intet sendes før første spørgsmål | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
+| AP-75 | Tekst fra skærmen (idé I4): træk en firkant, Macens tekstgenkendelse, oplæsning i afspilleren; intet netværk | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
 | AP-52 | Developer ID, notarisering og DMG | 5 | Udfører + bruger | AP-50, B9 | Forberedt: DMG og README; afventer certifikat, app-id og kodearkiv |
 
 ### Fase 0 – Grundlag
@@ -907,6 +908,18 @@ læses op og kopieres. Intet sendes, før brugeren spørger; derefter står "Mai
 mail-svar; forbruget tælles under Mail. Kender brugerens navn (egen mail = afsender).
 **Acceptkriterier:** Sparringstesten (8 tråde × 5 spørgsmål): korte svar, "står ikke i mailen" i stedet for gæt,
 brugerens egen mail genkendt. Tests. Brugeren har prøvet i Apple Mail.
+
+#### AP-75 Tekst fra skærmen (idé I4)
+
+**Hvorfor:** Brugeren valgte 24. november 2026 I4 som næste skridt: tekst, der ikke kan markeres (billeder,
+indscannede PDF'er, skærmbilleder, knapper), skal også kunne læses op.
+**Gør:** `Features/ScreenText/`: genvej ⌃⌥T (slået fra som standard; slås til på siden Oplæsning) → et halvmørkt lag
+over alle skærme, hvor brugeren trækker en firkant (Esc fortryder) → billede af netop det område (ScreenCaptureKit,
+macOS 15.2+, kræver tilladelsen Skærmoptagelse) → Macens tekstgenkendelse (Vision, dansk + engelsk) → linjerne sat
+sammen til afsnit (ord delt med bindestreg samles) → æ/ø/å-rettelse med Macens danske stavekontrol (kun ét entydigt
+bud) → den almindelige oplæsning i afspilleren. Intet netværk; billedet og teksten gemmes ikke.
+**Acceptkriterier:** OCR-målingen (`tools/skaermtekst/`): 0 % tegnfejl på almindelig skærmtekst. Tests af
+linjesammensætning, æ/ø/å-rettelse og indstillinger. Brugeren har prøvet på et billede og en indscannet PDF.
 
 ## 7. Stemmeporten
 

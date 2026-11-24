@@ -56,6 +56,20 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
         openSettings: { [weak self] in self?.openMainWindow(on: .ai) })
     private var sparringMenuItem: NSMenuItem?
 
+    // Tekst fra skærmen (AP-75, idé I4).
+    private let screenTextSettings = ScreenTextSettings()
+    private let screenTextShortcut = GlobalShortcutManager()
+    private lazy var screenText = ScreenTextController(settings: screenTextSettings) { [weak self] text in
+        guard let self else { return nil }
+        self.notices.dismiss()
+        if let notice = self.sessions.start(text: text, sourceAppName: "Skærmen", sourceBundleID: nil, triggeredAt: Date()) {
+            return notice
+        }
+        self.player.show()
+        return nil
+    }
+    private var screenTextMenuItem: NSMenuItem?
+
     private lazy var onboarding = OnboardingWindowController(
         model: OnboardingModel(settings: settings, catalog: catalog, sampleEngine: AppleSpeechEngine()))
 
@@ -109,6 +123,15 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
             guard let self else { return }
             self.mailMenuItem?.title = "Svar på mail (\(shortcut.displayString))"
             if self.mailSettings.isEnabled { self.setMailEnabled(true, shortcut: shortcut) }
+        }.store(in: &cancellables)
+        screenTextShortcut.onTrigger = { [weak self] in self?.screenText.run() }
+        screenTextSettings.$isEnabled.removeDuplicates().sink { [weak self] enabled in
+            self?.setScreenTextEnabled(enabled)
+        }.store(in: &cancellables)
+        screenTextSettings.$shortcut.removeDuplicates().dropFirst().sink { [weak self] shortcut in
+            guard let self else { return }
+            self.screenTextMenuItem?.title = "Læs tekst fra skærmen (\(shortcut.displayString))"
+            if self.screenTextSettings.isEnabled { self.setScreenTextEnabled(true, shortcut: shortcut) }
         }.store(in: &cancellables)
         sparringShortcut.onTrigger = { [weak self] in self?.sparring.run() }
         mailSettings.$sparringEnabled.removeDuplicates().sink { [weak self] enabled in
@@ -242,6 +265,22 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     @objc private func sparringFromMenu() { sparring.run() }
 
+    /// Genvejen til tekst fra skærmen er kun registreret, når brugeren har slået den til.
+    private func setScreenTextEnabled(_ enabled: Bool, shortcut: Shortcut? = nil) {
+        screenTextMenuItem?.isHidden = !enabled
+        guard enabled else {
+            screenTextShortcut.unregister()
+            screenTextSettings.shortcutFailed = false
+            screenText.close()
+            return
+        }
+        let ok = screenTextShortcut.register(shortcut ?? screenTextSettings.shortcut)
+        if !ok { diagnostics.record(.hotkeyRegistrationFailed) }
+        screenTextSettings.shortcutFailed = !ok
+    }
+
+    @objc private func screenTextFromMenu() { screenText.run() }
+
     /// Læser et ord eller den rettede tekst op med den valgte stemme for sproget.
     private func speakSpelling(_ text: String, language: Language, done: @escaping @MainActor () -> Void) {
         spellingVoices.forEach { $0.stop() }
@@ -301,7 +340,7 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private func refreshMainWindowContent() {
         mainWindow?.contentView = NSHostingView(rootView: MainView(
             model: windowModel, settings: settings, catalog: catalog, downloader: downloader,
-            spelling: spellingSettings, ai: spellingSettings.ai, mail: mailSettings,
+            spelling: spellingSettings, ai: spellingSettings.ai, mail: mailSettings, screenText: screenTextSettings,
             shortcutRegistrationFailed: shortcutRegistrationFailed
         ))
     }
@@ -321,6 +360,12 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
         read.target = self
         menu.addItem(read)
         readMenuItem = read
+        let screenItem = NSMenuItem(title: "Læs tekst fra skærmen (\(screenTextSettings.shortcut.displayString))",
+                                    action: #selector(screenTextFromMenu), keyEquivalent: "")
+        screenItem.target = self
+        screenItem.isHidden = !screenTextSettings.isEnabled
+        menu.addItem(screenItem)
+        screenTextMenuItem = screenItem
         let spell = NSMenuItem(title: "Ret stavning (\(spellingSettings.shortcut.displayString))",
                                action: #selector(spellCheckFromMenu), keyEquivalent: "")
         spell.target = self

@@ -67,7 +67,7 @@ public enum ScreenshotTool {
             model.page = page
             shoot("hovedvindue-\(page.rawValue)", size: NSSize(width: 780, height: 600),
                   MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
-                           spelling: SpellingSettings(defaults: defaults, ai: demoAI), ai: demoAI, mail: MailReplySettings(defaults: defaults), shortcutRegistrationFailed: false))
+                           spelling: SpellingSettings(defaults: defaults, ai: demoAI), ai: demoAI, mail: MailReplySettings(defaults: defaults), screenText: ScreenTextSettings(defaults: defaults), shortcutRegistrationFailed: false))
         }
         // Siden Stavning med "Bedre hjælp via internet" slået til (AP-64).
         defaults.set(true, forKey: "spellingCloudEnabled")
@@ -81,18 +81,20 @@ public enum ScreenshotTool {
         model.page = .spelling
         shoot("hovedvindue-spelling-internet", size: NSSize(width: 780, height: 1250),
               MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
-                       spelling: SpellingSettings(defaults: defaults, ai: demoAI), ai: demoAI, mail: MailReplySettings(defaults: defaults), shortcutRegistrationFailed: false))
+                       spelling: SpellingSettings(defaults: defaults, ai: demoAI), ai: demoAI, mail: MailReplySettings(defaults: defaults), screenText: ScreenTextSettings(defaults: defaults), shortcutRegistrationFailed: false))
         defaults.set(false, forKey: "spellingCloudEnabled")
         defaults.set(false, forKey: "spellingHelpEnabled")
-        // Start og Genvej med stavehjælpen slået til.
+        // Start, Oplæsning og Genveje med stavehjælpen og tekst fra skærmen slået til.
         defaults.set(true, forKey: "spellingHelpEnabled")
-        for page in [MainPage.start, .shortcut] {
+        defaults.set(true, forKey: "screenTextEnabled")
+        for page in [MainPage.start, .reading, .shortcut] {
             model.page = page
-            shoot("hovedvindue-\(page.rawValue)-stavning", size: NSSize(width: 780, height: 760),
+            shoot("hovedvindue-\(page.rawValue)-stavning", size: NSSize(width: 780, height: 1000),
                   MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
-                           spelling: SpellingSettings(defaults: defaults, ai: demoAI), ai: demoAI, mail: MailReplySettings(defaults: defaults), shortcutRegistrationFailed: false))
+                           spelling: SpellingSettings(defaults: defaults, ai: demoAI), ai: demoAI, mail: MailReplySettings(defaults: defaults), screenText: ScreenTextSettings(defaults: defaults), shortcutRegistrationFailed: false))
         }
         defaults.set(false, forKey: "spellingHelpEnabled")
+        defaults.set(false, forKey: "screenTextEnabled")
 
         // Grafen over forbruget (AP-66) med opdigtede tal for 30 dage og musen over en dag.
         var demoDate = Calendar(identifier: .gregorian).startOfDay(for: Date()).addingTimeInterval(-29 * 86_400 + 43_200)
@@ -147,7 +149,7 @@ public enum ScreenshotTool {
         model.page = .mail
         shoot("hovedvindue-mail", size: NSSize(width: 780, height: 1250),
               MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
-                       spelling: SpellingSettings(defaults: defaults, ai: demoAI), ai: demoAI, mail: MailReplySettings(defaults: defaults),
+                       spelling: SpellingSettings(defaults: defaults, ai: demoAI), ai: demoAI, mail: MailReplySettings(defaults: defaults), screenText: ScreenTextSettings(defaults: defaults),
                        shortcutRegistrationFailed: false))
         defaults.set(false, forKey: "mailReplyEnabled")
         defaults.set(false, forKey: "mailSparringEnabled")
@@ -176,7 +178,7 @@ public enum ScreenshotTool {
         model.page = .ai
         shoot("hovedvindue-ai", size: NSSize(width: 780, height: 1000),
               MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
-                       spelling: SpellingSettings(defaults: defaults, ai: demoAI), ai: demoAI, mail: MailReplySettings(defaults: defaults),
+                       spelling: SpellingSettings(defaults: defaults, ai: demoAI), ai: demoAI, mail: MailReplySettings(defaults: defaults), screenText: ScreenTextSettings(defaults: defaults),
                        shortcutRegistrationFailed: false))
         defaults.set(false, forKey: "spellingCloudEnabled")
         defaults.set(false, forKey: "mailReplyEnabled")

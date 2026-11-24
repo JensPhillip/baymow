@@ -11,7 +11,7 @@ final class MainWindowModel: ObservableObject {
     @Published var shortcutError: (target: ShortcutTarget, text: String)?
     var isRecordingShortcut: Bool { recording != nil }
 
-    enum ShortcutTarget: Equatable { case read, spelling, mail, sparring }
+    enum ShortcutTarget: Equatable { case read, screenText, spelling, mail, sparring }
     /// Siden, der vises i hovedvinduet.
     @Published var page: MainPage = .start {
         didSet { if page.isSetting { lastSettingsPage = page } }
@@ -205,7 +205,7 @@ enum MainPage: String, CaseIterable, Identifiable {
             guard spelling.isEnabled else { return read }
             return read + " Vil du have rettet din egen tekst, så markér den, og tryk på \(spelling.shortcut.spokenKeys)."
         case .reading:
-            return "Her vælger du, hvor hurtigt der bliver læst. Skildpadden er langsomt, og haren er hurtigt. Du kan også vælge sproget. Står den på automatisk, finder Baymow selv ud af, om teksten er dansk eller engelsk."
+            return "Her vælger du stemme, og hvor hurtigt der bliver læst. Skildpadden er langsomt, og haren er hurtigt. Du kan også vælge sproget. Står den på automatisk, finder Baymow selv ud af, om teksten er dansk eller engelsk. Slår du tekst fra skærmen til, kan du trække en firkant om tekst, du ikke kan markere, for eksempel i et billede, og få den læst op."
         case .display:
             return "Baymow kan vise dig, hvilket ord der bliver læst lige nu. Enten i et vindue med stor skrift, eller med et gult felt direkte i teksten. Du kan slå dem til og fra hver for sig."
         case .voices:
@@ -231,6 +231,7 @@ struct MainView: View {
     @ObservedObject var spelling: SpellingSettings
     @ObservedObject var ai: AIServices
     @ObservedObject var mail: MailReplySettings
+    @ObservedObject var screenText: ScreenTextSettings
     /// Sat af AppShell, hvis den valgte genvej ikke kunne registreres.
     let shortcutRegistrationFailed: Bool
 
@@ -271,7 +272,8 @@ struct MainView: View {
             || ((mail.isEnabled || mail.sparringEnabled) && !ai.savedKeys.contains(mail.provider))
         case .ai: return (spelling.cloudEnabled && !ai.savedKeys.contains(spelling.cloudProvider))
             || ((mail.isEnabled || mail.sparringEnabled) && !ai.savedKeys.contains(mail.provider))
-        case .reading, .display: return false
+        case .reading: return screenText.isEnabled && (!screenText.hasPermission || screenText.shortcutFailed)
+        case .display: return false
         }
     }
 
@@ -319,7 +321,7 @@ struct MainView: View {
             .padding(.vertical, 6)
         }
 
-        Section(spelling.isEnabled || mail.isEnabled ? "Læs op" : "Sådan gør du") {
+        Section(spelling.isEnabled || mail.isEnabled || screenText.isEnabled ? "Læs op" : "Sådan gør du") {
             HStack(alignment: .top, spacing: 0) {
                 HowToStep(number: 1, title: "Markér") {
                     Image(systemName: "character.cursor.ibeam").font(.system(size: 30, weight: .medium))
@@ -334,6 +336,23 @@ struct MainView: View {
                 }
             }
             .padding(.vertical, 10)
+        }
+
+        if screenText.isEnabled {
+            Section("Læs tekst fra skærmen") {
+                HStack(alignment: .top, spacing: 0) {
+                    HowToStep(number: 1, title: "Tryk") { KeyCaps(shortcut: screenText.shortcut, size: 30) }
+                    arrow
+                    HowToStep(number: 2, title: "Træk") {
+                        Image(systemName: "rectangle.dashed").font(.system(size: 30, weight: .medium)).foregroundStyle(.cyan)
+                    }
+                    arrow
+                    HowToStep(number: 3, title: "Lyt") {
+                        Image(systemName: "speaker.wave.3.fill").font(.system(size: 30, weight: .medium)).foregroundStyle(.cyan)
+                    }
+                }
+                .padding(.vertical, 10)
+            }
         }
 
         if spelling.isEnabled {
@@ -422,6 +441,39 @@ struct MainView: View {
             }
             .padding(.vertical, 4)
         }
+
+        Section {
+            OptionRow(symbol: "text.viewfinder", color: .cyan, title: "Læs tekst fra skærmen",
+                      subtitle: "Tekst, du ikke kan markere: billeder, indscannede sider, knapper.",
+                      help: "Tryk \(screenText.shortcut.displayString), og træk en firkant om teksten. Macen genkender teksten, og Baymow læser den op. Intet sendes væk.",
+                      isOn: $screenText.isEnabled)
+            if screenText.isEnabled {
+                HStack(spacing: 10) {
+                    Image(systemName: "keyboard").foregroundStyle(.secondary).frame(width: 20)
+                    Text("Tryk")
+                    KeyCaps(shortcut: screenText.shortcut, size: 26)
+                    Text("og træk en firkant om teksten").foregroundStyle(.secondary)
+                }
+                .accessibilityElement(children: .combine)
+                if screenText.hasPermission {
+                    Label("Baymow har lov til at se skærmen. Teksten bliver på din Mac.", systemImage: "checkmark.circle.fill")
+                        .foregroundStyle(.green)
+                } else {
+                    HStack {
+                        Label("Baymow skal have lov til at se skærmen (Skærmoptagelse).", systemImage: "exclamationmark.triangle.fill")
+                            .foregroundStyle(.orange)
+                        Spacer()
+                        Button { ScreenCapture.requestPermission() } label: { Label("Giv lov", systemImage: "lock.open.fill") }
+                            .help("Åbner Systemindstillinger → Anonymitet & sikkerhed → Skærm- og systemlydoptagelse. Slå Baymow til.")
+                    }
+                }
+                if screenText.shortcutFailed {
+                    Label("Tasterne \(screenText.shortcut.displayString) bruges af et andet program.",
+                          systemImage: "exclamationmark.triangle.fill").foregroundStyle(.orange)
+                }
+            }
+        }
+        .onAppear { screenText.refreshPermission() }
 
         Section {
             VStack(alignment: .leading, spacing: 10) {
@@ -558,6 +610,18 @@ struct MainView: View {
             }
         }
         Section {
+            shortcutEditor(.screenText, title: "Tekst fra skærmen", symbol: "text.viewfinder", color: .cyan,
+                           shortcut: screenText.shortcut, failed: screenText.isEnabled && screenText.shortcutFailed) { new in
+                if let taken = taken(new, except: .screenText) { return taken }
+                screenText.shortcut = new
+                return nil
+            }
+            if !screenText.isEnabled {
+                Label("Tekst fra skærmen er slået fra. Slå den til på siden Oplæsning.", systemImage: "info.circle")
+                    .foregroundStyle(.secondary)
+            }
+        }
+        Section {
             shortcutEditor(.spelling, title: "Ret stavning", symbol: "textformat.abc.dottedunderline", color: .teal,
                            shortcut: spelling.shortcut, failed: spelling.isEnabled && spelling.shortcutFailed) { new in
                 if let taken = taken(new, except: .spelling) { return taken }
@@ -601,6 +665,7 @@ struct MainView: View {
         if target != .spelling, shortcut == spelling.shortcut { return "De taster bruges allerede til at rette stavning." }
         if target != .mail, shortcut == mail.shortcut { return "De taster bruges allerede til mail-svar." }
         if target != .sparring, shortcut == mail.sparringShortcut { return "De taster bruges allerede til sparring om mail." }
+        if target != .screenText, shortcut == screenText.shortcut { return "De taster bruges allerede til tekst fra skærmen." }
         return nil
     }
 

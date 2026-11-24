@@ -61,6 +61,9 @@ MainActor.assumeIsolated {
         let level = arguments.firstIndex(of: "--level").flatMap { $0 + 1 < arguments.count ? arguments[$0 + 1] : nil }
         exit(SpellTest.run(sentencesFile: arguments[index + 1], outputFile: arguments[index + 2], cloud: cloud, level: level))
     }
+    if let index = arguments.firstIndex(of: "--ocr-test"), arguments.count > index + 2 {
+        exit(OCRTest.run(textsFile: arguments[index + 1], outputFile: arguments[index + 2]))
+    }
     if let index = arguments.firstIndex(of: "--sparring-test"), arguments.count > index + 2 {
         let cloud = arguments.firstIndex(of: "--cloud").flatMap { $0 + 1 < arguments.count ? arguments[$0 + 1] : nil }
         exit(SparringTest.run(casesFile: arguments[index + 1], outputFile: arguments[index + 2], cloud: cloud))

@@ -5,7 +5,7 @@ Sidst opdateret: 2026-11-23 af udfører (Claude Opus 5.5).
 
 ## Lige nu
 
-- **I gang:** AP-74 (sparring om mailen), AP-72 og AP-73 – bygget, afventer brugerens afprøvning. AP-71 er afprøvet af brugeren.
+- **I gang:** AP-75 (tekst fra skærmen), AP-74, AP-72 og AP-73 – bygget, afventer brugerens afprøvning. AP-71 er afprøvet af brugeren.
 - **Mail – plan aftalt 23. november:** 1) sparring på den åbne mail, 2) Outlook og Gmail, 3) senere: proaktiv hjælp med
   app på telefonen, brugerens kontekst og opklarende spørgsmål (I16), og login på kontoen. Proaktiv del venter, til
   mail-svar og sparring virker godt.
@@ -61,6 +61,9 @@ Sidst opdateret: 2026-11-23 af udfører (Claude Opus 5.5).
 - **AP-74 (sparring om mailen):** ⌃⌥K på en åben mail i Apple Mail → vindue med fire faste spørgsmål og eget
   spørgsmål. Sparringstesten: 40 af 40 svar (højst 68 ord, "Det står ikke i mailen" til det ukendte).
   Afprøvet af brugeren 24. november ("virker rigtig fint"); svarene vises nu formateret (fed, punkter).
+- **AP-75 (tekst fra skærmen, I4):** ⌃⌥T → træk en firkant → Macens tekstgenkendelse → oplæsning. Målt på egne
+  danske tekster: 0 % tegnfejl i fem udgaver af skærmtekst, 1,1 % på "indscannet" (efter æ/ø/å-rettelse; før 1,9 %).
+  Kræver tilladelsen Skærmoptagelse og macOS 15.2. Intet netværk.
 
 ## Venter på brugeren
 

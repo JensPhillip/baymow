@@ -43,6 +43,14 @@ Opdateret 23. november 2026.
 - [ ] 4. Skriv dit eget spørgsmål, fx "Hvad er fristen?". Står det ikke i mailen, skal den sige det.
 - [ ] 5. Virker det både, når du læser en mail, og når du er i gang med et svar?
 
+## Test nu: Tekst fra skærmen (ca. 5 min)
+- [ ] 1. Siden **Oplæsning** → slå **Læs tekst fra skærmen** til. Tryk **Giv lov**, og slå Baymow til under
+      Systemindstillinger → Anonymitet & sikkerhed → Skærm- og systemlydoptagelse. (macOS beder måske om at genstarte Baymow.)
+- [ ] 2. Åbn et billede med tekst (fx et skærmbillede) eller en indscannet PDF. Tryk **⌃⌥T**: skærmen bliver mørkere.
+- [ ] 3. Træk en firkant om teksten. Afspilleren læser teksten op. Er den rigtig – også æ, ø og å?
+- [ ] 4. Tryk ⌃⌥T, og tryk **Esc**: intet sker, og du er tilbage, hvor du var.
+- [ ] 5. Prøv med to skærme, hvis du har det.
+
 ## Beslut, når du har prøvet den
 - ✅ **AI-konto:** besluttet 23. november – begge, du vælger selv. **Standard:** ChatGPT.
 - [ ] **Testnøglerne** i nøgleringen (konto `baymow-test`) kan slettes, når vi ikke skal måle mere.
@@ -50,5 +58,5 @@ Opdateret 23. november 2026.
 ## Senere (ikke nu)
 - [ ] **En testperson**, der aldrig har set Baymow, prøver velkomstvinduet uden hjælp (AP-41).
 - [ ] **Apple Developer Program** (koster et årligt gebyr), når du vil dele Baymow med andre (AP-52).
-- Idéer, der venter: I13 hent rigtige priser og forbrug, I14 fælles nøgle mod betaling for ikke-tekniske brugere, I9 engelske ord i dansk tekst, I10 ret selv et ord, I11 skrivehjælp, I4 tekst fra skærmen,
+- Idéer, der venter: I13 hent rigtige priser og forbrug, I14 fælles nøgle mod betaling for ikke-tekniske brugere, I9 engelske ord i dansk tekst, I10 ret selv et ord, I11 skrivehjælp,
   I5 hele filer.
