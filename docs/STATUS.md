@@ -1,11 +1,11 @@
 # Status
 
 Opdateres af den, der sidst har arbejdet på projektet. Kort og faktuelt.
-Sidst opdateret: 2026-11-23 af udfører (Claude Opus 5.5).
+Sidst opdateret: 2026-11-24 af udfører (Claude Opus 5.5).
 
 ## Lige nu
 
-- **I gang:** AP-75 (tekst fra skærmen), AP-74, AP-72 og AP-73 – bygget, afventer brugerens afprøvning. AP-71 er afprøvet af brugeren.
+- **I gang:** AP-72 og AP-73 – bygget, afventer brugerens afprøvning. AP-71 er afprøvet af brugeren.
 - **Mail – plan aftalt 23. november:** 1) sparring på den åbne mail, 2) Outlook og Gmail, 3) senere: proaktiv hjælp med
   app på telefonen, brugerens kontekst og opklarende spørgsmål (I16), og login på kontoen. Proaktiv del venter, til
   mail-svar og sparring virker godt.
@@ -64,6 +64,8 @@ Sidst opdateret: 2026-11-23 af udfører (Claude Opus 5.5).
 - **AP-75 (tekst fra skærmen, I4):** ⌃⌥T → træk en firkant → Macens tekstgenkendelse → oplæsning. Målt på egne
   danske tekster: 0 % tegnfejl i fem udgaver af skærmtekst, 1,1 % på "indscannet" (efter æ/ø/å-rettelse; før 1,9 %).
   Kræver tilladelsen Skærmoptagelse og macOS 15.2. Intet netværk.
+  Afprøvet af brugeren 24. november ("det virker"). Rettet samme dag: "Giv lov" sætter nu Baymow på listen over
+  Skærmoptagelse, og firkanten og sparringsvinduet trækker ikke længere hovedvinduet frem.
 
 ## Venter på brugeren
 
