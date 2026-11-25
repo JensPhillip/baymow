@@ -18,7 +18,8 @@ Sidst opdateret: 2026-11-25 af udfører (Claude Opus 5.5).
   var 0 × 0 (usynligt) – nu målt i en test; kontakten "Brug tasterne" står også øverst på siden Genveje. Brugerens ønske samme dag: bløde
   overgange (knapperne glider og toner ind), logoet flytter sig ikke, når bjælken åbner (indholdet er hæftet til logoets
   hjørne; kontrolleret på skærmbilleder i begge størrelser), og forklaringen er lille, kommer efter 3 sekunder og har sin
-  egen plads. Afventer afprøvning.
+  egen plads. Derefter: roligere animation uden fjeder, vinduets nye størrelse animeres ikke (logoet
+  gled), fanen i kanten bliver stående med knapperne ud ved siden af, mindre skygger. Afventer afprøvning.
 - **Mail – plan aftalt 23. november:** 1) sparring på den åbne mail (færdig), 2) Outlook og Gmail – parkeret af brugeren 24. november (I17; nævnes kun ved forslag til forbedringer), 3) senere: proaktiv hjælp med
   app på telefonen, brugerens kontekst og opklarende spørgsmål (I16), og login på kontoen. Proaktiv del venter, til
   mail-svar og sparring virker godt.

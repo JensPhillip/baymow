@@ -59,7 +59,8 @@ final class ActionBarController {
     static let sizingOptions: NSHostingSizingOptions = [.intrinsicContentSize]
     /// Hvor længe musen skal stå stille over en knap, før forklaringen kommer (brugerens ønske: 3 sekunder).
     static let tipDelay: UInt64 = 3_000_000_000
-    static let animation = Animation.spring(response: 0.32, dampingFraction: 0.86)
+    /// Rolig og uden fjedren, der skød over (brugerens ønske 25. november).
+    static let animation = Animation.smooth(duration: 0.24)
     private var panel: NSPanel?
     private var cancellables: Set<AnyCancellable> = []
     private var hoverTask: Task<Void, Never>?
@@ -163,12 +164,19 @@ final class ActionBarController {
         let current = transition
         if expanded {
             place(full: true) // vinduet vokser først – logoet står stille
-            withAnimation(Self.animation) { model.expanded = true }
+            panel?.contentView?.layoutSubtreeIfNeeded()
+            // Animationen starter først, når vinduets nye størrelse er lagt ud. Ellers animerer SwiftUI også
+            // indholdets nye plads, og logoet glider (brugerens afprøvning 25. november).
+            DispatchQueue.main.async { [weak self] in
+                guard let self, self.transition == current else { return }
+                withAnimation(Self.animation) { self.model.expanded = true }
+            }
         } else {
             stopTip()
             withAnimation(Self.animation) { model.expanded = false } completion: { [weak self] in
                 guard let self, self.transition == current, !self.model.expanded else { return }
-                self.place(full: false) // først når knapperne er væk, bliver vinduet lille
+                var quiet = Transaction(); quiet.disablesAnimations = true
+                withTransaction(quiet) { self.place(full: false) } // først når knapperne er væk, bliver vinduet lille
             }
         }
     }
@@ -323,7 +331,7 @@ struct ActionBarHost: View {
     let onButtonHover: (ActionBarButton?) -> Void
     let onListen: () -> Void
 
-    static let shadowRoom: CGFloat = 10
+    static let shadowRoom: CGFloat = 6
     static let logoSize: CGFloat = 42
     /// Pladsen, der er sat af til forklaringen (under eller ved siden af knapperne).
     static let tipRoom = CGSize(width: 210, height: 52)
@@ -339,6 +347,7 @@ struct ActionBarHost: View {
             // indholdet (lukket). Så står logoet samme sted på skærmen, uanset vinduets størrelse.
             GeometryReader { window in
                 core.frame(width: window.size.width, height: window.size.height, alignment: anchor)
+                    .transaction(value: window.size) { $0.animation = nil } // vinduets størrelse animeres aldrig
             }
             .onHover(perform: onHover)
         }
@@ -376,8 +385,8 @@ struct ActionBarHost: View {
         let shown = model.showsButtons
         return view
             .opacity(shown ? 1 : 0)
-            .scaleEffect(shown ? 1 : 0.94, anchor: edge == .trailing ? .trailing : .leading)
-            .offset(x: shown ? 0 : (edge == .trailing ? 18 : -18))
+            .scaleEffect(shown ? 1 : 0.98, anchor: edge == .trailing ? .trailing : .leading)
+            .offset(x: shown ? 0 : (edge == .trailing ? 6 : -6))
             .allowsHitTesting(shown)
             .accessibilityHidden(!shown)
     }
@@ -394,17 +403,17 @@ struct ActionBarHost: View {
         .padding(.bottom, Self.tipRoom.height)
     }
 
+    /// Fanen står stille i kanten; knapperne glider ud ved siden af den (brugerens afprøvning 25. november: før
+    /// sprang logoet fra fanen op til toppen af bjælken).
     private var edge: some View {
-        ZStack(alignment: model.edgeOnLeft ? .leading : .trailing) {
-            revealed(bar(vertical: true, header: AnyView(logo)), from: model.edgeOnLeft ? .leading : .trailing)
-            ActionBarEdgeTab()
-                .scaleEffect(x: model.edgeOnLeft ? -1 : 1, y: 1)
-                .opacity(model.expanded ? 0 : 1)
+        HStack(alignment: .center, spacing: 6) {
+            if !model.edgeOnLeft { revealed(bar(vertical: true), from: .trailing) }
+            ActionBarEdgeTab(onLeft: model.edgeOnLeft, open: model.expanded)
                 .onTapGesture(perform: onLogoTap)
                 .gesture(dragGesture)
-                .allowsHitTesting(!model.expanded)
                 .accessibilityLabel("Baymow-knapper")
                 .accessibilityAddTraits(.isButton)
+            if model.edgeOnLeft { revealed(bar(vertical: true), from: .leading) }
         }
         .overlay(alignment: model.edgeOnLeft ? .trailing : .leading) { sideTip(onLeft: !model.edgeOnLeft) }
         .padding(model.edgeOnLeft ? .trailing : .leading, Self.tipRoom.width)
@@ -476,6 +485,6 @@ struct ActionBarSmallTip: View {
         .padding(.horizontal, 8).padding(.vertical, 5)
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous).strokeBorder(.primary.opacity(0.1)))
-        .shadow(color: .black.opacity(0.12), radius: 4, y: 1)
+        .shadow(color: .black.opacity(0.1), radius: 2, y: 1)
     }
 }

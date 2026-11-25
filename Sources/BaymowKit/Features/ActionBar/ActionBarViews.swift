@@ -62,7 +62,7 @@ struct BaymowMark: View {
             .frame(width: size, height: size)
             .background(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing),
                         in: RoundedRectangle(cornerRadius: size * 0.28, style: .continuous))
-            .shadow(color: .black.opacity(0.18), radius: 4, y: 2)
+            .shadow(color: .black.opacity(0.14), radius: 2, y: 1)
             .accessibilityLabel("Baymow")
     }
 }
@@ -102,7 +102,7 @@ struct ActionBarView: View {
         .padding(8)
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).strokeBorder(.primary.opacity(0.12)))
-        .shadow(color: .black.opacity(0.2), radius: 10, y: 4)
+        .shadow(color: .black.opacity(0.12), radius: 3, y: 1)
     }
 
     private func tile(_ button: ActionBarButton) -> some View {
@@ -154,17 +154,26 @@ struct ActionBarDot: View {
     }
 }
 
-/// Fanen, der stikker lidt ud fra skærmens kant, når bjælken sidder fast i siden.
+/// Fanen, der stikker lidt ud fra skærmens kant, når bjælken sidder fast i siden. Pilen viser vejen ud og ind.
 struct ActionBarEdgeTab: View {
+    var onLeft = false
+    var open = false
+
     var body: some View {
+        // Højre kant: pilen peger ind mod skærmen (venstre), når den er lukket, og ud, når den er åben.
+        let pointsLeft = onLeft ? open : !open
         VStack(spacing: 6) {
             BaymowMark(size: 26)
-            Image(systemName: "chevron.left").font(.system(size: 11, weight: .bold)).foregroundStyle(.secondary)
+            Image(systemName: pointsLeft ? "chevron.left" : "chevron.right")
+                .font(.system(size: 11, weight: .bold)).foregroundStyle(.secondary)
+                .contentTransition(.symbolEffect(.replace))
         }
-        .padding(.vertical, 10).padding(.leading, 6).padding(.trailing, 10)
-        .background(.regularMaterial, in: UnevenRoundedRectangle(topLeadingRadius: 12, bottomLeadingRadius: 12,
-                                                                 bottomTrailingRadius: 0, topTrailingRadius: 0))
-        .shadow(color: .black.opacity(0.2), radius: 6, x: -2)
+        .padding(.vertical, 10)
+        .padding(onLeft ? .trailing : .leading, 8)
+        .padding(onLeft ? .leading : .trailing, 6)
+        .background(.regularMaterial, in: UnevenRoundedRectangle(topLeadingRadius: onLeft ? 0 : 12, bottomLeadingRadius: onLeft ? 0 : 12,
+                                                                 bottomTrailingRadius: onLeft ? 12 : 0, topTrailingRadius: onLeft ? 12 : 0))
+        .shadow(color: .black.opacity(0.12), radius: 2, x: onLeft ? 1 : -1)
     }
 }
 
