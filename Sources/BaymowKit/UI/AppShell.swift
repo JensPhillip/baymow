@@ -70,8 +70,17 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
     private var screenTextMenuItem: NSMenuItem?
 
+    // Knapbjælken (AP-77) og om tastaturgenvejene virker.
+    private let controls = ActionBarSettings()
+    private lazy var actionBar = ActionBarController(
+        settings: controls,
+        available: { [weak self] in self?.availableButtons() ?? [] },
+        perform: { [weak self] button in self?.perform(button) },
+        speak: { [weak self] text, language, done in self?.speakSpelling(text, language: language, done: done) },
+        stopSpeaking: { [weak self] in self?.spellingVoices.forEach { $0.stop() } })
+
     private lazy var onboarding = OnboardingWindowController(
-        model: OnboardingModel(settings: settings, catalog: catalog, sampleEngine: AppleSpeechEngine()))
+        model: OnboardingModel(settings: settings, catalog: catalog, sampleEngine: AppleSpeechEngine(), controls: controls))
 
     private var statusItem: NSStatusItem?
     private var readMenuItem: NSMenuItem?
@@ -149,6 +158,13 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
             if self.spellingSettings.isEnabled { self.setSpellingEnabled(true, shortcut: shortcut) }
         }.store(in: &cancellables)
 
+        // Knapbjælken og tasterne: slås knapperne eller tasterne til eller fra, registreres genvejene igen.
+        controls.$isEnabled.combineLatest(controls.$keysEnabled).dropFirst().removeDuplicates { $0 == $1 }
+            .sink { [weak self] _ in
+                DispatchQueue.main.async { self?.applyKeys() }
+            }.store(in: &cancellables)
+        actionBar.refresh()
+
         // Første opstart: velkomstvinduet. Senere, hvis adgangen mangler: hovedvinduet, der forklarer det.
         if !settings.hasCompletedOnboarding {
             showOnboarding()
@@ -222,10 +238,16 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
     /// Stavehjælpens genvej er kun registreret, når brugeren har slået den til.
     private func setSpellingEnabled(_ enabled: Bool, shortcut: Shortcut? = nil) {
         spellingMenuItem?.isHidden = !enabled
+        actionBar.refresh()
         guard enabled else {
             spellingShortcut.unregister()
             spellingSettings.shortcutFailed = false
             spelling.close()
+            return
+        }
+        guard controls.keysActive else { // brugeren har slået tasterne fra; knapperne virker
+            spellingShortcut.unregister()
+            spellingSettings.shortcutFailed = false
             return
         }
         let ok = spellingShortcut.register(shortcut ?? spellingSettings.shortcut)
@@ -236,10 +258,16 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
     /// Mail-svarets genvej er kun registreret, når brugeren har slået det til.
     private func setMailEnabled(_ enabled: Bool, shortcut: Shortcut? = nil) {
         mailMenuItem?.isHidden = !enabled
+        actionBar.refresh()
         guard enabled else {
             mailShortcut.unregister()
             mailSettings.shortcutFailed = false
             mailReply.close()
+            return
+        }
+        guard controls.keysActive else { // brugeren har slået tasterne fra; knapperne virker
+            mailShortcut.unregister()
+            mailSettings.shortcutFailed = false
             return
         }
         let ok = mailShortcut.register(shortcut ?? mailSettings.shortcut)
@@ -252,10 +280,16 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
     /// Sparringens genvej er kun registreret, når brugeren har slået den til.
     private func setSparringEnabled(_ enabled: Bool, shortcut: Shortcut? = nil) {
         sparringMenuItem?.isHidden = !enabled
+        actionBar.refresh()
         guard enabled else {
             sparringShortcut.unregister()
             mailSettings.sparringShortcutFailed = false
             sparring.close()
+            return
+        }
+        guard controls.keysActive else { // brugeren har slået tasterne fra; knapperne virker
+            sparringShortcut.unregister()
+            mailSettings.sparringShortcutFailed = false
             return
         }
         let ok = sparringShortcut.register(shortcut ?? mailSettings.sparringShortcut)
@@ -268,10 +302,16 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
     /// Genvejen til tekst fra skærmen er kun registreret, når brugeren har slået den til.
     private func setScreenTextEnabled(_ enabled: Bool, shortcut: Shortcut? = nil) {
         screenTextMenuItem?.isHidden = !enabled
+        actionBar.refresh()
         guard enabled else {
             screenTextShortcut.unregister()
             screenTextSettings.shortcutFailed = false
             screenText.close()
+            return
+        }
+        guard controls.keysActive else { // brugeren har slået tasterne fra; knapperne virker
+            screenTextShortcut.unregister()
+            screenTextSettings.shortcutFailed = false
             return
         }
         let ok = screenTextShortcut.register(shortcut ?? screenTextSettings.shortcut)
@@ -302,13 +342,48 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     private func registerShortcut(_ shortcut: Shortcut) {
+        readMenuItem?.title = "Læs markeret tekst (\(shortcut.displayString))"
+        guard controls.keysActive else {
+            shortcuts.unregister()
+            if shortcutRegistrationFailed { shortcutRegistrationFailed = false; refreshMainWindowContent() }
+            return
+        }
         let ok = shortcuts.register(shortcut)
         if !ok { diagnostics.record(.hotkeyRegistrationFailed) }
         if shortcutRegistrationFailed != !ok {
             shortcutRegistrationFailed = !ok
             refreshMainWindowContent()
         }
-        readMenuItem?.title = "Læs markeret tekst (\(shortcut.displayString))"
+    }
+
+    /// Tasterne til eller fra: alle genveje registreres igen (eller fjernes).
+    private func applyKeys() {
+        registerShortcut(settings.shortcut)
+        setSpellingEnabled(spellingSettings.isEnabled)
+        setMailEnabled(mailSettings.isEnabled)
+        setSparringEnabled(mailSettings.sparringEnabled)
+        setScreenTextEnabled(screenTextSettings.isEnabled)
+    }
+
+    /// Knapperne, der kan vises: læs op altid, resten når funktionen er slået til.
+    private func availableButtons() -> Set<ActionBarButton> {
+        var buttons: Set<ActionBarButton> = [.read]
+        if screenTextSettings.isEnabled { buttons.insert(.screenText) }
+        if spellingSettings.isEnabled { buttons.insert(.spelling) }
+        if mailSettings.isEnabled { buttons.insert(.mailReply) }
+        if mailSettings.sparringEnabled { buttons.insert(.sparring) }
+        return buttons
+    }
+
+    /// En knap på bjælken gør det samme som genvejen.
+    private func perform(_ button: ActionBarButton) {
+        switch button {
+        case .read: readSelection()
+        case .screenText: screenText.run()
+        case .spelling: spelling.run()
+        case .mailReply: mailReply.run()
+        case .sparring: sparring.run()
+        }
     }
 
     // MARK: - Vinduer og menuer
@@ -341,7 +416,7 @@ public final class AppShell: NSObject, NSApplicationDelegate, NSWindowDelegate {
         mainWindow?.contentView = NSHostingView(rootView: MainView(
             model: windowModel, settings: settings, catalog: catalog, downloader: downloader,
             spelling: spellingSettings, ai: spellingSettings.ai, mail: mailSettings, screenText: screenTextSettings,
-            shortcutRegistrationFailed: shortcutRegistrationFailed
+            controls: controls, shortcutRegistrationFailed: shortcutRegistrationFailed
         ))
     }
 

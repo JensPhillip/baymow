@@ -134,11 +134,11 @@ final class MainWindowModel: ObservableObject {
 
 /// Siderne i hovedvinduet: én ting pr. side, hver med sit ikon (designprincip 4).
 enum MainPage: String, CaseIterable, Identifiable {
-    case start, reading, display, voices, spelling, mail, ai, shortcut
+    case start, reading, display, voices, spelling, mail, ai, shortcut, buttons
     var id: String { rawValue }
 
     /// Siderne under "Indstillinger" nederst i sidebjælken (brugerens ønske 23. november 2026).
-    static let settingsPages: [MainPage] = [.shortcut, .voices, .ai]
+    static let settingsPages: [MainPage] = [.shortcut, .buttons, .voices, .ai]
     /// Siderne øverst i sidebjælken.
     static let mainPages: [MainPage] = allCases.filter { !$0.isSetting }
     var isSetting: Bool { Self.settingsPages.contains(self) }
@@ -153,6 +153,7 @@ enum MainPage: String, CaseIterable, Identifiable {
         case .mail: return "Mail"
         case .ai: return "AI og nøgler"
         case .shortcut: return "Genveje"
+        case .buttons: return "Knapper"
         }
     }
 
@@ -166,6 +167,7 @@ enum MainPage: String, CaseIterable, Identifiable {
         case .mail: return "envelope.fill"
         case .ai: return "sparkles"
         case .shortcut: return "keyboard.fill"
+        case .buttons: return "hand.tap.fill"
         }
     }
 
@@ -179,6 +181,7 @@ enum MainPage: String, CaseIterable, Identifiable {
         case .mail: return .indigo
         case .ai: return .pink
         case .shortcut: return .gray
+        case .buttons: return .mint
         }
     }
 
@@ -193,6 +196,7 @@ enum MainPage: String, CaseIterable, Identifiable {
         case .mail: return "Få et forslag til svar på en mail."
         case .ai: return "Nøgler, firmaer og forbrug."
         case .shortcut: return "Tasterne, der starter Baymow."
+        case .buttons: return "Knapper på skærmen i stedet for tasterne."
         }
     }
 
@@ -219,6 +223,8 @@ enum MainPage: String, CaseIterable, Identifiable {
             return "Her gemmer du dine nøgler til ChatGPT og Claude. Du vælger, hvilket firma stavning og mail bruger, og du kan se, hvad det har kostet. Prisen er et skøn. Den præcise regning står hos firmaerne."
         case .shortcut:
             return "En genvej er de taster, du trykker på samtidig. Den ene får den markerede tekst læst op. De andre retter stavningen i din egen tekst og skriver svar på mails. Du kan skifte til andre taster, hvis du vil."
+        case .buttons:
+            return "Her kan du få knapper på skærmen, så du kan bruge Baymow med musen. Et lille Baymow logo står på skærmen. Hold musen over det, så kommer knapperne frem. Du kan også vælge, at knapperne skal stå fast i siden af skærmen, altid være synlige eller komme frem, når du klikker. Vælg selv, hvilke knapper du vil have. Bruger du kun knapperne, kan du slå tasterne fra."
         }
     }
 }
@@ -232,6 +238,7 @@ struct MainView: View {
     @ObservedObject var ai: AIServices
     @ObservedObject var mail: MailReplySettings
     @ObservedObject var screenText: ScreenTextSettings
+    @ObservedObject var controls: ActionBarSettings
     /// Sat af AppShell, hvis den valgte genvej ikke kunne registreres.
     let shortcutRegistrationFailed: Bool
 
@@ -262,6 +269,16 @@ struct MainView: View {
         .onDisappear { model.stopPolling() }
     }
 
+    /// Knapperne, der kan vælges: kun funktioner, der er slået til.
+    private var availableButtons: Set<ActionBarButton> {
+        var buttons: Set<ActionBarButton> = [.read]
+        if screenText.isEnabled { buttons.insert(.screenText) }
+        if spelling.isEnabled { buttons.insert(.spelling) }
+        if mail.isEnabled { buttons.insert(.mailReply) }
+        if mail.sparringEnabled { buttons.insert(.sparring) }
+        return buttons
+    }
+
     private func needsAttention(_ page: MainPage) -> Bool {
         switch page {
         case .start: return !model.hasPermission
@@ -274,6 +291,7 @@ struct MainView: View {
             || ((mail.isEnabled || mail.sparringEnabled) && !ai.savedKeys.contains(mail.provider))
         case .reading: return screenText.isEnabled && (!screenText.hasPermission || screenText.shortcutFailed)
         case .display: return false
+        case .buttons: return false
         }
     }
 
@@ -287,6 +305,8 @@ struct MainView: View {
         case .mail: MailSettingsPage(settings: mail, ai: ai, openAIPage: { model.page = .ai })
         case .ai: AISettingsPage(ai: ai, spelling: spelling, mail: mail)
         case .shortcut: shortcutPage
+        case .buttons:
+            ActionBarSettingsPage(controls: controls, available: availableButtons, openShortcuts: { model.page = .shortcut })
         }
     }
 
@@ -411,6 +431,9 @@ struct MainView: View {
         Section {} footer: {
             HStack {
                 Spacer()
+                Button { model.page = .buttons } label: { Label("Skift knapper", systemImage: "hand.tap") }
+                    .controlSize(.large)
+                    .help("Åbner Indstillinger → Knapper")
                 Button { model.page = .shortcut } label: { Label("Skift genveje", systemImage: "keyboard") }
                     .controlSize(.large)
                     .help("Åbner Indstillinger → Genveje")
@@ -606,6 +629,16 @@ struct MainView: View {
     // MARK: Genvej
 
     @ViewBuilder private var shortcutPage: some View {
+        if !controls.keysActive {
+            Section {
+                HStack {
+                    Label("Tasterne er slået fra. Du bruger knapperne på skærmen.", systemImage: "keyboard.badge.ellipsis")
+                        .foregroundStyle(.orange)
+                    Spacer()
+                    Button("Slå tasterne til") { controls.keysEnabled = true }
+                }
+            }
+        }
         Section {
             shortcutEditor(.read, title: "Læs op", symbol: "speaker.wave.2.fill", color: .blue,
                            shortcut: settings.shortcut, failed: shortcutRegistrationFailed) { new in

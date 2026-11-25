@@ -50,9 +50,9 @@ final class DesignTests: XCTestCase {
         for page in MainPage.allCases { XCTAssertLessThanOrEqual(page.title.split(separator: " ").count, 3, page.title) }
     }
 
-    /// AP-73: Genveje, Stemmer og AI og nøgler ligger under "Indstillinger" nederst; resten øverst. Ingen side to steder.
+    /// AP-73: Genveje, Knapper (AP-77), Stemmer og AI og nøgler ligger under "Indstillinger" nederst; resten øverst.
     func testSettingsPagesAreGroupedAtTheBottom() {
-        XCTAssertEqual(MainPage.settingsPages, [.shortcut, .voices, .ai])
+        XCTAssertEqual(MainPage.settingsPages, [.shortcut, .buttons, .voices, .ai])
         XCTAssertEqual(MainPage.mainPages, [.start, .reading, .display, .spelling, .mail])
         XCTAssertEqual(Set(MainPage.mainPages + MainPage.settingsPages), Set(MainPage.allCases))
     }

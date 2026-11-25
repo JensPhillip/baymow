@@ -43,7 +43,7 @@ enum ActionBarButton: String, CaseIterable, Identifiable {
     var help: String {
         switch self {
         case .read: return "Markér tekst, og tryk her for at få den læst op."
-        case .screenText: return "Træk en firkant om tekst, du ikke kan markere, fx i et billede."
+        case .screenText: return "Træk en firkant om tekst, du ikke kan markere, for eksempel i et billede."
         case .spelling: return "Markér din egen tekst, og tryk her for at få stavningen rettet."
         case .mailReply: return "Skriv stikord øverst i dit svar i Apple Mail, og tryk her."
         case .sparring: return "Åbn en mail i Apple Mail, og tryk her for at stille spørgsmål til den."
@@ -76,18 +76,25 @@ struct ActionBarView: View {
     var highlighted: ActionBarButton?
     var showMark = true
     var action: (ActionBarButton) -> Void = { _ in }
+    /// Musen kom over en knap (nil: væk igen).
+    var onHover: (ActionBarButton?) -> Void = { _ in }
+    /// Vises øverst i stedet for mærket (fx logoet, der kan trækkes).
+    var header: AnyView?
 
     var body: some View {
         let layout = vertical ? AnyLayout(VStackLayout(spacing: 6)) : AnyLayout(HStackLayout(spacing: 6))
         layout {
-            if showMark {
+            if let header {
+                header.padding(vertical ? .bottom : .trailing, 2)
+                Divider().frame(width: vertical ? 44 : nil, height: vertical ? nil : 44)
+            } else if showMark {
                 BaymowMark(size: 30).padding(vertical ? .bottom : .trailing, 2)
                 Divider().frame(width: vertical ? 44 : nil, height: vertical ? nil : 44)
             }
             ForEach(buttons) { button in
                 Button { action(button) } label: { tile(button) }
                     .buttonStyle(.plain)
-                    .help(button.help)
+                    .onHover { inside in onHover(inside ? button : nil) }
                     .accessibilityLabel(button.title)
                     .accessibilityHint(button.help)
             }
@@ -160,82 +167,73 @@ struct ActionBarEdgeTab: View {
     }
 }
 
-// MARK: Velkomsten: hvordan vil du helst bruge Baymow?
+// MARK: Velkomsten: med eller uden knapper?
 
-/// Valget i velkomsten. Kan ændres bagefter under Indstillinger.
+/// Valget i velkomsten. Tasterne virker i begge tilfælde; de kan slås fra senere under Indstillinger.
 enum ControlPreference: String, CaseIterable, Identifiable {
-    case buttons, keys, both
+    case withButtons, withoutButtons
 
     var id: String { rawValue }
 
     var title: String {
         switch self {
-        case .buttons: return "Knapper på skærmen"
-        case .keys: return "Taster på tastaturet"
-        case .both: return "Begge dele"
+        case .withButtons: return "Med knapper"
+        case .withoutButtons: return "Uden knapper"
         }
     }
 
     var detail: String {
         switch self {
-        case .buttons: return "Tryk på en knap med musen."
-        case .keys: return "Tryk for eksempel ⌃⌥S. Hurtigt, når man kender tasterne."
-        case .both: return "Knapperne er der, og tasterne virker også."
+        case .withButtons: return "Et lille Baymow-logo på skærmen. Hold musen over det, og tryk på en knap. Tasterne virker også."
+        case .withoutButtons: return "Kun tasterne på tastaturet. Der er intet ekstra på skærmen."
         }
     }
 }
 
-struct ControlPreferenceStep: View {
-    @Binding var choice: ControlPreference?
-    var onListen: () -> Void = {}
+/// De to kort i velkomsten.
+struct ControlPreferenceCards: View {
+    let choice: ControlPreference?
+    let choose: (ControlPreference) -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 18) {
-            HStack(spacing: 12) {
-                IconTile(symbol: "hand.tap.fill", color: .blue, size: 40)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Hvordan vil du helst bruge Baymow?").font(.title2.weight(.semibold))
-                    Text("Du kan altid skifte under Indstillinger.").foregroundStyle(.secondary)
-                }
-                Spacer()
-                ListenButton(isPlaying: false, help: "Læs trinnet højt", controlSize: .regular, action: onListen)
+        HStack(spacing: 14) {
+            ForEach(ControlPreference.allCases) { option in
+                Button { choose(option) } label: { card(option) }.buttonStyle(.plain)
             }
-            HStack(spacing: 14) {
-                ForEach(ControlPreference.allCases) { option in
-                    Button { choice = option } label: { card(option) }.buttonStyle(.plain)
-                }
-            }
-            .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(24)
+        .fixedSize(horizontal: false, vertical: true)
     }
 
     private func card(_ option: ControlPreference) -> some View {
         let selected = choice == option
-        return VStack(spacing: 12) {
-            picture(option).frame(height: 120)
+        return VStack(spacing: 10) {
+            picture(option).frame(height: 70)
             Text(option.title).font(.headline)
             Text(option.detail).font(.callout).foregroundStyle(.secondary)
                 .multilineTextAlignment(.center).fixedSize(horizontal: false, vertical: true)
             Image(systemName: selected ? "checkmark.circle.fill" : "circle")
                 .font(.title2).foregroundStyle(selected ? Color.accentColor : .secondary)
         }
-        .padding(16)
-        .frame(width: 200)
-        .frame(maxHeight: .infinity, alignment: .top)
+        .padding(14)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(Color.primary.opacity(selected ? 0.08 : 0.03), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous)
             .strokeBorder(selected ? Color.accentColor : Color.primary.opacity(0.12), lineWidth: selected ? 2 : 1))
+        .contentShape(RoundedRectangle(cornerRadius: 14))
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(selected ? .isSelected : [])
     }
 
     @ViewBuilder private func picture(_ option: ControlPreference) -> some View {
-        let small = ActionBarView(buttons: [.read, .spelling], vertical: false, showLabels: false, showMark: false)
-            .scaleEffect(0.8)
-        let keys = KeyCaps(shortcut: .standard, size: 26)
         switch option {
-        case .buttons: small
-        case .keys: keys
-        case .both: VStack(spacing: 4) { small; keys.scaleEffect(0.8) }.scaleEffect(0.9)
+        case .withButtons:
+            HStack(spacing: 8) {
+                ActionBarView(buttons: [.read, .spelling], vertical: false, showLabels: false, showMark: false)
+                    .scaleEffect(0.75)
+                BaymowMark(size: 34)
+            }
+        case .withoutButtons:
+            KeyCaps(shortcut: .standard, size: 26)
         }
     }
 }

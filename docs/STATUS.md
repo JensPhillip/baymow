@@ -12,7 +12,9 @@ Sidst opdateret: 2026-11-25 af udfører (Claude Opus 5.5).
   markering nævner "Tekst fra skærmen" (kerneændring), testnøglerne i `baymow-test` er slettet, Outlook og Gmail parkeret som I17. – bygget, afventer brugerens afprøvning. AP-71 er afprøvet af brugeren.
 - **AP-77 (knapbjælke, brugerens idé 25. november):** knapper på skærmen som alternativ til genvejene (genvejene bliver),
   valg i velkomsten (knapper / taster / begge). Skitser af fire varianter (altid synlig, prik, logo ved mus, kant) og
-  velkomsttrinnet: `Baymow --render-ui` → `knapbjaelke-*`, `velkomst-knapper-eller-taster`. Afventer brugerens valg.
+  velkomsttrinnet. Brugeren valgte C (logo, der folder sig ud ved musen) som standard, to valg i velkomsten (med eller
+  uden knapper; tasterne virker altid) og en knap på Start til siden Knapper. Bygget samme dag: siden Knapper (fire
+  måder, hvilke knapper, tasterne kan slås fra, når knapperne er til). Slået fra som standard. Afventer afprøvning.
 - **Mail – plan aftalt 23. november:** 1) sparring på den åbne mail (færdig), 2) Outlook og Gmail – parkeret af brugeren 24. november (I17; nævnes kun ved forslag til forbedringer), 3) senere: proaktiv hjælp med
   app på telefonen, brugerens kontekst og opklarende spørgsmål (I16), og login på kontoen. Proaktiv del venter, til
   mail-svar og sparring virker godt.

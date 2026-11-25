@@ -3,16 +3,19 @@ import SwiftUI
 import Combine
 import BaymowCore
 
-/// Førstegangsopsætningen (AP-41): tre trin fra første start til første oplæsning, uden tekniske ord.
+/// Førstegangsopsætningen (AP-41): fire trin fra første start til første oplæsning, uden tekniske ord.
+/// Trinnet "controls" (AP-77) spørger: med eller uden knapper på skærmen?
 enum OnboardingStep: Int, CaseIterable, Comparable {
-    case permission, voice, tryIt, done
+    case permission, voice, controls, tryIt, done
 
     static func < (a: OnboardingStep, b: OnboardingStep) -> Bool { a.rawValue < b.rawValue }
 
     /// Det trin, brugeren er nået til. Trin, der allerede er klaret (fx adgang givet tidligere), springes over.
-    static func current(hasPermission: Bool, hasMainVoice: Bool, skippedVoice: Bool, hasRead: Bool) -> OnboardingStep {
+    static func current(hasPermission: Bool, hasMainVoice: Bool, skippedVoice: Bool, hasChosenControls: Bool = true,
+                        hasRead: Bool) -> OnboardingStep {
         if !hasPermission { return .permission }
         if !hasMainVoice && !skippedVoice { return .voice }
+        if !hasChosenControls { return .controls }
         if !hasRead { return .tryIt }
         return .done
     }
@@ -28,7 +31,22 @@ final class OnboardingModel: ObservableObject {
     @Published private(set) var hasRead = false
 
     var step: OnboardingStep {
-        OnboardingStep.current(hasPermission: hasPermission, hasMainVoice: hasMainVoice, skippedVoice: skippedVoice, hasRead: hasRead)
+        OnboardingStep.current(hasPermission: hasPermission, hasMainVoice: hasMainVoice, skippedVoice: skippedVoice,
+                               hasChosenControls: controls?.hasChosen ?? true, hasRead: hasRead)
+    }
+
+    /// Knapper eller ej (AP-77). Nil i værktøjer uden knapbjælke.
+    let controls: ActionBarSettings?
+
+    /// Det, brugeren har valgt i trinnet "Knapper på skærmen".
+    var controlChoice: ControlPreference? {
+        guard let controls, controls.hasChosen else { return nil }
+        return controls.isEnabled ? .withButtons : .withoutButtons
+    }
+
+    func choose(_ choice: ControlPreference) {
+        objectWillChange.send()
+        controls?.choose(buttons: choice == .withButtons)
     }
 
     let settings: SettingsStore
@@ -40,12 +58,14 @@ final class OnboardingModel: ObservableObject {
     /// Eksempelteksten i trin 3. Kort, almindelig dansk – ingen tal eller forkortelser.
     static let sampleText = "Velkommen til Baymow. Når du markerer en tekst og trykker på genvejen, bliver teksten læst højt for dig. Det virker i næsten alle programmer på din Mac."
 
-    init(settings: SettingsStore, catalog: VoiceCatalog, sampleEngine: SpeechEngine) {
+    init(settings: SettingsStore, catalog: VoiceCatalog, sampleEngine: SpeechEngine, controls: ActionBarSettings? = nil) {
         self.settings = settings
+        self.controls = controls
         self.catalog = catalog
         self.sampleEngine = sampleEngine
         hasMainVoice = !VoiceLibrary.needsMainVoiceGuide(installed: catalog.voices)
         catalog.$voices.sink { [weak self] voices in
+            guard self?.isPreview == false else { return }
             self?.hasMainVoice = !VoiceLibrary.needsMainVoiceGuide(installed: voices)
         }.store(in: &cancellables)
     }
@@ -67,7 +87,16 @@ final class OnboardingModel: ObservableObject {
         playing = nil
     }
 
+    /// Til skærmbilleder: trin 1 og 2 står som klaret, og intet tjekkes.
+    private var isPreview = false
+    func showControlsStepForPreview() {
+        isPreview = true
+        hasPermission = true
+        hasMainVoice = true
+    }
+
     private func refresh() {
+        guard !isPreview else { return }
         let trusted = TextCaptureService.hasPermission
         if trusted != hasPermission { hasPermission = trusted }
         catalog.refresh()
@@ -118,8 +147,11 @@ final class OnboardingModel: ObservableObject {
             return "Første trin. Baymow skal have lov til at se den tekst, du markerer. Tryk på knappen Giv lov. Find Baymow på listen, og slå kontakten til."
         case .voice:
             return "Andet trin. Hent den gode danske stemme, Sara forbedret. Den er gratis. Tryk på knappen, og følg de fire trin på skærmen."
+        case .controls:
+            return "Tredje trin. Vil du have knapper på skærmen? Med knapper står der et lille Baymow logo på skærmen. Hold musen over det, og tryk på en knap. Tasterne på tastaturet virker også. Uden knapper bruger du kun tasterne. Du kan altid skifte under Indstillinger."
         case .tryIt:
-            return "Sidste trin. Markér teksten i feltet med musen. Tryk så på \(shortcut.spokenKeys) på samme tid."
+            let button = controls?.isEnabled == true ? " Eller hold musen over Baymow logoet, og tryk på Læs op." : ""
+            return "Sidste trin. Markér teksten i feltet med musen. Tryk så på \(shortcut.spokenKeys) på samme tid.\(button)"
         case .done:
             return "Det virkede. Nu kan du gøre det samme i alle andre programmer."
         }
@@ -145,7 +177,7 @@ struct OnboardingView: View {
                 IconTile(symbol: "speaker.wave.2.fill", color: .blue, size: 52)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Velkommen til Baymow").font(.largeTitle.weight(.semibold))
-                    Text("Tre små trin, så læser Baymow for dig.")
+                    Text("Fire små trin, så læser Baymow for dig.")
                         .font(.title3).foregroundStyle(.secondary)
                 }
                 Spacer()
@@ -189,13 +221,24 @@ struct OnboardingView: View {
                     }
                 }
             }
-            StepCard(number: 3, symbol: "hand.point.up.left.fill", title: "Prøv det",
+            StepCard(number: 3, symbol: "hand.tap.fill", title: "Knapper på skærmen?",
+                     state: state(for: .controls)) {
+                ControlPreferenceCards(choice: model.controlChoice) { model.choose($0) }
+                Label("Du kan altid skifte under Indstillinger → Knapper.", systemImage: "gearshape")
+                    .font(.callout).foregroundStyle(.secondary)
+            }
+            StepCard(number: 4, symbol: "hand.point.up.left.fill", title: "Prøv det",
                      state: state(for: .tryIt)) {
                 HStack(spacing: 12) {
                     Label("Markér teksten", systemImage: "character.cursor.ibeam")
                     Image(systemName: "arrow.right").foregroundStyle(.tertiary)
                     Text("Tryk")
                     KeyCaps(shortcut: settings.shortcut, size: 26)
+                    if model.controlChoice == .withButtons {
+                        Text("eller")
+                        IconTile(symbol: ActionBarButton.read.symbol, color: ActionBarButton.read.color, size: 26)
+                        Text("Læs op")
+                    }
                 }
                 .font(.headline)
                 SelectableText(text: OnboardingModel.sampleText)

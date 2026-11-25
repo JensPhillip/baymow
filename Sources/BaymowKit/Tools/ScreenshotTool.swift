@@ -38,6 +38,7 @@ public enum ScreenshotTool {
         let suite = "dk.jpmag.baymow.render.\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suite)!
         let demoAI = AIServices(defaults: defaults)
+        let demoControls = ActionBarSettings(defaults: defaults)
         defer { defaults.removePersistentDomain(forName: suite) }
         let settings = SettingsStore(defaults: defaults)
         settings.rate = 1.5
@@ -67,7 +68,7 @@ public enum ScreenshotTool {
             model.page = page
             shoot("hovedvindue-\(page.rawValue)", size: NSSize(width: 780, height: 600),
                   MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
-                           spelling: SpellingSettings(defaults: defaults, ai: demoAI), ai: demoAI, mail: MailReplySettings(defaults: defaults), screenText: ScreenTextSettings(defaults: defaults), shortcutRegistrationFailed: false))
+                           spelling: SpellingSettings(defaults: defaults, ai: demoAI), ai: demoAI, mail: MailReplySettings(defaults: defaults), screenText: ScreenTextSettings(defaults: defaults), controls: demoControls, shortcutRegistrationFailed: false))
         }
         // Siden Stavning med "Bedre hjælp via internet" slået til (AP-64).
         defaults.set(true, forKey: "spellingCloudEnabled")
@@ -81,7 +82,7 @@ public enum ScreenshotTool {
         model.page = .spelling
         shoot("hovedvindue-spelling-internet", size: NSSize(width: 780, height: 1250),
               MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
-                       spelling: SpellingSettings(defaults: defaults, ai: demoAI), ai: demoAI, mail: MailReplySettings(defaults: defaults), screenText: ScreenTextSettings(defaults: defaults), shortcutRegistrationFailed: false))
+                       spelling: SpellingSettings(defaults: defaults, ai: demoAI), ai: demoAI, mail: MailReplySettings(defaults: defaults), screenText: ScreenTextSettings(defaults: defaults), controls: demoControls, shortcutRegistrationFailed: false))
         defaults.set(false, forKey: "spellingCloudEnabled")
         defaults.set(false, forKey: "spellingHelpEnabled")
         // Start, Oplæsning og Genveje med stavehjælpen og tekst fra skærmen slået til.
@@ -91,7 +92,7 @@ public enum ScreenshotTool {
             model.page = page
             shoot("hovedvindue-\(page.rawValue)-stavning", size: NSSize(width: 780, height: 1000),
                   MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
-                           spelling: SpellingSettings(defaults: defaults, ai: demoAI), ai: demoAI, mail: MailReplySettings(defaults: defaults), screenText: ScreenTextSettings(defaults: defaults), shortcutRegistrationFailed: false))
+                           spelling: SpellingSettings(defaults: defaults, ai: demoAI), ai: demoAI, mail: MailReplySettings(defaults: defaults), screenText: ScreenTextSettings(defaults: defaults), controls: demoControls, shortcutRegistrationFailed: false))
         }
         defaults.set(false, forKey: "spellingHelpEnabled")
         defaults.set(false, forKey: "screenTextEnabled")
@@ -119,8 +120,34 @@ public enum ScreenshotTool {
         shoot("velkomst", size: nil, OnboardingView(model: onboarding, settings: settings) {})
         // Knapbjælken (AP-77): skitser af varianterne og velkomstens nye trin.
         for (name, view) in ActionBarSketches.shots() { shoot(name, size: nil, view) }
-        shoot("velkomst-knapper-eller-taster", size: nil,
-              ControlPreferenceStep(choice: .constant(.buttons)).frame(width: 700))
+        // Den rigtige knapbjælke: foldet sammen og åben med forklaring (logo i højre side).
+        for (name, expanded, style) in [("knapbjaelke-rigtig-lukket", false, ActionBarStyle.hover),
+                                        ("knapbjaelke-rigtig-aaben", true, .hover),
+                                        ("knapbjaelke-rigtig-kant", true, .edge),
+                                        ("knapbjaelke-rigtig-fane", false, .edge),
+                                        ("knapbjaelke-rigtig-fast", false, .floating)] {
+            let barModel = ActionBarModel()
+            barModel.style = style
+            barModel.buttons = [.read, .screenText, .spelling, .mailReply, .sparring]
+            barModel.expanded = expanded
+            barModel.tip = expanded ? .read : nil
+            shoot(name, size: nil, ActionBarHost(model: barModel, onHover: { _ in }, onLogoTap: {}, onDrag: { _ in },
+                                                 onButton: { _ in }, onButtonHover: { _ in }, onListen: {}))
+        }
+        // Siden Knapper med knapperne slået til.
+        demoControls.isEnabled = true
+        model.page = .buttons
+        shoot("hovedvindue-buttons-til", size: NSSize(width: 780, height: 1000),
+              MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
+                       spelling: SpellingSettings(defaults: defaults, ai: demoAI), ai: demoAI, mail: MailReplySettings(defaults: defaults),
+                       screenText: ScreenTextSettings(defaults: defaults), controls: demoControls, shortcutRegistrationFailed: false))
+        demoControls.isEnabled = false
+        // Velkomsten ved trinnet "Knapper på skærmen?".
+        let controlsDemo = ActionBarSettings(defaults: defaults)
+        let welcomeControls = OnboardingModel(settings: settings, catalog: catalog, sampleEngine: engines[0], controls: controlsDemo)
+        welcomeControls.showControlsStepForPreview()
+        shoot("velkomst-knapper", size: nil, OnboardingView(model: welcomeControls, settings: settings) {})
+
         _ = sessions.start(text: demoText, sourceAppName: "Safari")
         shoot("afspiller", size: nil, PlayerView(sessions: sessions, settings: settings) {})
         sessions.togglePlayPause()
@@ -153,7 +180,7 @@ public enum ScreenshotTool {
         model.page = .mail
         shoot("hovedvindue-mail", size: NSSize(width: 780, height: 1250),
               MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
-                       spelling: SpellingSettings(defaults: defaults, ai: demoAI), ai: demoAI, mail: MailReplySettings(defaults: defaults), screenText: ScreenTextSettings(defaults: defaults),
+                       spelling: SpellingSettings(defaults: defaults, ai: demoAI), ai: demoAI, mail: MailReplySettings(defaults: defaults), screenText: ScreenTextSettings(defaults: defaults), controls: demoControls,
                        shortcutRegistrationFailed: false))
         defaults.set(false, forKey: "mailReplyEnabled")
         defaults.set(false, forKey: "mailSparringEnabled")
@@ -182,7 +209,7 @@ public enum ScreenshotTool {
         model.page = .ai
         shoot("hovedvindue-ai", size: NSSize(width: 780, height: 1000),
               MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
-                       spelling: SpellingSettings(defaults: defaults, ai: demoAI), ai: demoAI, mail: MailReplySettings(defaults: defaults), screenText: ScreenTextSettings(defaults: defaults),
+                       spelling: SpellingSettings(defaults: defaults, ai: demoAI), ai: demoAI, mail: MailReplySettings(defaults: defaults), screenText: ScreenTextSettings(defaults: defaults), controls: demoControls,
                        shortcutRegistrationFailed: false))
         defaults.set(false, forKey: "spellingCloudEnabled")
         defaults.set(false, forKey: "mailReplyEnabled")

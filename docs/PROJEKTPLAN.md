@@ -450,7 +450,9 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 | AP-72 | Mail-svar bedre (opfølgning på egen mail, antagelser vises, aldrig hilsen/navn) og siden "AI og nøgler" (nøgler, firma pr. funktion, forbrug pr. funktion) | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
 | AP-73 | Sidebjælken: "Indstillinger" fast nederst med Genveje, Stemmer og AI og nøgler; link fra Start til Genveje og fra Oplæsning til Stemmer | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
 | AP-74 | Sparring om den åbne mail: faste spørgsmål, eget spørgsmål, Hør, Kopiér; intet sendes før første spørgsmål | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
-| AP-75 | Tekst fra skærmen (idé I4): træk en firkant, Macens tekstgenkendelse, oplæsning i afspilleren; intet netværk | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
+| AP-75 | Tekst fra skærmen (idé I4): træk en firkant, Macens tekstgenkendelse, oplæsning i afspilleren; intet netværk | 6 | Udfører + bruger | MVP | Færdig (afprøvet af brugeren 24. november 2026) |
+| AP-76 | Oprydning: beskeden uden markering nævner "Tekst fra skærmen" (kerne), testnøgler slettet, Outlook/Gmail parkeret (I17) | 6 | Udfører | – | Færdig |
+| AP-77 | Knapbjælke: knapper på skærmen som alternativ til genvejene; velkomsten spørger "med eller uden knapper"; siden Knapper | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
 | AP-52 | Developer ID, notarisering og DMG | 5 | Udfører + bruger | AP-50, B9 | Forberedt: DMG og README; afventer certifikat, app-id og kodearkiv |
 
 ### Fase 0 – Grundlag
@@ -921,6 +923,22 @@ sammen til afsnit (ord delt med bindestreg samles) → æ/ø/å-rettelse med Mac
 bud) → den almindelige oplæsning i afspilleren. Intet netværk; billedet og teksten gemmes ikke.
 **Acceptkriterier:** OCR-målingen (`tools/skaermtekst/`): 0 % tegnfejl på almindelig skærmtekst. Tests af
 linjesammensætning, æ/ø/å-rettelse og indstillinger. Brugeren har prøvet på et billede og en indscannet PDF.
+
+
+#### AP-77 Knapbjælke
+
+**Hvorfor:** Brugerens idé 25. november 2026: ikke alle kan lide tastaturgenveje. Knapper på skærmen er mere
+inkluderende for dem, der ikke er tekniske. Genvejene skal blive.
+**Gør:** `Features/ActionBar/`: et lille vindue, der aldrig tager fokus fra brugerens program (derfor virker "Læs op" på
+markeringen). Fire måder at ligge på: logo, der folder sig ud, når musen er over (C – standard, valgt af brugeren), fast
+i skærmens kant, altid synlig, eller prik med klik. Logoet kan trækkes; i kanten kan fanen flyttes op/ned og til den
+anden side. Knapper: Læs op, Fra skærmen, Ret stavning, Svar på mail, Spørg om mail – kun dem, der er slået til, og som
+brugeren ikke har valgt fra. Forklaring med "Hør", når musen bliver over en knap. Velkomsten har et nyt trin 3: "med
+eller uden knapper" (tasterne virker i begge tilfælde). Siden "Knapper" under Indstillinger; Start har "Skift knapper"
+ved siden af "Skift genveje". Tasterne kan slås fra – men kun, når knapperne er slået til.
+**Acceptkriterier:** Tests af indstillinger, tasterne, valget i velkomsten og knappernes forklaringer. Skærmbilleder
+(`--render-ui`: `knapbjaelke-rigtig-*`, `velkomst-knapper`, `hovedvindue-buttons-til`). Brugeren har prøvet knapperne i
+rigtige programmer, også at "Læs op" læser markeringen.
 
 ## 7. Stemmeporten
 
