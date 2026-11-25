@@ -629,14 +629,16 @@ struct MainView: View {
     // MARK: Genvej
 
     @ViewBuilder private var shortcutPage: some View {
-        if !controls.keysActive {
-            Section {
-                HStack {
-                    Label("Tasterne er slået fra. Du bruger knapperne på skærmen.", systemImage: "keyboard.badge.ellipsis")
-                        .foregroundStyle(.orange)
-                    Spacer()
-                    Button("Slå tasterne til") { controls.keysEnabled = true }
-                }
+        // Tasterne til eller fra (AP-77). Kun muligt, når knapperne er slået til – ellers kan Baymow ikke bruges.
+        Section {
+            OptionRow(symbol: "keyboard.fill", color: .gray, title: "Brug tasterne",
+                      subtitle: controls.isEnabled ? "Slå fra, hvis du kun vil bruge knapperne på skærmen."
+                                                   : "Tasterne kan kun slås fra, når knapperne på skærmen er slået til.",
+                      help: "Når tasterne er slået fra, gør genvejene ingenting. Du bruger så knapperne på skærmen.",
+                      isOn: Binding(get: { controls.keysActive }, set: { controls.keysEnabled = $0 }))
+                .disabled(!controls.isEnabled)
+            if !controls.isEnabled {
+                Button { model.page = .buttons } label: { Label("Gå til Knapper", systemImage: "hand.tap") }
             }
         }
         Section {

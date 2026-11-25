@@ -38,7 +38,7 @@ Opdateret 25. november 2026.
 - [ ] 3. Hold musen stille over en knap: der kommer en forklaring med **Hør**.
 - [ ] 4. Træk logoet et andet sted hen. Står det der stadig efter en genstart af Baymow?
 - [ ] 5. Prøv de tre andre måder under "Hvordan skal knapperne ligge?" – især **Fast i skærmens kant**. Hvilken kan du bedst lide?
-- [ ] 6. Slå **Tasterne på tastaturet virker også** fra: ⌃⌥S gør nu ingenting, men knapperne virker. Slå den til igen.
+- [ ] 6. Siden **Genveje** → slå **Brug tasterne** fra: ⌃⌥S gør nu ingenting, men knapperne virker. Slå den til igen.
 - [ ] 7. Slå stavehjælpen fra på siden Stavning: knappen "Ret stavning" forsvinder fra bjælken.
 
 ## Test nu: Ny besked uden markering (1 min)

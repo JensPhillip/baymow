@@ -1,4 +1,5 @@
 import XCTest
+import SwiftUI
 @testable import BaymowKit
 import BaymowCore
 
@@ -72,6 +73,27 @@ final class ActionBarTests: XCTestCase {
         for button in ActionBarButton.allCases {
             XCTAssertFalse(button.help.isEmpty)
             for short in [" fx ", " bl.a. ", " evt. "] { XCTAssertFalse(button.help.contains(short), button.help) }
+        }
+    }
+
+    /// Brugerens afprøvning 25. november: vinduet var 0 × 0 og derfor usynligt. Størrelsen skal kunne måles.
+    func testTheBarWindowHasASize() {
+        let model = ActionBarModel()
+        model.buttons = [.read, .spelling]
+        let hosting = NSHostingView(rootView: ActionBarHost(model: model, onHover: { _ in }, onLogoTap: {}, onDrag: { _ in },
+                                                            onButton: { _ in }, onButtonHover: { _ in }, onListen: {}))
+        hosting.sizingOptions = ActionBarController.sizingOptions
+        let closed = hosting.fittingSize
+        XCTAssertGreaterThan(closed.width, 40)
+        XCTAssertGreaterThan(closed.height, 40)
+        model.expanded = true
+        hosting.layoutSubtreeIfNeeded()
+        XCTAssertGreaterThan(hosting.fittingSize.width, closed.width + 100, "åben er bredere end logoet alene")
+        for style in ActionBarStyle.allCases {
+            model.style = style
+            hosting.layoutSubtreeIfNeeded()
+            XCTAssertGreaterThan(hosting.fittingSize.width, 20, style.rawValue)
+            XCTAssertGreaterThan(hosting.fittingSize.height, 20, style.rawValue)
         }
     }
 }

@@ -32,6 +32,7 @@ final class ActionBarController {
     private let speak: SpellingPanelModel.Speak
     private let stopSpeaking: () -> Void
     private let model = ActionBarModel()
+    static let sizingOptions: NSHostingSizingOptions = [.intrinsicContentSize]
     private var panel: NSPanel?
     private var cancellables: Set<AnyCancellable> = []
     private var hoverTask: Task<Void, Never>?
@@ -94,7 +95,8 @@ final class ActionBarController {
             onButtonHover: { [weak self] button in self?.hoverButton(button) },
             onListen: { [weak self] in self?.listenToTip() })
         let hosting = NSHostingView(rootView: view)
-        hosting.sizingOptions = [] // Baymow sætter selv størrelsen, så logoet bliver stående
+        // Kun den naturlige størrelse (ikke vinduets min/max): Baymow sætter selv rammen, så logoet bliver stående.
+        hosting.sizingOptions = Self.sizingOptions
         panel.contentView = hosting
         return panel
     }

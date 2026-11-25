@@ -14,7 +14,8 @@ Sidst opdateret: 2026-11-25 af udfører (Claude Opus 5.5).
   valg i velkomsten (knapper / taster / begge). Skitser af fire varianter (altid synlig, prik, logo ved mus, kant) og
   velkomsttrinnet. Brugeren valgte C (logo, der folder sig ud ved musen) som standard, to valg i velkomsten (med eller
   uden knapper; tasterne virker altid) og en knap på Start til siden Knapper. Bygget samme dag: siden Knapper (fire
-  måder, hvilke knapper, tasterne kan slås fra, når knapperne er til). Slået fra som standard. Afventer afprøvning.
+  måder, hvilke knapper, tasterne kan slås fra, når knapperne er til). Slået fra som standard. Rettet efter brugerens afprøvning samme dag: bjælkens vindue
+  var 0 × 0 (usynligt) – nu målt i en test; kontakten "Brug tasterne" står også øverst på siden Genveje. Afventer afprøvning.
 - **Mail – plan aftalt 23. november:** 1) sparring på den åbne mail (færdig), 2) Outlook og Gmail – parkeret af brugeren 24. november (I17; nævnes kun ved forslag til forbedringer), 3) senere: proaktiv hjælp med
   app på telefonen, brugerens kontekst og opklarende spørgsmål (I16), og login på kontoen. Proaktiv del venter, til
   mail-svar og sparring virker godt.
