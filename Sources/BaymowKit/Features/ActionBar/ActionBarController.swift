@@ -19,6 +19,8 @@ final class ActionBarModel: ObservableObject {
     /// Ligger bjælken i venstre kant (kun "Fast i skærmens kant").
     @Published var edgeOnLeft = false
     @Published var isListening = false
+    @Published var size: ActionBarSize = .medium
+    @Published var showLabels = true
 
     /// Står knapperne fremme? "Altid synlig" er altid åben.
     var showsButtons: Bool { style == .floating || expanded }
@@ -29,6 +31,8 @@ final class ActionBarModel: ObservableObject {
         other.buttons = buttons
         other.opensLeft = opensLeft
         other.edgeOnLeft = edgeOnLeft
+        other.size = size
+        other.showLabels = showLabels
         return other
     }
 
@@ -92,11 +96,14 @@ final class ActionBarController {
             return
         }
         let changed = model.style != settings.style || model.buttons != buttons || model.edgeOnLeft == settings.edgeOnRight
+            || model.size != settings.size || model.showLabels != settings.showLabels
         guard changed || panel == nil else { return }
         if model.style != settings.style { model.expanded = false; model.tip = nil }
         model.style = settings.style
         model.buttons = buttons
         model.edgeOnLeft = !settings.edgeOnRight
+        model.size = settings.size
+        model.showLabels = settings.showLabels
         if panel == nil { panel = makePanel() }
         place()
         panel?.orderFrontRegardless()
@@ -273,7 +280,8 @@ final class ActionBarController {
             return fullSize(model)
         case .hover, .dot:
             // Logoet står midt for knapperækken (som er højere end logoet), så det lille vindue er rækkens højde.
-            let row = NSHostingView(rootView: ActionBarView(buttons: model.buttons, vertical: false, showMark: false))
+            let row = NSHostingView(rootView: ActionBarView(buttons: model.buttons, vertical: false, showLabels: model.showLabels,
+                                                            size: model.size, showMark: false))
             row.sizingOptions = sizingOptions
             let height = max(ActionBarHost.logoSize, row.fittingSize.height)
             return CGSize(width: ActionBarHost.logoSize + 2 * ActionBarHost.shadowRoom,
@@ -432,7 +440,8 @@ struct ActionBarHost: View {
     }
 
     private func bar(vertical: Bool, header: AnyView? = nil) -> some View {
-        ActionBarView(buttons: model.buttons, vertical: vertical, highlighted: model.hovered, showMark: false,
+        ActionBarView(buttons: model.buttons, vertical: vertical, showLabels: model.showLabels, highlighted: model.hovered,
+                      size: model.size, showMark: false,
                       action: onButton, onHover: onButtonHover, header: header)
     }
 

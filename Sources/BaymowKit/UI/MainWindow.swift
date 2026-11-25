@@ -188,7 +188,7 @@ enum MainPage: String, CaseIterable, Identifiable {
     /// Én kort sætning under overskriften.
     var subtitle: String {
         switch self {
-        case .start: return "Markér tekst, tryk på genvejen, og lyt."
+        case .start: return "Markér tekst, og få den læst op."
         case .reading: return "Hvor hurtigt og på hvilket sprog."
         case .display: return "Se ordet, der bliver læst."
         case .voices: return "Vælg, hvem der læser for dig."
@@ -202,12 +202,32 @@ enum MainPage: String, CaseIterable, Identifiable {
 
     /// Det, "Hør"-knappen læser op. Almindeligt dansk uden forkortelser.
     @MainActor
-    func explanation(shortcut: Shortcut, spelling: SpellingSettings, mail: MailReplySettings? = nil) -> String {
+    func explanation(shortcut: Shortcut, spelling: SpellingSettings, mail: MailReplySettings? = nil,
+                     controls: ActionBarSettings? = nil) -> String {
         switch self {
         case .start:
-            let read = "Markér en tekst i et hvilket som helst program. Tryk så på \(shortcut.spokenKeys) på samme tid. Så læser Baymow teksten højt for dig."
+            // Følger brugerens opsætning: knapper, taster eller begge (AP-77).
+            let keys = controls?.keysActive ?? true
+            let buttons = controls?.isEnabled ?? false
+            var find = ""
+            if buttons, let style = controls?.style {
+                switch style {
+                case .hover: find = "Baymows knapper kommer frem, når du holder musen over Baymow logoet. "
+                case .edge: find = "Baymows knapper kommer frem, når du holder musen over fanen i kanten af skærmen. "
+                case .dot: find = "Baymows knapper kommer frem, når du klikker på Baymow logoet. "
+                case .floating: find = "Baymows knapper står fremme på skærmen. "
+                }
+            }
+            func press(_ button: String, _ shortcut: Shortcut) -> String {
+                switch (buttons, keys) {
+                case (true, true): return "tryk på \(button) på knapperne, eller tryk på \(shortcut.spokenKeys) på samme tid"
+                case (true, false): return "tryk på \(button) på knapperne"
+                default: return "tryk på \(shortcut.spokenKeys) på samme tid"
+                }
+            }
+            let read = find + "Markér en tekst i et hvilket som helst program. Så \(press("Læs op", shortcut)). Så læser Baymow teksten højt for dig."
             guard spelling.isEnabled else { return read }
-            return read + " Vil du have rettet din egen tekst, så markér den, og tryk på \(spelling.shortcut.spokenKeys)."
+            return read + " Vil du have rettet din egen tekst, så markér den, og \(press("Ret stavning", spelling.shortcut))."
         case .reading:
             return "Her vælger du stemme, og hvor hurtigt der bliver læst. Skildpadden er langsomt, og haren er hurtigt. Du kan også vælge sproget. Står den på automatisk, finder Baymow selv ud af, om teksten er dansk eller engelsk. Slår du tekst fra skærmen til, kan du trække en firkant om tekst, du ikke kan markere, for eksempel i et billede, og få den læst op."
         case .display:
@@ -254,7 +274,8 @@ struct MainView: View {
                         .padding(.top, 18)
                 }
                 PageHeader(page: model.page, isPlaying: model.playing == "help:\(model.page.rawValue)", onListen: {
-                    model.speakHelp(model.page.explanation(shortcut: settings.shortcut, spelling: spelling, mail: mail),
+                    model.speakHelp(model.page.explanation(shortcut: settings.shortcut, spelling: spelling, mail: mail,
+                                                           controls: controls),
                                     id: "help:\(model.page.rawValue)")
                 })
                     .padding(.horizontal, 28)
@@ -341,19 +362,18 @@ struct MainView: View {
             .padding(.vertical, 6)
         }
 
-        Section(spelling.isEnabled || mail.isEnabled || screenText.isEnabled ? "Læs op" : "Sådan gør du") {
+        // Startsiden følger opsætningen (AP-77): knapperne får en vejledning, og hvert trin viser knappen og/eller
+        // tasterne – kun det, der er slået til.
+        if controls.isEnabled { buttonsGuide }
+
+        let several = spelling.isEnabled || mail.isEnabled || screenText.isEnabled || mail.sparringEnabled || controls.isEnabled
+        Section(several ? "Læs op" : "Sådan gør du") {
             HStack(alignment: .top, spacing: 0) {
-                HowToStep(number: 1, title: "Markér") {
-                    Image(systemName: "character.cursor.ibeam").font(.system(size: 30, weight: .medium))
-                        .foregroundStyle(.blue)
-                }
+                HowToStep(number: 1, title: "Markér") { symbol("character.cursor.ibeam", .blue) }
                 arrow
-                HowToStep(number: 2, title: "Tryk") { KeyCaps(shortcut: settings.shortcut, size: 30) }
+                HowToStep(number: 2, title: "Tryk") { trigger(.read, keys: settings.shortcut) }
                 arrow
-                HowToStep(number: 3, title: "Lyt") {
-                    Image(systemName: "speaker.wave.3.fill").font(.system(size: 30, weight: .medium))
-                        .foregroundStyle(.blue)
-                }
+                HowToStep(number: 3, title: "Lyt") { symbol("speaker.wave.3.fill", .blue) }
             }
             .padding(.vertical, 10)
         }
@@ -361,15 +381,11 @@ struct MainView: View {
         if screenText.isEnabled {
             Section("Læs tekst fra skærmen") {
                 HStack(alignment: .top, spacing: 0) {
-                    HowToStep(number: 1, title: "Tryk") { KeyCaps(shortcut: screenText.shortcut, size: 30) }
+                    HowToStep(number: 1, title: "Tryk") { trigger(.screenText, keys: screenText.shortcut) }
                     arrow
-                    HowToStep(number: 2, title: "Træk") {
-                        Image(systemName: "rectangle.dashed").font(.system(size: 30, weight: .medium)).foregroundStyle(.cyan)
-                    }
+                    HowToStep(number: 2, title: "Træk") { symbol("rectangle.dashed", .cyan) }
                     arrow
-                    HowToStep(number: 3, title: "Lyt") {
-                        Image(systemName: "speaker.wave.3.fill").font(.system(size: 30, weight: .medium)).foregroundStyle(.cyan)
-                    }
+                    HowToStep(number: 3, title: "Lyt") { symbol("speaker.wave.3.fill", .cyan) }
                 }
                 .padding(.vertical, 10)
             }
@@ -378,17 +394,11 @@ struct MainView: View {
         if spelling.isEnabled {
             Section("Ret din egen tekst") {
                 HStack(alignment: .top, spacing: 0) {
-                    HowToStep(number: 1, title: "Markér") {
-                        Image(systemName: "character.cursor.ibeam").font(.system(size: 30, weight: .medium))
-                            .foregroundStyle(.teal)
-                    }
+                    HowToStep(number: 1, title: "Markér") { symbol("character.cursor.ibeam", .teal) }
                     arrow
-                    HowToStep(number: 2, title: "Tryk") { KeyCaps(shortcut: spelling.shortcut, size: 30) }
+                    HowToStep(number: 2, title: "Tryk") { trigger(.spelling, keys: spelling.shortcut) }
                     arrow
-                    HowToStep(number: 3, title: "Ret") {
-                        Image(systemName: "textformat.abc.dottedunderline").font(.system(size: 30, weight: .medium))
-                            .foregroundStyle(.teal)
-                    }
+                    HowToStep(number: 3, title: "Ret") { symbol("textformat.abc.dottedunderline", .teal) }
                 }
                 .padding(.vertical, 10)
             }
@@ -397,15 +407,24 @@ struct MainView: View {
         if mail.isEnabled {
             Section("Svar på en mail") {
                 HStack(alignment: .top, spacing: 0) {
-                    HowToStep(number: 1, title: "Stikord") {
-                        Image(systemName: "list.bullet").font(.system(size: 30, weight: .medium)).foregroundStyle(.indigo)
-                    }
+                    HowToStep(number: 1, title: "Stikord") { symbol("list.bullet", .indigo) }
                     arrow
-                    HowToStep(number: 2, title: "Tryk") { KeyCaps(shortcut: mail.shortcut, size: 30) }
+                    HowToStep(number: 2, title: "Tryk") { trigger(.mailReply, keys: mail.shortcut) }
                     arrow
-                    HowToStep(number: 3, title: "Svar") {
-                        Image(systemName: "envelope.fill").font(.system(size: 30, weight: .medium)).foregroundStyle(.indigo)
-                    }
+                    HowToStep(number: 3, title: "Svar") { symbol("envelope.fill", .indigo) }
+                }
+                .padding(.vertical, 10)
+            }
+        }
+
+        if mail.sparringEnabled {
+            Section("Spørg om en mail") {
+                HStack(alignment: .top, spacing: 0) {
+                    HowToStep(number: 1, title: "Åbn mailen") { symbol("envelope.open.fill", .indigo) }
+                    arrow
+                    HowToStep(number: 2, title: "Tryk") { trigger(.sparring, keys: mail.sparringShortcut) }
+                    arrow
+                    HowToStep(number: 3, title: "Spørg") { symbol("questionmark.bubble.fill", .indigo) }
                 }
                 .padding(.vertical, 10)
             }
@@ -438,6 +457,72 @@ struct MainView: View {
                     .controlSize(.large)
                     .help("Åbner Indstillinger → Genveje")
             }
+        }
+    }
+
+    private func symbol(_ name: String, _ color: Color) -> some View {
+        Image(systemName: name).font(.system(size: 30, weight: .medium)).foregroundStyle(color)
+    }
+
+    /// Er knappen på bjælken?
+    private func buttonShown(_ button: ActionBarButton) -> Bool {
+        controls.isEnabled && controls.visibleButtons(available: availableButtons).contains(button)
+    }
+
+    /// Det, man trykker på: knappen, tasterne eller begge – efter opsætningen.
+    @ViewBuilder private func trigger(_ button: ActionBarButton, keys: Shortcut) -> some View {
+        let showButton = buttonShown(button)
+        let showKeys = controls.keysActive
+        HStack(spacing: 6) {
+            if showButton {
+                IconTile(symbol: button.symbol, color: button.color, size: showKeys ? 30 : 34)
+                    .help("Knappen \(button.title)")
+            }
+            if showButton && showKeys { Text("eller").font(.callout).foregroundStyle(.secondary).fixedSize() }
+            if showKeys { KeyCaps(shortcut: keys, size: showButton ? 22 : 30) }
+            if !showButton && !showKeys {
+                Button { model.page = .buttons } label: { Label("Slå knappen til", systemImage: "hand.tap") }
+            }
+        }
+    }
+
+    /// Vejledning til knapperne i den måde, brugeren har valgt.
+    private var buttonsGuide: some View {
+        Section("Knapper på skærmen") {
+            HStack(alignment: .top, spacing: 0) {
+                switch controls.style {
+                case .hover, .dot:
+                    HowToStep(number: 1, title: "Find logoet") { BaymowMark(size: 38) }
+                    arrow
+                    HowToStep(number: 2, title: controls.style == .dot ? "Klik på det" : "Hold musen over") {
+                        symbol(controls.style == .dot ? "cursorarrow.click.2" : "cursorarrow.rays", .blue)
+                    }
+                case .edge:
+                    HowToStep(number: 1, title: "Find fanen") { ActionBarEdgeTab(onLeft: !controls.edgeOnRight).scaleEffect(0.8) }
+                    arrow
+                    HowToStep(number: 2, title: "Hold musen over") { symbol("cursorarrow.rays", .blue) }
+                case .floating:
+                    HowToStep(number: 1, title: "Find knapperne") { BaymowMark(size: 38) }
+                }
+                arrow
+                HowToStep(number: controls.style == .floating ? 2 : 3, title: "Tryk på en knap") {
+                    ActionBarView(buttons: Array(controls.visibleButtons(available: availableButtons).prefix(3)),
+                                  vertical: false, showLabels: false, size: .small, showMark: false)
+                        .allowsHitTesting(false)
+                }
+            }
+            .padding(.vertical, 10)
+            Label(buttonsWhere, systemImage: "info.circle").foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    private var buttonsWhere: String {
+        switch controls.style {
+        case .hover: return "Logoet står på skærmen, først øverst til højre. Træk det derhen, hvor du vil have det."
+        case .dot: return "Logoet står på skærmen, først øverst til højre. Klik igen for at skjule knapperne."
+        case .edge: return "Fanen sidder i \(controls.edgeOnRight ? "højre" : "venstre") side af skærmen. Træk den op eller ned, eller over i den anden side."
+        case .floating: return "Knapperne står fremme hele tiden. Træk i logoet for at flytte dem."
         }
     }
 
@@ -641,6 +726,11 @@ struct MainView: View {
                 Button { model.page = .buttons } label: { Label("Gå til Knapper", systemImage: "hand.tap") }
             }
         }
+        // Er tasterne slået fra, skjules resten – som på de andre sider.
+        if controls.keysActive { shortcutEditors }
+    }
+
+    @ViewBuilder private var shortcutEditors: some View {
         Section {
             shortcutEditor(.read, title: "Læs op", symbol: "speaker.wave.2.fill", color: .blue,
                            shortcut: settings.shortcut, failed: shortcutRegistrationFailed) { new in

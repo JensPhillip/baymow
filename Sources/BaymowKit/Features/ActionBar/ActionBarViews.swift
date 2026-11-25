@@ -74,6 +74,8 @@ struct ActionBarView: View {
     var showLabels = true
     /// Knappen, musen står over (kun til skitserne; i appen styrer musen det selv).
     var highlighted: ActionBarButton?
+    /// Knappernes størrelse (brugerens valg under Knapper).
+    var size: ActionBarSize = .medium
     var showMark = true
     var action: (ActionBarButton) -> Void = { _ in }
     /// Musen kom over en knap (nil: væk igen).
@@ -86,10 +88,10 @@ struct ActionBarView: View {
         layout {
             if let header {
                 header.padding(vertical ? .bottom : .trailing, 2)
-                Divider().frame(width: vertical ? 44 : nil, height: vertical ? nil : 44)
+                Divider().frame(width: vertical ? size.tile + 10 : nil, height: vertical ? nil : size.tile + 10)
             } else if showMark {
                 BaymowMark(size: 30).padding(vertical ? .bottom : .trailing, 2)
-                Divider().frame(width: vertical ? 44 : nil, height: vertical ? nil : 44)
+                Divider().frame(width: vertical ? size.tile + 10 : nil, height: vertical ? nil : size.tile + 10)
             }
             ForEach(buttons) { button in
                 Button { action(button) } label: { tile(button) }
@@ -107,12 +109,12 @@ struct ActionBarView: View {
 
     private func tile(_ button: ActionBarButton) -> some View {
         VStack(spacing: 4) {
-            IconTile(symbol: button.symbol, color: button.color, size: 34)
+            IconTile(symbol: button.symbol, color: button.color, size: size.tile)
             if showLabels {
-                Text(button.title).font(.system(size: 11, weight: .medium)).lineLimit(1).fixedSize()
+                Text(button.title).font(.system(size: size.label, weight: .medium)).lineLimit(1).fixedSize()
             }
         }
-        .frame(minWidth: showLabels ? 72 : 44, minHeight: 44)
+        .frame(minWidth: showLabels ? size.tile * 2.1 : size.tile + 10, minHeight: size.tile + 10)
         .padding(.vertical, 4)
         .background(highlighted == button ? Color.primary.opacity(0.1) : .clear,
                     in: RoundedRectangle(cornerRadius: 10, style: .continuous))

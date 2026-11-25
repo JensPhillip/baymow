@@ -39,6 +39,35 @@ enum ActionBarStyle: String, CaseIterable, Identifiable {
     var isVertical: Bool { self == .edge || self == .floating }
 }
 
+/// Knappernes størrelse på bjælken.
+enum ActionBarSize: String, CaseIterable, Identifiable {
+    case small, medium, large
+
+    var id: String { rawValue }
+    var title: String {
+        switch self {
+        case .small: return "Små"
+        case .medium: return "Mellem"
+        case .large: return "Store"
+        }
+    }
+    /// Ikonets side i punkter.
+    var tile: CGFloat {
+        switch self {
+        case .small: return 24
+        case .medium: return 34
+        case .large: return 44
+        }
+    }
+    var label: CGFloat {
+        switch self {
+        case .small: return 9
+        case .medium: return 11
+        case .large: return 13
+        }
+    }
+}
+
 /// Indstillingerne for knapbjælken og for tastaturgenvejene. Knapperne er slået fra som standard (planens afsnit 3);
 /// velkomsten spørger nye brugere. Tasterne virker, til brugeren selv slår dem fra – og kun, hvis knapperne er slået til.
 @MainActor
@@ -55,6 +84,9 @@ final class ActionBarSettings: ObservableObject {
     @Published var keysEnabled: Bool { didSet { defaults.set(keysEnabled, forKey: Keys.keys) } }
     /// Har brugeren svaret på spørgsmålet i velkomsten?
     @Published var hasChosen: Bool { didSet { defaults.set(hasChosen, forKey: Keys.chosen) } }
+    @Published var size: ActionBarSize { didSet { defaults.set(size.rawValue, forKey: Keys.size) } }
+    /// Teksten under knapperne ("Læs op" osv.).
+    @Published var showLabels: Bool { didSet { defaults.set(showLabels, forKey: Keys.labels) } }
     /// Fanen i kanten: højre (ellers venstre) side, og hvor højt (0 = bunden, 1 = toppen).
     @Published var edgeOnRight: Bool { didSet { defaults.set(edgeOnRight, forKey: Keys.edgeRight) } }
     @Published var edgeHeight: Double { didSet { defaults.set(edgeHeight, forKey: Keys.edgeHeight) } }
@@ -62,6 +94,7 @@ final class ActionBarSettings: ObservableObject {
     enum Keys {
         static let enabled = "actionBarEnabled", style = "actionBarStyle", hidden = "actionBarHidden"
         static let keys = "keyboardShortcutsEnabled", chosen = "actionBarChosen"
+        static let size = "actionBarSize", labels = "actionBarLabels"
         static let edgeRight = "actionBarEdgeRight", edgeHeight = "actionBarEdgeHeight"
         static let originX = "actionBarLogo.x", originY = "actionBarLogo.y"
     }
@@ -73,6 +106,8 @@ final class ActionBarSettings: ObservableObject {
         hiddenButtons = Set((defaults.stringArray(forKey: Keys.hidden) ?? []).compactMap(ActionBarButton.init(rawValue:)))
         keysEnabled = defaults.object(forKey: Keys.keys) as? Bool ?? true
         hasChosen = defaults.bool(forKey: Keys.chosen)
+        size = defaults.string(forKey: Keys.size).flatMap(ActionBarSize.init(rawValue:)) ?? .medium
+        showLabels = defaults.object(forKey: Keys.labels) as? Bool ?? true
         edgeOnRight = defaults.object(forKey: Keys.edgeRight) as? Bool ?? true
         edgeHeight = defaults.object(forKey: Keys.edgeHeight) as? Double ?? 0.6
     }

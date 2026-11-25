@@ -147,6 +147,33 @@ public enum ScreenshotTool {
               MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
                        spelling: SpellingSettings(defaults: defaults, ai: demoAI), ai: demoAI, mail: MailReplySettings(defaults: defaults),
                        screenText: ScreenTextSettings(defaults: defaults), controls: demoControls, shortcutRegistrationFailed: false))
+        // Startsiden med knapper og taster, og med kun knapper (tasterne slået fra); Genveje uden taster;
+        // Knapper med små knapper uden tekst.
+        model.page = .start
+        shoot("hovedvindue-start-knapper", size: NSSize(width: 780, height: 760),
+              MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
+                       spelling: SpellingSettings(defaults: defaults, ai: demoAI), ai: demoAI, mail: MailReplySettings(defaults: defaults),
+                       screenText: ScreenTextSettings(defaults: defaults), controls: demoControls, shortcutRegistrationFailed: false))
+        demoControls.keysEnabled = false
+        shoot("hovedvindue-start-kun-knapper", size: NSSize(width: 780, height: 760),
+              MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
+                       spelling: SpellingSettings(defaults: defaults, ai: demoAI), ai: demoAI, mail: MailReplySettings(defaults: defaults),
+                       screenText: ScreenTextSettings(defaults: defaults), controls: demoControls, shortcutRegistrationFailed: false))
+        model.page = .shortcut
+        shoot("hovedvindue-shortcut-uden-taster", size: NSSize(width: 780, height: 600),
+              MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
+                       spelling: SpellingSettings(defaults: defaults, ai: demoAI), ai: demoAI, mail: MailReplySettings(defaults: defaults),
+                       screenText: ScreenTextSettings(defaults: defaults), controls: demoControls, shortcutRegistrationFailed: false))
+        demoControls.keysEnabled = true
+        demoControls.size = .small
+        demoControls.showLabels = false
+        model.page = .buttons
+        shoot("hovedvindue-buttons-smaa", size: NSSize(width: 780, height: 1250),
+              MainView(model: model, settings: settings, catalog: catalog, downloader: downloader,
+                       spelling: SpellingSettings(defaults: defaults, ai: demoAI), ai: demoAI, mail: MailReplySettings(defaults: defaults),
+                       screenText: ScreenTextSettings(defaults: defaults), controls: demoControls, shortcutRegistrationFailed: false))
+        demoControls.size = .medium
+        demoControls.showLabels = true
         demoControls.isEnabled = false
         // Velkomsten ved trinnet "Knapper på skærmen?".
         let controlsDemo = ActionBarSettings(defaults: defaults)

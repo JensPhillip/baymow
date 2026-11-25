@@ -22,6 +22,28 @@ struct ActionBarSettingsPage: View {
             Section("Hvilke knapper?") {
                 ForEach(ActionBarButton.allCases) { button in buttonRow(button) }
             }
+            Section("Knappernes størrelse") {
+                Picker(selection: $controls.size) {
+                    ForEach(ActionBarSize.allCases) { size in Text(size.title).tag(size) }
+                } label: {
+                    Label("Størrelse", systemImage: "textformat.size")
+                }
+                .pickerStyle(.segmented)
+                Toggle(isOn: $controls.showLabels) {
+                    Label("Vis tekst under knapperne", systemImage: "character.textbox")
+                }
+                .help("Uden tekst fylder knapperne mindre. Hold musen over en knap for at se, hvad den gør.")
+                // Sådan ser knapperne ud med valget.
+                HStack {
+                    Spacer()
+                    ActionBarView(buttons: ActionBarButton.allCases.filter { available.contains($0) && !controls.hiddenButtons.contains($0) },
+                                  vertical: false, showLabels: controls.showLabels, size: controls.size, showMark: false)
+                        .allowsHitTesting(false)
+                        .accessibilityHidden(true)
+                    Spacer()
+                }
+                .padding(.vertical, 6)
+            }
         }
         Section {
             Toggle(isOn: Binding(get: { controls.keysActive }, set: { controls.keysEnabled = $0 })) {

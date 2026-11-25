@@ -19,7 +19,9 @@ Sidst opdateret: 2026-11-25 af udfører (Claude Opus 5.5).
   overgange (knapperne glider og toner ind), logoet flytter sig ikke, når bjælken åbner (indholdet er hæftet til logoets
   hjørne; kontrolleret på skærmbilleder i begge størrelser), og forklaringen er lille, kommer efter 3 sekunder og har sin
   egen plads. Derefter: roligere animation uden fjeder, vinduets nye størrelse animeres ikke (logoet
-  gled), fanen i kanten bliver stående med knapperne ud ved siden af, mindre skygger. Afventer afprøvning.
+  gled), fanen i kanten bliver stående med knapperne ud ved siden af, mindre skygger. Derefter: knapperne i tre
+  størrelser og tekst under dem til/fra (med forhåndsvisning); Genveje skjuler tasterne, når de er slået fra; Start følger
+  opsætningen (vejledning til den valgte knapvariant, knap og/eller taster i hvert trin, sparring med). Afventer afprøvning.
 - **Mail – plan aftalt 23. november:** 1) sparring på den åbne mail (færdig), 2) Outlook og Gmail – parkeret af brugeren 24. november (I17; nævnes kun ved forslag til forbedringer), 3) senere: proaktiv hjælp med
   app på telefonen, brugerens kontekst og opklarende spørgsmål (I16), og login på kontoen. Proaktiv del venter, til
   mail-svar og sparring virker godt.

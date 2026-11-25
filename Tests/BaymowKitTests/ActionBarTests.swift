@@ -103,4 +103,51 @@ final class ActionBarTests: XCTestCase {
         model.tip = .read
         XCTAssertEqual(ActionBarController.fullSize(model.copyWithTip()), without, "forklaringen har sin egen plads")
     }
+
+    // MARK: Brugerens ønsker 25. november: størrelse, tekst og en startside, der følger opsætningen
+
+    func testSizeAndLabelsAreSaved() throws {
+        let defaults = try freshDefaults("baymow-actionbar-5")
+        let settings = ActionBarSettings(defaults: defaults)
+        XCTAssertEqual(settings.size, .medium)
+        XCTAssertTrue(settings.showLabels)
+        settings.size = .small
+        settings.showLabels = false
+        let again = ActionBarSettings(defaults: defaults)
+        XCTAssertEqual(again.size, .small)
+        XCTAssertFalse(again.showLabels)
+        XCTAssertLessThan(ActionBarSize.small.tile, ActionBarSize.medium.tile)
+        XCTAssertLessThan(ActionBarSize.medium.tile, ActionBarSize.large.tile)
+    }
+
+    func testSmallButtonsWithoutTextTakeLessRoom() {
+        let model = ActionBarModel()
+        model.buttons = [.read, .screenText, .spelling]
+        let normal = ActionBarController.fullSize(model)
+        model.size = .small
+        model.showLabels = false
+        let small = ActionBarController.fullSize(model)
+        XCTAssertLessThan(small.width, normal.width - 60)
+    }
+
+    func testStartExplanationFollowsTheSetup() throws {
+        let defaults = try freshDefaults("baymow-actionbar-6")
+        let spelling = SpellingSettings(defaults: defaults)
+        let controls = ActionBarSettings(defaults: defaults)
+        let keys = Shortcut.standard.spokenKeys
+        let onlyKeys = MainPage.start.explanation(shortcut: .standard, spelling: spelling, controls: controls)
+        XCTAssertTrue(onlyKeys.contains(keys))
+        XCTAssertFalse(onlyKeys.contains("knapperne"))
+        controls.isEnabled = true
+        let both = MainPage.start.explanation(shortcut: .standard, spelling: spelling, controls: controls)
+        XCTAssertTrue(both.contains(keys))
+        XCTAssertTrue(both.contains("Læs op"))
+        XCTAssertTrue(both.contains("holder musen over Baymow logoet"))
+        controls.keysEnabled = false
+        let onlyButtons = MainPage.start.explanation(shortcut: .standard, spelling: spelling, controls: controls)
+        XCTAssertFalse(onlyButtons.contains(keys), "tasterne er slået fra og skal ikke nævnes")
+        XCTAssertTrue(onlyButtons.contains("Læs op"))
+        controls.style = .edge
+        XCTAssertTrue(MainPage.start.explanation(shortcut: .standard, spelling: spelling, controls: controls).contains("fanen"))
+    }
 }

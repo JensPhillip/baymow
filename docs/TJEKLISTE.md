@@ -40,6 +40,8 @@ Opdateret 25. november 2026.
 - [ ] 5. Prøv de tre andre måder under "Hvordan skal knapperne ligge?" – især **Fast i skærmens kant**. Hvilken kan du bedst lide?
 - [ ] 6. Siden **Genveje** → slå **Brug tasterne** fra: ⌃⌥S gør nu ingenting, men knapperne virker. Slå den til igen.
 - [ ] 7. Slå stavehjælpen fra på siden Stavning: knappen "Ret stavning" forsvinder fra bjælken.
+- [ ] 8. Under **Knapper** → "Knappernes størrelse": prøv Små og Store, og slå "Vis tekst under knapperne" fra.
+- [ ] 9. Se **Start** med knapper til, og igen med tasterne slået fra: viser den knappen, tasterne eller begge, som du har valgt?
 
 ## Test nu: Ny besked uden markering (1 min)
 - [ ] Tryk **⌃⌥S** uden at have markeret noget. Beskeden skal nu nævne "Tekst fra skærmen" i stedet for at sige,
