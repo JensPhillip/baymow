@@ -63,7 +63,7 @@ final class ActionBarSettings: ObservableObject {
         static let enabled = "actionBarEnabled", style = "actionBarStyle", hidden = "actionBarHidden"
         static let keys = "keyboardShortcutsEnabled", chosen = "actionBarChosen"
         static let edgeRight = "actionBarEdgeRight", edgeHeight = "actionBarEdgeHeight"
-        static let originX = "actionBarOrigin.x", originY = "actionBarOrigin.y"
+        static let originX = "actionBarLogo.x", originY = "actionBarLogo.y"
     }
 
     init(defaults: UserDefaults = .standard) {
@@ -87,7 +87,7 @@ final class ActionBarSettings: ObservableObject {
         hasChosen = true
     }
 
-    /// Hvor logoet (eller bjælken) står – nederste venstre hjørne i skærmkoordinater.
+    /// Hvor logoet står: nederste venstre hjørne af logoets vindue (lukket), i skærmkoordinater.
     var savedOrigin: CGPoint? {
         get {
             guard defaults.object(forKey: Keys.originX) != nil else { return nil }

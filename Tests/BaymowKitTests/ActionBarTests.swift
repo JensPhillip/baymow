@@ -80,20 +80,27 @@ final class ActionBarTests: XCTestCase {
     func testTheBarWindowHasASize() {
         let model = ActionBarModel()
         model.buttons = [.read, .spelling]
-        let hosting = NSHostingView(rootView: ActionBarHost(model: model, onHover: { _ in }, onLogoTap: {}, onDrag: { _ in },
-                                                            onButton: { _ in }, onButtonHover: { _ in }, onListen: {}))
-        hosting.sizingOptions = ActionBarController.sizingOptions
-        let closed = hosting.fittingSize
-        XCTAssertGreaterThan(closed.width, 40)
-        XCTAssertGreaterThan(closed.height, 40)
-        model.expanded = true
-        hosting.layoutSubtreeIfNeeded()
-        XCTAssertGreaterThan(hosting.fittingSize.width, closed.width + 100, "åben er bredere end logoet alene")
         for style in ActionBarStyle.allCases {
             model.style = style
-            hosting.layoutSubtreeIfNeeded()
-            XCTAssertGreaterThan(hosting.fittingSize.width, 20, style.rawValue)
-            XCTAssertGreaterThan(hosting.fittingSize.height, 20, style.rawValue)
+            let full = ActionBarController.fullSize(model), closed = ActionBarController.collapsedSize(model)
+            XCTAssertGreaterThan(closed.width, 20, style.rawValue)
+            XCTAssertGreaterThan(closed.height, 20, style.rawValue)
+            XCTAssertGreaterThanOrEqual(full.width, closed.width, style.rawValue)
+            XCTAssertGreaterThanOrEqual(full.height, closed.height, style.rawValue)
         }
+        model.style = .hover
+        XCTAssertGreaterThan(ActionBarController.fullSize(model).width, ActionBarController.collapsedSize(model).width + 100,
+                             "åben er bredere end logoet alene")
+    }
+
+    /// Brugerens ønske 25. november: forklaringen kommer først efter 3 sekunder og flytter ikke på noget.
+    func testTipWaitsThreeSecondsAndDoesNotChangeTheSize() {
+        XCTAssertEqual(ActionBarController.tipDelay, 3_000_000_000)
+        let model = ActionBarModel()
+        model.buttons = [.read, .spelling]
+        model.expanded = true
+        let without = ActionBarController.fullSize(model)
+        model.tip = .read
+        XCTAssertEqual(ActionBarController.fullSize(model.copyWithTip()), without, "forklaringen har sin egen plads")
     }
 }

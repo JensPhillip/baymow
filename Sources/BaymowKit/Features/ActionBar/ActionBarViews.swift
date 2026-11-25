@@ -116,6 +116,7 @@ struct ActionBarView: View {
         .padding(.vertical, 4)
         .background(highlighted == button ? Color.primary.opacity(0.1) : .clear,
                     in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .animation(.easeOut(duration: 0.12), value: highlighted)
         .contentShape(Rectangle())
     }
 }

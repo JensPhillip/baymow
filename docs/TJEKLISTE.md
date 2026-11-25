@@ -35,7 +35,7 @@ Opdateret 25. november 2026.
 - [ ] 1. **Start** → **Skift knapper**, og slå **Knapper på skærmen** til. Et lille Baymow-logo kommer frem øverst til højre.
 - [ ] 2. Markér tekst i et program, hold musen over logoet, og tryk **Læs op**. Teksten skal læses op, og du skal blive
       i dit program (Baymows vindue må ikke hoppe frem).
-- [ ] 3. Hold musen stille over en knap: der kommer en forklaring med **Hør**.
+- [ ] 3. Hold musen stille over en knap i 3 sekunder: der kommer en lille forklaring med en lille **Hør**. Står logoet stille hele tiden?
 - [ ] 4. Træk logoet et andet sted hen. Står det der stadig efter en genstart af Baymow?
 - [ ] 5. Prøv de tre andre måder under "Hvordan skal knapperne ligge?" – især **Fast i skærmens kant**. Hvilken kan du bedst lide?
 - [ ] 6. Siden **Genveje** → slå **Brug tasterne** fra: ⌃⌥S gør nu ingenting, men knapperne virker. Slå den til igen.

@@ -120,19 +120,25 @@ public enum ScreenshotTool {
         shoot("velkomst", size: nil, OnboardingView(model: onboarding, settings: settings) {})
         // Knapbjælken (AP-77): skitser af varianterne og velkomstens nye trin.
         for (name, view) in ActionBarSketches.shots() { shoot(name, size: nil, view) }
-        // Den rigtige knapbjælke: foldet sammen og åben med forklaring (logo i højre side).
-        for (name, expanded, style) in [("knapbjaelke-rigtig-lukket", false, ActionBarStyle.hover),
-                                        ("knapbjaelke-rigtig-aaben", true, .hover),
-                                        ("knapbjaelke-rigtig-kant", true, .edge),
-                                        ("knapbjaelke-rigtig-fane", false, .edge),
-                                        ("knapbjaelke-rigtig-fast", false, .floating)] {
+        // Den rigtige knapbjælke i præcis de rammer, vinduet får: lukket (kun logoet) og åben – logoet skal stå samme sted.
+        for (name, expanded, style, tip) in [("knapbjaelke-rigtig-lukket", false, ActionBarStyle.hover, false),
+                                             ("knapbjaelke-rigtig-aaben", true, .hover, false),
+                                             ("knapbjaelke-rigtig-forklaring", true, .hover, true),
+                                             ("knapbjaelke-rigtig-kant", true, .edge, true),
+                                             ("knapbjaelke-rigtig-fane", false, .edge, false),
+                                             ("knapbjaelke-rigtig-fast", true, .floating, false)] {
             let barModel = ActionBarModel()
             barModel.style = style
             barModel.buttons = [.read, .screenText, .spelling, .mailReply, .sparring]
             barModel.expanded = expanded
-            barModel.tip = expanded ? .read : nil
-            shoot(name, size: nil, ActionBarHost(model: barModel, onHover: { _ in }, onLogoTap: {}, onDrag: { _ in },
-                                                 onButton: { _ in }, onButtonHover: { _ in }, onListen: {}))
+            barModel.hovered = tip ? .read : nil
+            barModel.tip = tip ? .read : nil
+            let size = expanded ? ActionBarController.fullSize(barModel) : ActionBarController.collapsedSize(barModel)
+            shoot(name, size: NSSize(width: size.width, height: size.height),
+                  ActionBarHost(model: barModel, onHover: { _ in }, onLogoTap: {}, onDrag: { _ in },
+                                onButton: { _ in }, onButtonHover: { _ in }, onListen: {})
+                    .frame(width: size.width, height: size.height).clipped() // præcis vinduets ramme
+                    .background(Color.gray.opacity(0.15)))
         }
         // Siden Knapper med knapperne slået til.
         demoControls.isEnabled = true
