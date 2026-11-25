@@ -117,6 +117,10 @@ public enum ScreenshotTool {
         model.page = .start
         shoot("sidebjaelke", size: NSSize(width: 220, height: 420), MainSidebar(model: model, needsAttention: { $0 == .voices }))
         shoot("velkomst", size: nil, OnboardingView(model: onboarding, settings: settings) {})
+        // Knapbjælken (AP-77): skitser af varianterne og velkomstens nye trin.
+        for (name, view) in ActionBarSketches.shots() { shoot(name, size: nil, view) }
+        shoot("velkomst-knapper-eller-taster", size: nil,
+              ControlPreferenceStep(choice: .constant(.buttons)).frame(width: 700))
         _ = sessions.start(text: demoText, sourceAppName: "Safari")
         shoot("afspiller", size: nil, PlayerView(sessions: sessions, settings: settings) {})
         sessions.togglePlayPause()

@@ -10,6 +10,9 @@ Sidst opdateret: 2026-11-25 af udfører (Claude Opus 5.5).
   at give valg; instruktionen kræver nu valg, når personen selv skal sige ja eller nej. Mail-testen (10 tråde): 10 af 10
   i fem kørsler. Afprøvet og godkendt af brugeren 25. november. AP-76 (oprydning 24. november): beskeden ved ingen
   markering nævner "Tekst fra skærmen" (kerneændring), testnøglerne i `baymow-test` er slettet, Outlook og Gmail parkeret som I17. – bygget, afventer brugerens afprøvning. AP-71 er afprøvet af brugeren.
+- **AP-77 (knapbjælke, brugerens idé 25. november):** knapper på skærmen som alternativ til genvejene (genvejene bliver),
+  valg i velkomsten (knapper / taster / begge). Skitser af fire varianter (altid synlig, prik, logo ved mus, kant) og
+  velkomsttrinnet: `Baymow --render-ui` → `knapbjaelke-*`, `velkomst-knapper-eller-taster`. Afventer brugerens valg.
 - **Mail – plan aftalt 23. november:** 1) sparring på den åbne mail (færdig), 2) Outlook og Gmail – parkeret af brugeren 24. november (I17; nævnes kun ved forslag til forbedringer), 3) senere: proaktiv hjælp med
   app på telefonen, brugerens kontekst og opklarende spørgsmål (I16), og login på kontoen. Proaktiv del venter, til
   mail-svar og sparring virker godt.
