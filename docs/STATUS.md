@@ -1,7 +1,7 @@
 # Status
 
 Opdateres af den, der sidst har arbejdet på projektet. Kort og faktuelt.
-Sidst opdateret: 2026-11-25 af udfører (Claude Opus 5.5).
+Sidst opdateret: 2026-11-26 af udfører (Claude Opus 5.5).
 
 ## Lige nu
 
@@ -21,7 +21,8 @@ Sidst opdateret: 2026-11-25 af udfører (Claude Opus 5.5).
   egen plads. Derefter: roligere animation uden fjeder, vinduets nye størrelse animeres ikke (logoet
   gled), fanen i kanten bliver stående med knapperne ud ved siden af, mindre skygger. Derefter: knapperne i tre
   størrelser og tekst under dem til/fra (med forhåndsvisning); Genveje skjuler tasterne, når de er slået fra; Start følger
-  opsætningen (vejledning til den valgte knapvariant, knap og/eller taster i hvert trin, sparring med). Afventer afprøvning.
+  opsætningen (vejledning til den valgte knapvariant, knap og/eller taster i hvert trin, sparring med). Afprøvet og
+  godkendt af brugeren 26. november.
 - **Mail – plan aftalt 23. november:** 1) sparring på den åbne mail (færdig), 2) Outlook og Gmail – parkeret af brugeren 24. november (I17; nævnes kun ved forslag til forbedringer), 3) senere: proaktiv hjælp med
   app på telefonen, brugerens kontekst og opklarende spørgsmål (I16), og login på kontoen. Proaktiv del venter, til
   mail-svar og sparring virker godt.
@@ -29,7 +30,7 @@ Sidst opdateret: 2026-11-25 af udfører (Claude Opus 5.5).
 - **Færdige pakker:** AP-00, AP-01, AP-02, AP-10, AP-11, AP-12, AP-19 (hovedstemme: Apple Sara (Enhanced)),
   AP-20, AP-21, AP-22, AP-23, AP-30, AP-31, AP-32, AP-40, AP-50, AP-51, AP-60, AP-61, AP-62.
 - **Lukket/droppet af brugeren 22. november:** AP-03 (lytteskemaet), AP-15 (Plapre).
-- **Venter på brugeren:** afprøvning af AP-70 og AP-76, AP-41 (testperson – udskudt af brugeren 2026-11-18).
+- **Venter på brugeren:** afprøvning af AP-70, AP-41 (testperson – udskudt af brugeren 2026-11-18).
 - **Delvist:** AP-24 – udtalelister pr. motor er bygget, men gav kun lidt (Piper 14 → 18 af 30, Apple uændret).
 - **Parkeret eller udskudt:** AP-13/14 (cloud-stemmer, B6), AP-16 (Røst – hovedstemmen er valgt).
 - **Beslutninger:** B6 cloud udskudt · B7 Sara (Enhanced) · B8 GPL-3.0-or-later · B9 Baymow, app-id

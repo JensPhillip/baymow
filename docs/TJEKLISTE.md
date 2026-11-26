@@ -1,6 +1,6 @@
 # Tjekliste: det, du skal teste eller beslutte
 
-Opdateret 25. november 2026.
+Opdateret 26. november 2026.
 
 ## Afklaret 22. november
 - ✅ Afspilleren: alle 10 punkter virker.
@@ -31,21 +31,9 @@ Opdateret 25. november 2026.
 - ✅ Valg som knapper i mail-svar virker (25. nov.), også når mailen spørger om et tidspunkt.
 - ✅ Testnøglerne (konto `baymow-test`) er slettet. Dine egne nøgler i Baymow er urørte.
 
-## Test nu: Knapper på skærmen (ca. 10 min)
-- [ ] 1. **Start** → **Skift knapper**, og slå **Knapper på skærmen** til. Et lille Baymow-logo kommer frem øverst til højre.
-- [ ] 2. Markér tekst i et program, hold musen over logoet, og tryk **Læs op**. Teksten skal læses op, og du skal blive
-      i dit program (Baymows vindue må ikke hoppe frem).
-- [ ] 3. Hold musen stille over en knap i 3 sekunder: der kommer en lille forklaring med en lille **Hør**. Står logoet stille hele tiden?
-- [ ] 4. Træk logoet et andet sted hen. Står det der stadig efter en genstart af Baymow?
-- [ ] 5. Prøv de tre andre måder under "Hvordan skal knapperne ligge?" – især **Fast i skærmens kant**. Hvilken kan du bedst lide?
-- [ ] 6. Siden **Genveje** → slå **Brug tasterne** fra: ⌃⌥S gør nu ingenting, men knapperne virker. Slå den til igen.
-- [ ] 7. Slå stavehjælpen fra på siden Stavning: knappen "Ret stavning" forsvinder fra bjælken.
-- [ ] 8. Under **Knapper** → "Knappernes størrelse": prøv Små og Store, og slå "Vis tekst under knapperne" fra.
-- [ ] 9. Se **Start** med knapper til, og igen med tasterne slået fra: viser den knappen, tasterne eller begge, som du har valgt?
-
-## Test nu: Ny besked uden markering (1 min)
-- [ ] Tryk **⌃⌥S** uden at have markeret noget. Beskeden skal nu nævne "Tekst fra skærmen" i stedet for at sige,
-      at billeder ikke kan læses op.
+## Afklaret 26. november
+- ✅ Knapper på skærmen (knapbjælken) er godkendt: varianter, størrelse, tekst, tasterne til/fra og Start.
+- ✅ Den nye besked uden markering (nævner "Tekst fra skærmen") er godkendt.
 
 ## Besluttet
 - ✅ **AI-konto:** besluttet 23. november – begge, du vælger selv. **Standard:** ChatGPT.

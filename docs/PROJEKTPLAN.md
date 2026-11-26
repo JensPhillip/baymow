@@ -452,7 +452,7 @@ intet under Kerne, må pakken ikke ændre kernefiler.
 | AP-74 | Sparring om den åbne mail: faste spørgsmål, eget spørgsmål, Hør, Kopiér; intet sendes før første spørgsmål | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
 | AP-75 | Tekst fra skærmen (idé I4): træk en firkant, Macens tekstgenkendelse, oplæsning i afspilleren; intet netværk | 6 | Udfører + bruger | MVP | Færdig (afprøvet af brugeren 24. november 2026) |
 | AP-76 | Oprydning: beskeden uden markering nævner "Tekst fra skærmen" (kerne), testnøgler slettet, Outlook/Gmail parkeret (I17) | 6 | Udfører | – | Færdig |
-| AP-77 | Knapbjælke: knapper på skærmen som alternativ til genvejene; velkomsten spørger "med eller uden knapper"; siden Knapper | 6 | Udfører + bruger | MVP | Afventer bruger (afprøvning) |
+| AP-77 | Knapbjælke: knapper på skærmen som alternativ til genvejene; velkomsten spørger "med eller uden knapper"; siden Knapper | 6 | Udfører + bruger | MVP | Færdig (afprøvet af brugeren 26. november 2026) |
 | AP-52 | Developer ID, notarisering og DMG | 5 | Udfører + bruger | AP-50, B9 | Forberedt: DMG og README; afventer certifikat, app-id og kodearkiv |
 
 ### Fase 0 – Grundlag
