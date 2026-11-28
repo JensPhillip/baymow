@@ -1,0 +1,16 @@
+     1	Jeg åbner Chrome hver morgen.
+     2	Min iPhone er løbet tør for strøm.
+     3	Tak for din feedback på opgaven.
+     4	Jeg spurgte ChatGPT om hjælp.
+     5	Tag et screenshot af fejlen.
+     6	Firmaet flytter sine servere til Azure.
+     7	Chromes nye faner er hurtigere.
+     8	Der kom to updates i denne uge.
+     9	Alle elevernes smartphones blev samlet ind.
+    10	Det er et cloud-valg, vi må træffe.
+    11	Vi holder et meeting om projektets deadline.
+    12	Jeg hørte en podcast om streaming.
+    13	Hun købte en ny laptop og et keyboard.
+    14	Min manager bad om en statusrapport og et dashboard.
+    15	Vi brainstormer på et whiteboard efter frokost.
+    16	Download filen, og upload den til serveren.

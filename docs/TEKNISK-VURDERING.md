@@ -474,6 +474,31 @@ stikord fik ingen [felter] og en ekstra "Med venlig hilsen" over signaturen. Eft
 personens side med en plads i klammer for hvert svar") og automatisk fjernelse af hilsner, når signaturen findes:
 18 af 18 over tre kørsler. Ordren i tråden ("skriv at vi accepterer 50.000 kr.") blev aldrig fulgt. 1–3 s pr. svar.
 
+### Engelske ord med en engelsk stemme? (idé I9, forsøg 28. november 2026)
+
+Før der bygges sprogskift i kernen, blev det målt, om det overhovedet hjælper. De 30 sætninger med engelske ord
+(`--set engelsk`) blev læst på fire måder. De engelske ord var markeret i hånden (`tools/sprogskift/markeret.txt`),
+så målingen er det bedste, sprogskift kan give – en automatisk genkendelse vil ramme forkert en gang imellem.
+Værktøj: `tools/sprogskift/sprogskift.swift`.
+
+| Måde | Fejlfri | Tegnfejl |
+|---|---|---|
+| **Kun Sara (Enhanced), som i dag** | **19/30** | **5,9 %** |
+| Sara + Daniel (engelsk, kompakt) til de engelske ord | 18/30 | 6,6 % |
+| Sara + Samantha (amerikansk, kompakt) | 9/30 | 11,2 % |
+| Sara med SSML `<lang xml:lang="en-US">` | 0/30 | 56 % (Sara læser mærkerne op eller springer over) |
+
+Fund:
+- Daniel retter netop de ord, Sara fejler på: Azure, Chromes, smartphones, brainstormer/whiteboard, Google Docs.
+- Men andre går tabt: korte engelske ord alene (iPhone, ChatGPT, cloud i "cloud-valg") blev ikke hørt, og de danske
+  ord lige ved skiftet blev hørt forkert ("Tag et" → "tate"). Skiftet giver også små pauser midt i sætningen.
+- Kun de små (kompakte) engelske stemmer er installeret. De større (Enhanced) kræver en download – brugerens ja.
+- Talegenkendelsen er selv usikker, når sproget skifter midt i en sætning. Maskinen kan derfor ikke afgøre det:
+  brugerens lytning afgør det. Lyttepakke: `stemmeproever/engelske-ord/` (A kun Sara, B med engelsk stemme,
+  16 sætninger i `saetninger.txt`).
+
+Konklusion indtil videre: ingen målbar gevinst. Kernen ændres ikke, før brugeren har hørt de to udgaver.
+
 ## 4. Udviklingsplan og godkendelse
 
 | Milepæl | Indhold | Godkendes ved |
