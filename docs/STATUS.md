@@ -5,10 +5,8 @@ Sidst opdateret: 2026-11-28 af udfører (Claude Opus 5.5).
 
 ## Lige nu
 
-- **I9 (engelske ord med engelsk stemme), forsøg 28. november:** målt før der bygges. Sara alene 19/30, Sara + engelsk
-  stemme (Daniel) 18/30 – ingen gevinst på maskinen, men den engelske stemme retter andre ord, end den taber. Kernen er
-  ikke ændret. **Afventer bruger:** lyt til `stemmeproever/engelske-ord/` (A og B), og sig, hvilken der er lettest at forstå.
-  Se TEKNISK-VURDERING "Engelske ord med en engelsk stemme?".
+- **I9 fravalgt af brugeren 28. november:** målt (Sara alene 19/30, med engelsk stemme 18/30), og brugeren lyttede:
+  "det er bedre uden". Sara læser alt, som før. Kernen er ikke ændret.
 - **AP-72 og AP-73 afprøvet og godkendt af brugeren 24. november** (én gang hilsen over signaturen). Valgfelter som "[passer / passer ikke]" vises nu som knapper i
   mail-svarets vindue; et tryk erstatter feltet i mailen, kun hvis det står uændret (ellers kopieres valget). Brugerens afprøvning samme dag: modellen gættede "13:00 works well" i stedet for
   at give valg; instruktionen kræver nu valg, når personen selv skal sige ja eller nej. Mail-testen (10 tråde): 10 af 10

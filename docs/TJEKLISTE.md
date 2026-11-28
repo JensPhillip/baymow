@@ -41,5 +41,5 @@ Opdateret 26. november 2026.
 ## Senere (ikke nu)
 - [ ] **En testperson**, der aldrig har set Baymow, prøver velkomstvinduet uden hjælp (AP-41).
 - [ ] **Apple Developer Program** (koster et årligt gebyr), når du vil dele Baymow med andre (AP-52).
-- Idéer, der venter: I13 hent rigtige priser og forbrug, I14 fælles nøgle mod betaling for ikke-tekniske brugere, I9 engelske ord i dansk tekst, I10 ret selv et ord, I11 skrivehjælp,
+- Idéer, der venter: I13 hent rigtige priser og forbrug, I14 fælles nøgle mod betaling for ikke-tekniske brugere, I10 ret selv et ord, I11 skrivehjælp,
   I5 hele filer, I17 mail i Outlook og Gmail.

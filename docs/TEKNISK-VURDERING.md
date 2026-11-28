@@ -497,7 +497,8 @@ Fund:
   brugerens lytning afgør det. Lyttepakke: `stemmeproever/engelske-ord/` (A kun Sara, B med engelsk stemme,
   16 sætninger i `saetninger.txt`).
 
-Konklusion indtil videre: ingen målbar gevinst. Kernen ændres ikke, før brugeren har hørt de to udgaver.
+Konklusion: ingen målbar gevinst. Brugeren lyttede 28. november og kunne ikke lide nogen af udgaverne med engelsk
+stemme – "det er bedre uden". I9 er fravalgt; Sara læser alt, som før. Kernen er ikke ændret.
 
 ## 4. Udviklingsplan og godkendelse
 
